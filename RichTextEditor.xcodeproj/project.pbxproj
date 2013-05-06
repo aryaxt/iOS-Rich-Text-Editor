@@ -1,0 +1,575 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		158389131735A5D7006DE713 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389121735A5D7006DE713 /* UIKit.framework */; };
+		158389151735A5D7006DE713 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389141735A5D7006DE713 /* Foundation.framework */; };
+		158389171735A5D7006DE713 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389161735A5D7006DE713 /* CoreGraphics.framework */; };
+		1583891D1735A5D7006DE713 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1583891B1735A5D7006DE713 /* InfoPlist.strings */; };
+		1583891F1735A5D7006DE713 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1583891E1735A5D7006DE713 /* main.m */; };
+		158389231735A5D7006DE713 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 158389221735A5D7006DE713 /* AppDelegate.m */; };
+		158389251735A5D7006DE713 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 158389241735A5D7006DE713 /* Default.png */; };
+		158389271735A5D7006DE713 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 158389261735A5D7006DE713 /* Default@2x.png */; };
+		158389291735A5D7006DE713 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 158389281735A5D7006DE713 /* Default-568h@2x.png */; };
+		1583892C1735A5D7006DE713 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1583892A1735A5D7006DE713 /* MainStoryboard_iPhone.storyboard */; };
+		1583892F1735A5D7006DE713 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1583892D1735A5D7006DE713 /* MainStoryboard_iPad.storyboard */; };
+		158389321735A5D7006DE713 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158389311735A5D7006DE713 /* ViewController.m */; };
+		1583893A1735A5D7006DE713 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389391735A5D7006DE713 /* SenTestingKit.framework */; };
+		1583893B1735A5D7006DE713 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389121735A5D7006DE713 /* UIKit.framework */; };
+		1583893C1735A5D7006DE713 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389141735A5D7006DE713 /* Foundation.framework */; };
+		158389441735A5D7006DE713 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 158389421735A5D7006DE713 /* InfoPlist.strings */; };
+		158389471735A5D7006DE713 /* RichTextEditorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 158389461735A5D7006DE713 /* RichTextEditorTests.m */; };
+		158389531735A616006DE713 /* RichTextEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 158389521735A616006DE713 /* RichTextEditor.m */; };
+		158389551735A62E006DE713 /* RichTextEditor.xib in Resources */ = {isa = PBXBuildFile; fileRef = 158389541735A62E006DE713 /* RichTextEditor.xib */; };
+		1583895A1735D7F4006DE713 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389591735D7F4006DE713 /* CoreText.framework */; };
+		1583896617370F01006DE713 /* ColorPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1583896517370F01006DE713 /* ColorPickerView.m */; };
+		1583896A1737118D006DE713 /* UIFont+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 158389691737118D006DE713 /* UIFont+Additions.m */; };
+		1583896D173711AB006DE713 /* UIView+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1583896C173711AB006DE713 /* UIView+Additions.m */; };
+		1583896F173712BE006DE713 /* ColorPickerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1583896E173712BD006DE713 /* ColorPickerView.xib */; };
+		15838971173712F9006DE713 /* colors.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 15838970173712F9006DE713 /* colors.jpg */; };
+		1583897517374737006DE713 /* FontPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1583897417374737006DE713 /* FontPickerView.m */; };
+		1583897717374792006DE713 /* FontPickerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1583897617374792006DE713 /* FontPickerView.xib */; };
+		1583897A17376DAF006DE713 /* FontSizePickerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1583897917376DAF006DE713 /* FontSizePickerView.xib */; };
+		1583897D17376DC1006DE713 /* FontSizePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1583897C17376DC1006DE713 /* FontSizePickerView.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1583893D1735A5D7006DE713 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 158389051735A5D7006DE713 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1583890D1735A5D7006DE713;
+			remoteInfo = RichTextEditor;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1583890E1735A5D7006DE713 /* RichTextEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RichTextEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		158389121735A5D7006DE713 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		158389141735A5D7006DE713 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		158389161735A5D7006DE713 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		1583891A1735A5D7006DE713 /* RichTextEditor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RichTextEditor-Info.plist"; sourceTree = "<group>"; };
+		1583891C1735A5D7006DE713 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1583891E1735A5D7006DE713 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		158389201735A5D7006DE713 /* RichTextEditor-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RichTextEditor-Prefix.pch"; sourceTree = "<group>"; };
+		158389211735A5D7006DE713 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		158389221735A5D7006DE713 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		158389241735A5D7006DE713 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		158389261735A5D7006DE713 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		158389281735A5D7006DE713 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		1583892B1735A5D7006DE713 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		1583892E1735A5D7006DE713 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		158389301735A5D7006DE713 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		158389311735A5D7006DE713 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		158389381735A5D7006DE713 /* RichTextEditorTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RichTextEditorTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		158389391735A5D7006DE713 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		158389411735A5D7006DE713 /* RichTextEditorTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RichTextEditorTests-Info.plist"; sourceTree = "<group>"; };
+		158389431735A5D7006DE713 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		158389451735A5D7006DE713 /* RichTextEditorTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RichTextEditorTests.h; sourceTree = "<group>"; };
+		158389461735A5D7006DE713 /* RichTextEditorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RichTextEditorTests.m; sourceTree = "<group>"; };
+		158389511735A616006DE713 /* RichTextEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichTextEditor.h; sourceTree = "<group>"; };
+		158389521735A616006DE713 /* RichTextEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RichTextEditor.m; sourceTree = "<group>"; };
+		158389541735A62E006DE713 /* RichTextEditor.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RichTextEditor.xib; sourceTree = "<group>"; };
+		158389591735D7F4006DE713 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		1583896417370F01006DE713 /* ColorPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorPickerView.h; sourceTree = "<group>"; };
+		1583896517370F01006DE713 /* ColorPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorPickerView.m; sourceTree = "<group>"; };
+		158389681737118D006DE713 /* UIFont+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+Additions.h"; sourceTree = "<group>"; };
+		158389691737118D006DE713 /* UIFont+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+Additions.m"; sourceTree = "<group>"; };
+		1583896B173711AB006DE713 /* UIView+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Additions.h"; sourceTree = "<group>"; };
+		1583896C173711AB006DE713 /* UIView+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Additions.m"; sourceTree = "<group>"; };
+		1583896E173712BD006DE713 /* ColorPickerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ColorPickerView.xib; sourceTree = "<group>"; };
+		15838970173712F9006DE713 /* colors.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = colors.jpg; sourceTree = "<group>"; };
+		1583897317374737006DE713 /* FontPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontPickerView.h; sourceTree = "<group>"; };
+		1583897417374737006DE713 /* FontPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontPickerView.m; sourceTree = "<group>"; };
+		1583897617374792006DE713 /* FontPickerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FontPickerView.xib; sourceTree = "<group>"; };
+		1583897917376DAF006DE713 /* FontSizePickerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FontSizePickerView.xib; sourceTree = "<group>"; };
+		1583897B17376DC1006DE713 /* FontSizePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSizePickerView.h; sourceTree = "<group>"; };
+		1583897C17376DC1006DE713 /* FontSizePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontSizePickerView.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1583890B1735A5D7006DE713 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1583895A1735D7F4006DE713 /* CoreText.framework in Frameworks */,
+				158389131735A5D7006DE713 /* UIKit.framework in Frameworks */,
+				158389151735A5D7006DE713 /* Foundation.framework in Frameworks */,
+				158389171735A5D7006DE713 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		158389341735A5D7006DE713 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1583893A1735A5D7006DE713 /* SenTestingKit.framework in Frameworks */,
+				1583893B1735A5D7006DE713 /* UIKit.framework in Frameworks */,
+				1583893C1735A5D7006DE713 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		158389031735A5D7006DE713 = {
+			isa = PBXGroup;
+			children = (
+				158389591735D7F4006DE713 /* CoreText.framework */,
+				158389181735A5D7006DE713 /* RichTextEditor */,
+				1583893F1735A5D7006DE713 /* RichTextEditorTests */,
+				158389111735A5D7006DE713 /* Frameworks */,
+				1583890F1735A5D7006DE713 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1583890F1735A5D7006DE713 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1583890E1735A5D7006DE713 /* RichTextEditor.app */,
+				158389381735A5D7006DE713 /* RichTextEditorTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		158389111735A5D7006DE713 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				158389121735A5D7006DE713 /* UIKit.framework */,
+				158389141735A5D7006DE713 /* Foundation.framework */,
+				158389161735A5D7006DE713 /* CoreGraphics.framework */,
+				158389391735A5D7006DE713 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		158389181735A5D7006DE713 /* RichTextEditor */ = {
+			isa = PBXGroup;
+			children = (
+				158389501735A5F2006DE713 /* Source */,
+				158389211735A5D7006DE713 /* AppDelegate.h */,
+				158389221735A5D7006DE713 /* AppDelegate.m */,
+				1583892A1735A5D7006DE713 /* MainStoryboard_iPhone.storyboard */,
+				1583892D1735A5D7006DE713 /* MainStoryboard_iPad.storyboard */,
+				158389301735A5D7006DE713 /* ViewController.h */,
+				158389311735A5D7006DE713 /* ViewController.m */,
+				158389191735A5D7006DE713 /* Supporting Files */,
+			);
+			path = RichTextEditor;
+			sourceTree = "<group>";
+		};
+		158389191735A5D7006DE713 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1583891A1735A5D7006DE713 /* RichTextEditor-Info.plist */,
+				1583891B1735A5D7006DE713 /* InfoPlist.strings */,
+				1583891E1735A5D7006DE713 /* main.m */,
+				158389201735A5D7006DE713 /* RichTextEditor-Prefix.pch */,
+				158389241735A5D7006DE713 /* Default.png */,
+				158389261735A5D7006DE713 /* Default@2x.png */,
+				158389281735A5D7006DE713 /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1583893F1735A5D7006DE713 /* RichTextEditorTests */ = {
+			isa = PBXGroup;
+			children = (
+				158389451735A5D7006DE713 /* RichTextEditorTests.h */,
+				158389461735A5D7006DE713 /* RichTextEditorTests.m */,
+				158389401735A5D7006DE713 /* Supporting Files */,
+			);
+			path = RichTextEditorTests;
+			sourceTree = "<group>";
+		};
+		158389401735A5D7006DE713 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				158389411735A5D7006DE713 /* RichTextEditorTests-Info.plist */,
+				158389421735A5D7006DE713 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		158389501735A5F2006DE713 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				1583897817376D94006DE713 /* Font Size Picker */,
+				1583897217374721006DE713 /* Font Picker */,
+				158389671737118D006DE713 /* Categories */,
+				1583896317370EE6006DE713 /* Color Picker */,
+				158389511735A616006DE713 /* RichTextEditor.h */,
+				158389521735A616006DE713 /* RichTextEditor.m */,
+				158389541735A62E006DE713 /* RichTextEditor.xib */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		1583896317370EE6006DE713 /* Color Picker */ = {
+			isa = PBXGroup;
+			children = (
+				1583896417370F01006DE713 /* ColorPickerView.h */,
+				1583896517370F01006DE713 /* ColorPickerView.m */,
+				1583896E173712BD006DE713 /* ColorPickerView.xib */,
+				15838970173712F9006DE713 /* colors.jpg */,
+			);
+			path = "Color Picker";
+			sourceTree = "<group>";
+		};
+		158389671737118D006DE713 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				158389681737118D006DE713 /* UIFont+Additions.h */,
+				158389691737118D006DE713 /* UIFont+Additions.m */,
+				1583896B173711AB006DE713 /* UIView+Additions.h */,
+				1583896C173711AB006DE713 /* UIView+Additions.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		1583897217374721006DE713 /* Font Picker */ = {
+			isa = PBXGroup;
+			children = (
+				1583897317374737006DE713 /* FontPickerView.h */,
+				1583897417374737006DE713 /* FontPickerView.m */,
+				1583897617374792006DE713 /* FontPickerView.xib */,
+			);
+			path = "Font Picker";
+			sourceTree = "<group>";
+		};
+		1583897817376D94006DE713 /* Font Size Picker */ = {
+			isa = PBXGroup;
+			children = (
+				1583897B17376DC1006DE713 /* FontSizePickerView.h */,
+				1583897C17376DC1006DE713 /* FontSizePickerView.m */,
+				1583897917376DAF006DE713 /* FontSizePickerView.xib */,
+			);
+			path = "Font Size Picker";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1583890D1735A5D7006DE713 /* RichTextEditor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1583894A1735A5D7006DE713 /* Build configuration list for PBXNativeTarget "RichTextEditor" */;
+			buildPhases = (
+				1583890A1735A5D7006DE713 /* Sources */,
+				1583890B1735A5D7006DE713 /* Frameworks */,
+				1583890C1735A5D7006DE713 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RichTextEditor;
+			productName = RichTextEditor;
+			productReference = 1583890E1735A5D7006DE713 /* RichTextEditor.app */;
+			productType = "com.apple.product-type.application";
+		};
+		158389371735A5D7006DE713 /* RichTextEditorTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1583894D1735A5D7006DE713 /* Build configuration list for PBXNativeTarget "RichTextEditorTests" */;
+			buildPhases = (
+				158389331735A5D7006DE713 /* Sources */,
+				158389341735A5D7006DE713 /* Frameworks */,
+				158389351735A5D7006DE713 /* Resources */,
+				158389361735A5D7006DE713 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1583893E1735A5D7006DE713 /* PBXTargetDependency */,
+			);
+			name = RichTextEditorTests;
+			productName = RichTextEditorTests;
+			productReference = 158389381735A5D7006DE713 /* RichTextEditorTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		158389051735A5D7006DE713 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = "Aryan Ghassemi";
+			};
+			buildConfigurationList = 158389081735A5D7006DE713 /* Build configuration list for PBXProject "RichTextEditor" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 158389031735A5D7006DE713;
+			productRefGroup = 1583890F1735A5D7006DE713 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1583890D1735A5D7006DE713 /* RichTextEditor */,
+				158389371735A5D7006DE713 /* RichTextEditorTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1583890C1735A5D7006DE713 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1583891D1735A5D7006DE713 /* InfoPlist.strings in Resources */,
+				158389251735A5D7006DE713 /* Default.png in Resources */,
+				158389271735A5D7006DE713 /* Default@2x.png in Resources */,
+				158389291735A5D7006DE713 /* Default-568h@2x.png in Resources */,
+				1583892C1735A5D7006DE713 /* MainStoryboard_iPhone.storyboard in Resources */,
+				1583892F1735A5D7006DE713 /* MainStoryboard_iPad.storyboard in Resources */,
+				158389551735A62E006DE713 /* RichTextEditor.xib in Resources */,
+				1583896F173712BE006DE713 /* ColorPickerView.xib in Resources */,
+				15838971173712F9006DE713 /* colors.jpg in Resources */,
+				1583897717374792006DE713 /* FontPickerView.xib in Resources */,
+				1583897A17376DAF006DE713 /* FontSizePickerView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		158389351735A5D7006DE713 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				158389441735A5D7006DE713 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		158389361735A5D7006DE713 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1583890A1735A5D7006DE713 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1583891F1735A5D7006DE713 /* main.m in Sources */,
+				158389231735A5D7006DE713 /* AppDelegate.m in Sources */,
+				158389321735A5D7006DE713 /* ViewController.m in Sources */,
+				158389531735A616006DE713 /* RichTextEditor.m in Sources */,
+				1583896617370F01006DE713 /* ColorPickerView.m in Sources */,
+				1583896A1737118D006DE713 /* UIFont+Additions.m in Sources */,
+				1583896D173711AB006DE713 /* UIView+Additions.m in Sources */,
+				1583897517374737006DE713 /* FontPickerView.m in Sources */,
+				1583897D17376DC1006DE713 /* FontSizePickerView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		158389331735A5D7006DE713 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				158389471735A5D7006DE713 /* RichTextEditorTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1583893E1735A5D7006DE713 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1583890D1735A5D7006DE713 /* RichTextEditor */;
+			targetProxy = 1583893D1735A5D7006DE713 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1583891B1735A5D7006DE713 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1583891C1735A5D7006DE713 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		1583892A1735A5D7006DE713 /* MainStoryboard_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1583892B1735A5D7006DE713 /* en */,
+			);
+			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		1583892D1735A5D7006DE713 /* MainStoryboard_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1583892E1735A5D7006DE713 /* en */,
+			);
+			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		158389421735A5D7006DE713 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				158389431735A5D7006DE713 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		158389481735A5D7006DE713 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		158389491735A5D7006DE713 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1583894B1735A5D7006DE713 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RichTextEditor/RichTextEditor-Prefix.pch";
+				INFOPLIST_FILE = "RichTextEditor/RichTextEditor-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		1583894C1735A5D7006DE713 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RichTextEditor/RichTextEditor-Prefix.pch";
+				INFOPLIST_FILE = "RichTextEditor/RichTextEditor-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		1583894E1735A5D7006DE713 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RichTextEditor.app/RichTextEditor";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RichTextEditor/RichTextEditor-Prefix.pch";
+				INFOPLIST_FILE = "RichTextEditorTests/RichTextEditorTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		1583894F1735A5D7006DE713 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RichTextEditor.app/RichTextEditor";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RichTextEditor/RichTextEditor-Prefix.pch";
+				INFOPLIST_FILE = "RichTextEditorTests/RichTextEditorTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		158389081735A5D7006DE713 /* Build configuration list for PBXProject "RichTextEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				158389481735A5D7006DE713 /* Debug */,
+				158389491735A5D7006DE713 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1583894A1735A5D7006DE713 /* Build configuration list for PBXNativeTarget "RichTextEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1583894B1735A5D7006DE713 /* Debug */,
+				1583894C1735A5D7006DE713 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		1583894D1735A5D7006DE713 /* Build configuration list for PBXNativeTarget "RichTextEditorTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1583894E1735A5D7006DE713 /* Debug */,
+				1583894F1735A5D7006DE713 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 158389051735A5D7006DE713 /* Project object */;
+}
