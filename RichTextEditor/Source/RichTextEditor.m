@@ -9,12 +9,13 @@
 #import "RichTextEditor.h"
 
 @implementation RichTextEditor
-@synthesize toolbarView;
 @synthesize textView;
 @synthesize defaultFont;
 @synthesize colorPickerView;
 @synthesize fontPickerView;
 @synthesize fontSizePickerView;
+@synthesize toolbar;
+@synthesize shouldAttachToolbarToKeyboard;
 
 #pragma mark - Initialization -
 
@@ -32,6 +33,7 @@
 {
 	self = [[[NSBundle mainBundle]loadNibNamed:@"RichTextEditor" owner:nil options:nil] lastObject];
 
+	self.shouldAttachToolbarToKeyboard = NO;
 	self.textView.text = @"Hello this is a test";
 	
 	self.layer.borderColor = [UIColor lightGrayColor].CGColor;
@@ -40,9 +42,9 @@
 	return self;
 }
 
-#pragma mark - IBActions -
+#pragma mark - ToolbarDelegateMethods -
 
-- (IBAction)boldSelected:(id)sender
+- (void)richTextToolbarDidSelectBold
 {
 	NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location effectiveRange:nil];
 	UIFont *font = [dictionary objectForKey:NSFontAttributeName];
@@ -51,7 +53,7 @@
 	[self applyAttrubutesToSelectedRange:newFont forKey:NSFontAttributeName];
 }
 
-- (IBAction)italicSelected:(id)sender
+- (void)richTextToolbarDidSelectItalic
 {
 	NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location effectiveRange:nil];
 	UIFont *font = [dictionary objectForKey:NSFontAttributeName];
@@ -60,19 +62,7 @@
 	[self applyAttrubutesToSelectedRange:newFont forKey:NSFontAttributeName];
 }
 
-- (IBAction)backgroundColorSelected:(id)sender
-{
-	[self addSubview:self.colorPickerView];
-	self.colorPickerView.tag = ColorPickerViewActionTextBackgroundColor;
-}
-
-- (IBAction)textColorSelected:(id)sender
-{
-	[self addSubview:self.colorPickerView];
-	self.colorPickerView.tag = ColorPickerViewActionTextColor;
-}
-
-- (IBAction)underlineSelected:(id)sender
+- (void)richTextToolbarDidSelectUnderline
 {
 	NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location effectiveRange:nil];
 	
@@ -86,14 +76,34 @@
 	[self applyAttrubutesToSelectedRange:existingUnderlineStyle forKey:NSUnderlineStyleAttributeName];
 }
 
-- (IBAction)fontSelected:(id)sender
+- (void)richTextToolbarDidSelectBackgroundColor
 {
-	[self addSubview:self.fontPickerView];
+	[self addSubview:self.colorPickerView];
+	self.colorPickerView.tag = ColorPickerViewActionTextBackgroundColor;
 }
 
-- (IBAction)fontSizeSelected:(id)sender
+- (void)richTextToolbarDidSelectTextColor
+{
+	[self addSubview:self.colorPickerView];
+	self.colorPickerView.tag = ColorPickerViewActionTextColor;
+}
+
+- (void)richTextToolbarDidSelectFontSize
 {
 	[self addSubview:self.fontSizePickerView];
+}
+
+- (void)richTextToolbarDidSelectFont
+{
+		[self addSubview:self.fontPickerView];
+}
+
+- (void)richTextToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
+{
+	NSMutableParagraphStyle *mutParaStyle = [[NSMutableParagraphStyle alloc] init];
+	mutParaStyle.alignment = textAlignment;
+	
+	[self applyAttrubutesToSelectedRange:mutParaStyle forKey:NSParagraphStyleAttributeName];
 }
 
 #pragma mark - Private Methods -
@@ -113,6 +123,16 @@
 - (void)applyAttrubutesToSelectedRange:(id)attribute forKey:(NSString *)key
 {
 	[self applyAttributes:attribute forKey:key atRange:self.textView.selectedRange];
+}
+
+#pragma mark - UITextViewDelegate -
+
+- (void)textViewDidChangeSelection:(UITextView *)textView
+{
+	/*NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location
+																effectiveRange:nil];
+	
+	[self.toolbar populateWithAttributes:dictionary];*/
 }
 
 #pragma mark - ColorPickerViewDelegate -
@@ -187,6 +207,44 @@
 	}
 	
 	return fontSizePickerView;
+}
+
+- (RichTextToolbar *)toolbar
+{
+	if (!toolbar)
+	{
+		toolbar = [[RichTextToolbar alloc] initWithDeleate:self];
+	}
+	
+	return toolbar;
+}
+
+- (void)setShouldAttachToolbarToKeyboard:(BOOL)markShouldAttachToolbarToKeyboard
+{
+	shouldAttachToolbarToKeyboard = markShouldAttachToolbarToKeyboard;
+	
+	if (shouldAttachToolbarToKeyboard)
+	{
+		[self.toolbar removeFromSuperview];
+		self.textView.frame = self.bounds;
+		self.textView.inputAccessoryView = self.toolbar;
+	}
+	else
+	{
+		self.textView.inputAccessoryView = nil;
+		
+		CGRect toolbarRect = self.toolbar.frame;
+		toolbarRect.size.width = self.frame.size.width;
+		toolbarRect.origin.x = 0;
+		toolbarRect.origin.y = 0;
+		self.toolbar.frame = toolbarRect;
+		[self addSubview:self.toolbar];
+		
+		CGRect textViewRect = self.textView.frame;
+		textViewRect.origin.y = toolbarRect.size.height;
+		textViewRect.size.height = self.frame.size.height - toolbarRect.size.height;
+		self.textView.frame = textViewRect;
+	}
 }
 
 @end

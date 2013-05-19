@@ -20,7 +20,8 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 	
-	RichTextEditor *editor = [[RichTextEditor alloc] initWithFrame:CGRectMake(10, 10, 600, 600)];
+	RichTextEditor *editor = [[RichTextEditor alloc] initWithFrame:CGRectMake(10, 10, self.view.frame.size.width-20, self.view.frame.size.height-20)];
+	editor.shouldAttachToolbarToKeyboard = YES;
 	[self.view addSubview:editor];
 }
 
