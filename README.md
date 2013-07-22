@@ -1,4 +1,6 @@
-iOS-Rich-Text-Editor
+Moved PROJECT
 ====================
+I decided to rewrite this rich text editor, since I wasn't happy with this implementation
+An improved version can be found here:
 
-A Rich Text Editor for iOS
+https://github.com/aryaxt/RichTextEditor-iOS
