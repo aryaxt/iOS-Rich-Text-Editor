@@ -17,7 +17,6 @@
 - (void)richTextEditorToolbarDidSelectBold;
 - (void)richTextEditorToolbarDidSelectItalic;
 - (void)richTextEditorToolbarDidSelectUnderline;
-- (void)richTextEditorToolbarDidSelectBulletPoint;
 - (void)richTextEditorToolbarDidSelectFontSize:(NSNumber *)fontSize;
 - (void)richTextEditorToolbarDidSelectFontWithName:(NSString *)fontName;
 - (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color;

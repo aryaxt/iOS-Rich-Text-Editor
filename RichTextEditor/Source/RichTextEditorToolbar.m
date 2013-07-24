@@ -29,8 +29,6 @@
 		
 		UIBarButtonItem *textForegroundColorItem = [[UIBarButtonItem alloc] initWithTitle:@"Foreground" style:UIBarButtonItemStylePlain target:self action:@selector(textForegroundColorSelected:)];
 		
-		UIBarButtonItem *bulletItem = [[UIBarButtonItem alloc] initWithTitle:@"Bullet" style:UIBarButtonItemStylePlain target:self action:@selector(bulletPointSelected:)];
-		
 		UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[
 																						   [UIImage imageNamed:@"left.gif"],
 																						   [UIImage imageNamed:@"center.gif"],
@@ -41,7 +39,7 @@
 		[segmentedControl addTarget:self action:@selector(textAlignmentSegmentedControlDidChange:) forControlEvents:UIControlEventValueChanged];
 		UIBarButtonItem *textAlignmentItem = [[UIBarButtonItem alloc] initWithCustomView:segmentedControl];
 		
-		[self setItems:@[boldItem, italicItem, underlineItem, fontSizeItem, fontItem, textBackgroundColorItem, textForegroundColorItem, bulletItem, textAlignmentItem]];
+		[self setItems:@[boldItem, italicItem, underlineItem, fontSizeItem, fontItem, textBackgroundColorItem, textForegroundColorItem, textAlignmentItem]];
 	}
 	
 	return self;
@@ -62,11 +60,6 @@
 - (void)underLineSelected:(UIBarButtonItem *)sender
 {
 	[self.delegate richTextEditorToolbarDidSelectUnderline];
-}
-
-- (void)bulletPointSelected:(UIBarButtonItem *)sender
-{
-	[self.delegate richTextEditorToolbarDidSelectBulletPoint];
 }
 
 - (void)fontSizeSelected:(UIBarButtonItem *)sender

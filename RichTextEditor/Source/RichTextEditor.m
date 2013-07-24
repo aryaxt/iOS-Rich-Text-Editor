@@ -95,23 +95,6 @@
 	[self applyAttrubutesToSelectedRange:existingUnderlineStyle forKey:NSUnderlineStyleAttributeName];
 }
 
-- (void)richTextEditorToolbarDidSelectBulletPoint
-{
-	NSRange range = self.selectedRange;
-	NSRange paragraphRange = [self.attributedText paragraphRangeFromTextRange:self.selectedRange];
-	NSString *stringWithGlyph = [NSString stringWithUTF8String:"\u2022\t"];
-	
-	NSDictionary *dictionary = [self.attributedText attributesAtIndex:paragraphRange.location effectiveRange:nil];
-	NSAttributedString *newAttributedString = [[NSAttributedString alloc] initWithString:stringWithGlyph attributes:dictionary];
-	
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-	[attributedString insertAttributedString:newAttributedString atIndex:paragraphRange.location];
-	
-	self.attributedText = attributedString;
-
-	[self setSelectedRange:range];
-}
-
 - (void)richTextEditorToolbarDidSelectFontSize:(NSNumber *)fontSize
 {
 	NSRange range = self.selectedRange;
