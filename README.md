@@ -13,6 +13,6 @@ Features:
 - Text alignment
 
 
-![alt tag](https://raw.github.com/aryaxt/RichTextEditor-iOS/master/ipadScreenShot.png)
+![alt tag](https://raw.github.com/aryaxt/iOS-Rich-Text-Editor/master/ipadScreenShot.png)
 
-![alt tag](https://raw.github.com/aryaxt/RichTextEditor-iOS/master/iphoneScreenshot.png)
+![alt tag](https://raw.github.com/aryaxt/iOS-Rich-Text-Editor/master/iphoneScreenshot.png)
