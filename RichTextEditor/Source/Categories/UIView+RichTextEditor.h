@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  UIView+RichTextEditor.h
 //  RichTextEdtor
 //
 //  Created by Aryan Gh on 7/21/13.
@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 
-@interface ViewController : UIViewController
+@interface UIView (RichTextEditor)
+
+- (UIColor *)colorOfPoint:(CGPoint)point;
 
 @end

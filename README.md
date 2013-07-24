@@ -1,7 +1,18 @@
-Moved Project
-====================
-I decided to rewrite this rich text editor, since I wasn't happy with this implementation
+RichTextEditor-iOS
+==================
+RichTextEditor for iPhone &amp; iPad
 
-An improved version can be found here:
+Features:
+- Bold
+- Italic
+- Underline
+- Font
+- Font size
+- Text background color
+- Text foregroud color
+- Text alignment
 
-https://github.com/aryaxt/RichTextEditor-iOS
+
+![alt tag](https://raw.github.com/aryaxt/RichTextEditor-iOS/master/ipadScreenShot.png)
+
+![alt tag](https://raw.github.com/aryaxt/RichTextEditor-iOS/master/iphoneScreenshot.png)

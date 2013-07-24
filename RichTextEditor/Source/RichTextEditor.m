@@ -1,70 +1,89 @@
 //
 //  RichTextEditor.m
-//  RichTextEditor
+//  RichTextEdtor
 //
-//  Created by Aryan Gh on 5/4/13.
+//  Created by Aryan Gh on 7/21/13.
 //  Copyright (c) 2013 Aryan Ghassemi. All rights reserved.
 //
 
 #import "RichTextEditor.h"
 
 @implementation RichTextEditor
-@synthesize textView;
-@synthesize defaultFont;
-@synthesize colorPickerView;
-@synthesize fontPickerView;
-@synthesize fontSizePickerView;
-@synthesize toolbar;
-@synthesize shouldAttachToolbarToKeyboard;
 
-#pragma mark - Initialization -
-
-- (id)initWithFrame:(CGRect)frame
+- (void)awakeFromNib
 {
-    if (self = [self init])
-	{
-		self.frame = frame;
-	}
-	
-	return self;
-}
-
-- (id)init
-{
-	self = [[[NSBundle mainBundle]loadNibNamed:@"RichTextEditor" owner:nil options:nil] lastObject];
-
-	self.shouldAttachToolbarToKeyboard = NO;
-	self.textView.text = @"Hello this is a test";
-	
 	self.layer.borderColor = [UIColor lightGrayColor].CGColor;
 	self.layer.borderWidth = 1;
 	
-	return self;
-}
-
-#pragma mark - ToolbarDelegateMethods -
-
-- (void)richTextToolbarDidSelectBold
-{
-	NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location effectiveRange:nil];
-	UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-	UIFont *newFont = [font fontWithBoldTrait:![font isBold] andItalicTrait:[font isItalic]];
+	UIView *lastToolbarSubview = self.toolBar.subviews.lastObject;
+	float newWidth = lastToolbarSubview.frame.origin.x + lastToolbarSubview.frame.size.width;
 	
-	[self applyAttrubutesToSelectedRange:newFont forKey:NSFontAttributeName];
-}
-
-- (void)richTextToolbarDidSelectItalic
-{
-	NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location effectiveRange:nil];
-	UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-	UIFont *newFont = [font fontWithBoldTrait:[font isBold] andItalicTrait:![font isItalic]];
+	CGFloat screenWidth = [self currentScreenBoundsDependOnOrientation].size.width;
+	CGRect toolBarRect = self.toolBar.frame;
+	toolBarRect.size.width = newWidth;
 	
-	[self applyAttrubutesToSelectedRange:newFont forKey:NSFontAttributeName];
+	if (toolBarRect.size.width < screenWidth)
+		toolBarRect.size.width = screenWidth;
+	
+	self.toolBar.frame = toolBarRect;
+	self.toolBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	
+	UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, toolBarRect.size.height)];
+	scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	scrollView.backgroundColor =[UIColor yellowColor];
+	scrollView.backgroundColor = [UIColor whiteColor];
+	scrollView.contentSize = CGSizeMake(newWidth, 35);
+	[scrollView addSubview:self.toolBar];
+	self.inputAccessoryView = scrollView;
 }
 
-- (void)richTextToolbarDidSelectUnderline
+#pragma mark - RichTextEditorToolbarDelegate Methods -
+
+- (void)richTextEditorToolbarDidSelectBold
 {
-	NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location effectiveRange:nil];
+	NSRange range = self.selectedRange;
+	
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+	
+	[attributedString beginEditing];
+	[attributedString enumerateAttributesInRange:self.selectedRange
+										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
+										  
+										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
+										  UIFont *newFont = [font fontWithBoldTrait:![font isBold] andItalicTrait:[font isItalic]];
+										  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
+									  }];
+	[attributedString endEditing];
+	self.attributedText = attributedString;
+	
+	[self setSelectedRange:range];
+}
+
+- (void)richTextEditorToolbarDidSelectItalic
+{
+	NSRange range = self.selectedRange;
+	
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+	
+	[attributedString beginEditing];
+	[attributedString enumerateAttributesInRange:self.selectedRange
+										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
+										  
+										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
+										  UIFont *newFont = [font fontWithBoldTrait:[font isBold] andItalicTrait:![font isItalic]];
+										  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
+									  }];
+	[attributedString endEditing];
+	self.attributedText = attributedString;
+	
+	[self setSelectedRange:range];
+}
+
+- (void)richTextEditorToolbarDidSelectUnderline
+{
+	NSDictionary *dictionary = [self.attributedText attributesAtIndex:self.selectedRange.location effectiveRange:nil];
 	
 	NSNumber *existingUnderlineStyle = [dictionary objectForKey:NSUnderlineStyleAttributeName];
 	
@@ -76,175 +95,130 @@
 	[self applyAttrubutesToSelectedRange:existingUnderlineStyle forKey:NSUnderlineStyleAttributeName];
 }
 
-- (void)richTextToolbarDidSelectBackgroundColor
+- (void)richTextEditorToolbarDidSelectBulletPoint
 {
-	[self addSubview:self.colorPickerView];
-	self.colorPickerView.tag = ColorPickerViewActionTextBackgroundColor;
+	NSRange range = self.selectedRange;
+	NSRange paragraphRange = [self.attributedText paragraphRangeFromTextRange:self.selectedRange];
+	NSString *stringWithGlyph = [NSString stringWithUTF8String:"\u2022\t"];
+	
+	NSDictionary *dictionary = [self.attributedText attributesAtIndex:paragraphRange.location effectiveRange:nil];
+	NSAttributedString *newAttributedString = [[NSAttributedString alloc] initWithString:stringWithGlyph attributes:dictionary];
+	
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+	[attributedString insertAttributedString:newAttributedString atIndex:paragraphRange.location];
+	
+	self.attributedText = attributedString;
+
+	[self setSelectedRange:range];
 }
 
-- (void)richTextToolbarDidSelectTextColor
+- (void)richTextEditorToolbarDidSelectFontSize:(NSNumber *)fontSize
 {
-	[self addSubview:self.colorPickerView];
-	self.colorPickerView.tag = ColorPickerViewActionTextColor;
+	NSRange range = self.selectedRange;
+	
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+	
+	[attributedString beginEditing];
+	[attributedString enumerateAttributesInRange:self.selectedRange
+										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
+										  
+										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
+										  UIFont *newFont = [UIFont fontWithName:font.familyName size:fontSize.intValue boldTrait:[font isBold] italicTrait:[font isItalic]];
+										  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
+									  }];
+	[attributedString endEditing];
+	self.attributedText = attributedString;
+	
+	[self setSelectedRange:range];
 }
 
-- (void)richTextToolbarDidSelectFontSize
+- (void)richTextEditorToolbarDidSelectFontWithName:(NSString *)fontName
 {
-	[self addSubview:self.fontSizePickerView];
+	NSRange range = self.selectedRange;
+	
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+	
+	[attributedString beginEditing];
+	[attributedString enumerateAttributesInRange:self.selectedRange
+										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
+										  
+										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
+										  UIFont *newFont = [UIFont fontWithName:fontName size:font.pointSize boldTrait:[font isBold] italicTrait:[font isItalic]];
+										  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
+									  }];
+	[attributedString endEditing];
+	self.attributedText = attributedString;
+	
+	[self setSelectedRange:range];
 }
 
-- (void)richTextToolbarDidSelectFont
+- (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color
 {
-		[self addSubview:self.fontPickerView];
+	[self applyAttrubutesToSelectedRange:color forKey:NSBackgroundColorAttributeName];
 }
 
-- (void)richTextToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
+- (void)richTextEditorToolbarDidSelectTextForegroundColor:(UIColor *)color
+{
+	[self applyAttrubutesToSelectedRange:color forKey:NSForegroundColorAttributeName];
+}
+
+- (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
 {
 	NSMutableParagraphStyle *mutParaStyle = [[NSMutableParagraphStyle alloc] init];
 	mutParaStyle.alignment = textAlignment;
 	
-	[self applyAttrubutesToSelectedRange:mutParaStyle forKey:NSParagraphStyleAttributeName];
+	NSRange paragraphRange = [self.attributedText paragraphRangeFromTextRange:self.selectedRange];
+	[self applyAttributes:mutParaStyle forKey:NSParagraphStyleAttributeName atRange:paragraphRange];
 }
 
 #pragma mark - Private Methods -
 
 - (void)applyAttributes:(id)attribute forKey:(NSString *)key atRange:(NSRange)range
-{	
+{
 	if (range.length > 0)
 	{
-		NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.textView.attributedText];
+		NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
 		[attributedString addAttributes:[NSDictionary dictionaryWithObject:attribute forKey:key] range:range];
 		
-		[self.textView setAttributedText:attributedString];
-		[self.textView setSelectedRange:range];
+		[self setAttributedText:attributedString];
+		[self setSelectedRange:range];
 	}
 }
 
 - (void)applyAttrubutesToSelectedRange:(id)attribute forKey:(NSString *)key
 {
-	[self applyAttributes:attribute forKey:key atRange:self.textView.selectedRange];
+	[self applyAttributes:attribute forKey:key atRange:self.selectedRange];
 }
 
-#pragma mark - UITextViewDelegate -
-
-- (void)textViewDidChangeSelection:(UITextView *)textView
+- (CGRect)currentScreenBoundsDependOnOrientation
 {
-	/*NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location
-																effectiveRange:nil];
 	
-	[self.toolbar populateWithAttributes:dictionary];*/
-}
-
-#pragma mark - ColorPickerViewDelegate -
-
-- (void)colorPickerView:(ColorPickerView *)aColorPickerView didSelectColor:(UIColor *)color
-{
-	NSString *colorChangeKey = (aColorPickerView.tag == ColorPickerViewActionTextBackgroundColor) ? NSBackgroundColorAttributeName : NSForegroundColorAttributeName;
+    CGRect screenBounds = [UIScreen mainScreen].bounds ;
+    CGFloat width = CGRectGetWidth(screenBounds)  ;
+    CGFloat height = CGRectGetHeight(screenBounds) ;
+    UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
 	
-	[self applyAttrubutesToSelectedRange:color forKey:colorChangeKey];
-	[self.colorPickerView removeFromSuperview];
+    if(UIInterfaceOrientationIsPortrait(interfaceOrientation)){
+        screenBounds.size = CGSizeMake(width, height);
+    }else if(UIInterfaceOrientationIsLandscape(interfaceOrientation)){
+        screenBounds.size = CGSizeMake(height, width);
+    }
+    return screenBounds ;
 }
 
-- (void)colorPickerViewDidSelectClose:(ColorPickerView *)colorPickerView
+#pragma mark - Setter & Getter -
+
+- (RichTextEditorToolbar *)toolBar
 {
-	[self.colorPickerView removeFromSuperview];
-}
-
-#pragma mark - FontPickerViewDelegate -
-
-- (void)fontPickerViewDidSelectFontWithName:(NSString *)fontName
-{
-	NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location effectiveRange:nil];
-	UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-	UIFont *newFont = [UIFont fontWithName:fontName size:font.pointSize boldTrait:[font isBold] italicTrait:[font isItalic]];
-	[self applyAttrubutesToSelectedRange:newFont forKey:NSFontAttributeName];
-	
-	[self.fontPickerView removeFromSuperview];
-}
-
-#pragma mark - FontSizePickerView -
-
-- (void)fontSizePickerViewDidSelectFontSize:(NSInteger)fontSize
-{
-	NSDictionary *dictionary = [self.textView.attributedText attributesAtIndex:self.textView.selectedRange.location effectiveRange:nil];
-	UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-	UIFont *newFont = [UIFont fontWithName:font.familyName size:fontSize boldTrait:[font isBold] italicTrait:[font isItalic]];
-	[self applyAttrubutesToSelectedRange:newFont forKey:NSFontAttributeName];
-	
-	[self.fontSizePickerView removeFromSuperview];
-}
-
-#pragma mark - Getter & Setter -
-
-- (ColorPickerView *)colorPickerView
-{
-	if (!colorPickerView)
+	if (!_toolBar)
 	{
-		colorPickerView = [[ColorPickerView alloc] init];
-		colorPickerView.delegate = self;
+		_toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, self.window.frame.size.width, 40)];
+		_toolBar.delegate = self;
 	}
 	
-	return colorPickerView;
-}
-
-- (FontPickerView *)fontPickerView
-{
-	if (!fontPickerView)
-	{
-		fontPickerView = [[FontPickerView alloc] init];
-		fontPickerView.delegate = self;
-	}
-	
-	return fontPickerView;
-}
-
-- (FontSizePickerView *)fontSizePickerView
-{
-	if (!fontSizePickerView)
-	{
-		fontSizePickerView = [[FontSizePickerView alloc] init];
-		fontSizePickerView.delegate = self;
-	}
-	
-	return fontSizePickerView;
-}
-
-- (RichTextToolbar *)toolbar
-{
-	if (!toolbar)
-	{
-		toolbar = [[RichTextToolbar alloc] initWithDeleate:self];
-	}
-	
-	return toolbar;
-}
-
-- (void)setShouldAttachToolbarToKeyboard:(BOOL)markShouldAttachToolbarToKeyboard
-{
-	shouldAttachToolbarToKeyboard = markShouldAttachToolbarToKeyboard;
-	
-	if (shouldAttachToolbarToKeyboard)
-	{
-		[self.toolbar removeFromSuperview];
-		self.textView.frame = self.bounds;
-		self.textView.inputAccessoryView = self.toolbar;
-	}
-	else
-	{
-		self.textView.inputAccessoryView = nil;
-		
-		CGRect toolbarRect = self.toolbar.frame;
-		toolbarRect.size.width = self.frame.size.width;
-		toolbarRect.origin.x = 0;
-		toolbarRect.origin.y = 0;
-		self.toolbar.frame = toolbarRect;
-		[self addSubview:self.toolbar];
-		
-		CGRect textViewRect = self.textView.frame;
-		textViewRect.origin.y = toolbarRect.size.height;
-		textViewRect.size.height = self.frame.size.height - toolbarRect.size.height;
-		self.textView.frame = textViewRect;
-	}
+	return _toolBar;
 }
 
 @end

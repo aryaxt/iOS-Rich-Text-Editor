@@ -1,32 +1,19 @@
 //
 //  RichTextEditor.h
-//  RichTextEditor
+//  RichTextEdtor
 //
-//  Created by Aryan Gh on 5/4/13.
+//  Created by Aryan Gh on 7/21/13.
 //  Copyright (c) 2013 Aryan Ghassemi. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import <CoreText/CoreText.h>
-#import "UIFont+Additions.h"
-#import "ColorPickerView.h"
-#import "FontPickerView.h"
-#import "FontSizePickerView.h"
-#import "RichTextToolbar.h"
+#import <QuartzCore/QuartzCore.h>
+#import "RichTextEditorToolbar.h"
+#import "UIFont+RichTextEditor.h"
+#import "NSAttributedString+RichTextEditor.h"
 
-typedef enum {
-	ColorPickerViewActionTextColor,
-	ColorPickerViewActionTextBackgroundColor
-}ColorPickerViewAction;
+@interface RichTextEditor : UITextView <RichTextEditorToolbarDelegate>
 
-@interface RichTextEditor : UIView <ColorPickerViewDelegate, FontPickerViewDelegate, FontSizePickerViewDelegate, RichTextToolbarDelegate, UITextViewDelegate>
-
-@property (nonatomic, strong) IBOutlet UITextView *textView;
-@property (nonatomic, strong) UIFont *defaultFont;
-@property (nonatomic, strong) ColorPickerView *colorPickerView;
-@property (nonatomic, strong) FontPickerView *fontPickerView;
-@property (nonatomic, strong) FontSizePickerView *fontSizePickerView;
-@property (nonatomic, strong) RichTextToolbar *toolbar;
-@property (nonatomic, assign) BOOL shouldAttachToolbarToKeyboard;
+@property (nonatomic, strong) RichTextEditorToolbar *toolBar;
 
 @end
