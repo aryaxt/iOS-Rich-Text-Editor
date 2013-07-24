@@ -16,7 +16,7 @@
 	NSInteger end = -1;
 	NSInteger length = 0;
 	
-	NSInteger startingRange = ([self.string characterAtIndex:range.location] == '\n') ?
+	NSInteger startingRange = (range.location == self.string.length || [self.string characterAtIndex:range.location] == '\n') ?
 		range.location-1 :
 		range.location;
 	
