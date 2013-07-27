@@ -41,44 +41,34 @@
 
 - (void)richTextEditorToolbarDidSelectBold
 {
-	NSRange range = self.selectedRange;
-	
-	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-	
-	[attributedString beginEditing];
-	[attributedString enumerateAttributesInRange:self.selectedRange
-										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
-									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
-										  
-										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-										  UIFont *newFont = [font fontWithBoldTrait:![font isBold] andItalicTrait:[font isItalic]];
-										  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
-									  }];
-	[attributedString endEditing];
-	self.attributedText = attributedString;
-	
-	[self setSelectedRange:range];
+	UIFont *font = [self fontAtIndex:self.selectedRange.location];
+	[self applyFontAttributesToSelectedRangeWithBoldTrait:[NSNumber numberWithBool:![font isBold]] italicTrait:nil fontName:nil fontSize:nil];
 }
 
 - (void)richTextEditorToolbarDidSelectItalic
 {
-	NSRange range = self.selectedRange;
-	
-	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-	
-	[attributedString beginEditing];
-	[attributedString enumerateAttributesInRange:self.selectedRange
-										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
-									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
-										  
-										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-										  UIFont *newFont = [font fontWithBoldTrait:[font isBold] andItalicTrait:![font isItalic]];
-										  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
-									  }];
-	[attributedString endEditing];
-	self.attributedText = attributedString;
-	
-	[self setSelectedRange:range];
+	UIFont *font = [self fontAtIndex:self.selectedRange.location];
+	[self applyFontAttributesToSelectedRangeWithBoldTrait:nil italicTrait:[NSNumber numberWithBool:![font isItalic]] fontName:nil fontSize:nil];
+}
+
+- (void)richTextEditorToolbarDidSelectFontSize:(NSNumber *)fontSize
+{
+	[self applyFontAttributesToSelectedRangeWithBoldTrait:nil italicTrait:nil fontName:nil fontSize:fontSize];
+}
+
+- (void)richTextEditorToolbarDidSelectFontWithName:(NSString *)fontName
+{
+	[self applyFontAttributesToSelectedRangeWithBoldTrait:nil italicTrait:nil fontName:fontName fontSize:nil];
+}
+
+- (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color
+{
+	[self applyAttrubutesToSelectedRange:color forKey:NSBackgroundColorAttributeName];
+}
+
+- (void)richTextEditorToolbarDidSelectTextForegroundColor:(UIColor *)color
+{
+	[self applyAttrubutesToSelectedRange:color forKey:NSForegroundColorAttributeName];
 }
 
 - (void)richTextEditorToolbarDidSelectUnderline
@@ -95,58 +85,6 @@
 	[self applyAttrubutesToSelectedRange:existingUnderlineStyle forKey:NSUnderlineStyleAttributeName];
 }
 
-- (void)richTextEditorToolbarDidSelectFontSize:(NSNumber *)fontSize
-{
-	NSRange range = self.selectedRange;
-	
-	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-	
-	[attributedString beginEditing];
-	[attributedString enumerateAttributesInRange:self.selectedRange
-										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
-									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
-										  
-										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-										  UIFont *newFont = [UIFont fontWithName:font.familyName size:fontSize.intValue boldTrait:[font isBold] italicTrait:[font isItalic]];
-										  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
-									  }];
-	[attributedString endEditing];
-	self.attributedText = attributedString;
-	
-	[self setSelectedRange:range];
-}
-
-- (void)richTextEditorToolbarDidSelectFontWithName:(NSString *)fontName
-{
-	NSRange range = self.selectedRange;
-	
-	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-	
-	[attributedString beginEditing];
-	[attributedString enumerateAttributesInRange:self.selectedRange
-										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
-									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
-										  
-										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-										  UIFont *newFont = [UIFont fontWithName:fontName size:font.pointSize boldTrait:[font isBold] italicTrait:[font isItalic]];
-										  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
-									  }];
-	[attributedString endEditing];
-	self.attributedText = attributedString;
-	
-	[self setSelectedRange:range];
-}
-
-- (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color
-{
-	[self applyAttrubutesToSelectedRange:color forKey:NSBackgroundColorAttributeName];
-}
-
-- (void)richTextEditorToolbarDidSelectTextForegroundColor:(UIColor *)color
-{
-	[self applyAttrubutesToSelectedRange:color forKey:NSForegroundColorAttributeName];
-}
-
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
 {
 	NSMutableParagraphStyle *mutParaStyle = [[NSMutableParagraphStyle alloc] init];
@@ -157,6 +95,12 @@
 }
 
 #pragma mark - Private Methods -
+
+- (UIFont *)fontAtIndex:(NSInteger)index
+{
+	NSDictionary *dictionary = [self.attributedText attributesAtIndex:index effectiveRange:nil];
+	return [dictionary objectForKey:NSFontAttributeName];
+}
 
 - (void)applyAttributes:(id)attribute forKey:(NSString *)key atRange:(NSRange)range
 {
@@ -173,6 +117,44 @@
 - (void)applyAttrubutesToSelectedRange:(id)attribute forKey:(NSString *)key
 {
 	[self applyAttributes:attribute forKey:key atRange:self.selectedRange];
+}
+
+- (void)applyFontAttributesToSelectedRangeWithBoldTrait:(NSNumber *)isBold italicTrait:(NSNumber *)isItalic fontName:(NSString *)fontName fontSize:(NSNumber *)fontSize
+{
+	[self applyFontAttributesWithBoldTrait:isBold italicTrait:isItalic fontName:fontName fontSize:fontSize toTextAtRange:self.selectedRange];
+}
+
+- (void)applyFontAttributesWithBoldTrait:(NSNumber *)isBold italicTrait:(NSNumber *)isItalic fontName:(NSString *)fontName fontSize:(NSNumber *)fontSize toTextAtRange:(NSRange)range
+{
+	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+	
+	[attributedString beginEditing];
+	[attributedString enumerateAttributesInRange:range
+										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
+										  
+										  UIFont *newFont = nil;
+										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
+										  BOOL newBold = (isBold) ? isBold.intValue : [font isBold];
+										  BOOL newItalic = (isItalic) ? isItalic.intValue : [font isItalic];
+										  CGFloat newFontSize = (fontSize) ? fontSize.floatValue : font.pointSize;
+										  
+										  if (fontName)
+										  {
+											  newFont = [UIFont fontWithName:fontName size:newFontSize boldTrait:newBold italicTrait:newItalic];
+										  }
+										  else
+										  {
+											  newFont = [font fontWithBoldTrait:newBold italicTrait:newItalic andSize:newFontSize];
+										  }
+										  
+										  if (newFont)
+											  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
+									  }];
+	[attributedString endEditing];
+	self.attributedText = attributedString;
+	
+	[self setSelectedRange:range];
 }
 
 - (CGRect)currentScreenBoundsDependOnOrientation
