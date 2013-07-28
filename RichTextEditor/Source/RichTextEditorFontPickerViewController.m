@@ -14,7 +14,9 @@
 {
     [super viewDidLoad];
 	
-	self.fontNames = [UIFont familyNames];
+	if (!self.fontNames)
+		self.fontNames = [UIFont familyNames];
+	
 	[self.view addSubview:self.tableview];
 	
 	self.contentSizeForViewInPopover = CGSizeMake(250, 400);

@@ -11,7 +11,8 @@
 
 @interface UIFont (RichTextEditor)
 
-+ (UIFont *)fontWithName:(NSString *)name size:(float)size boldTrait:(BOOL)isBold italicTrait:(BOOL)isItalic;
++ (UIFont *)fontWithName:(NSString *)name size:(CGFloat)size boldTrait:(BOOL)isBold italicTrait:(BOOL)isItalic;
+- (UIFont *)fontWithBoldTrait:(BOOL)bold italicTrait:(BOOL)italic andSize:(CGFloat)size;
 - (UIFont *)fontWithBoldTrait:(BOOL)bold andItalicTrait:(BOOL)italic;
 - (BOOL)isBold;
 - (BOOL)isItalic;

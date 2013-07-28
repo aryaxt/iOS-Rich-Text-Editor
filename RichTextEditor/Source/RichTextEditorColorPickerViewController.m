@@ -18,26 +18,29 @@
 	
 	self.view.backgroundColor = [UIColor whiteColor];
 	
-	UIButton *btnClose = [[UIButton alloc] initWithFrame:CGRectMake(5, 5, 60, 35)];
+	UIButton *btnClose = [[UIButton alloc] initWithFrame:CGRectMake(5, 5, 60, 30)];
 	[btnClose addTarget:self action:@selector(closeSelected:) forControlEvents:UIControlEventTouchUpInside];
+	[btnClose.titleLabel setFont:[UIFont boldSystemFontOfSize:12]];
 	[btnClose setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 	[btnClose setTitle:@"Close" forState:UIControlStateNormal];
 	[self.view addSubview:btnClose];
 	
-	UIButton *btnDone = [[UIButton alloc] initWithFrame:CGRectMake(65, 5, 60, 35)];
+	UIButton *btnDone = [[UIButton alloc] initWithFrame:CGRectMake(65, 5, 60, 30)];
 	[btnDone addTarget:self action:@selector(doneSelected:) forControlEvents:UIControlEventTouchUpInside];
+	[btnDone.titleLabel setFont:[UIFont boldSystemFontOfSize:12]];
 	[btnDone setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 	[btnDone setTitle:@"Done" forState:UIControlStateNormal];
 	[self.view addSubview:btnDone];
 	
-	self.selectedColorView = [[UIView alloc] initWithFrame:CGRectMake(130, 5, 35, 35)];
+	self.selectedColorView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 35 - 5, 5, 35, 30)];
 	self.selectedColorView.backgroundColor = [UIColor blackColor];
 	self.selectedColorView.layer.borderColor = [UIColor lightGrayColor].CGColor;
 	self.selectedColorView.layer.borderWidth = 1;
+	self.selectedColorView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
 	[self.view addSubview:self.selectedColorView];
 	
 	self.colorsImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"colors.jpg"]];;
-	self.colorsImageView.frame = CGRectMake(2, 50, self.view.frame.size.width-4, self.view.frame.size.height - 50 - 2);
+	self.colorsImageView.frame = CGRectMake(2, 40, self.view.frame.size.width-4, self.view.frame.size.height - 40 - 2);
 	self.colorsImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	self.colorsImageView.layer.borderColor = [UIColor lightGrayColor].CGColor;
 	self.colorsImageView.layer.borderWidth = 1;

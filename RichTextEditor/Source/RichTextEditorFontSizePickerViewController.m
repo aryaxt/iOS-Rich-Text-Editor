@@ -14,10 +14,12 @@
 {
     [super viewDidLoad];
 	
-	self.fontSizes = @[@8, @10, @12, @14, @16, @18, @20, @22, @24, @26, @28, @30];
+	if (!self.fontSizes)
+		self.fontSizes = @[@8, @10, @12, @14, @16, @18, @20, @22, @24, @26, @28, @30];
+	
 	[self.view addSubview:self.tableview];
 	
-	self.contentSizeForViewInPopover = CGSizeMake(150, 400);
+	self.contentSizeForViewInPopover = CGSizeMake(100, 400);
 }
 
 #pragma mark - UITableView Delegate & Datasrouce -

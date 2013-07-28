@@ -7,34 +7,37 @@
 //
 
 #import "RichTextEditor.h"
+#import <QuartzCore/QuartzCore.h>
+#import "RichTextEditorToolbar.h"
+#import "UIFont+RichTextEditor.h"
+#import "NSAttributedString+RichTextEditor.h"
+
+@interface RichTextEditor() <RichTextEditorToolbarDelegate, RichTextEditorToolbarDataSource>
+@property (nonatomic, strong) RichTextEditorToolbar *toolBar;
+@end
 
 @implementation RichTextEditor
 
 - (void)awakeFromNib
 {
+	[super awakeFromNib];
+	
 	self.layer.borderColor = [UIColor lightGrayColor].CGColor;
 	self.layer.borderWidth = 1;
 	
-	UIView *lastToolbarSubview = self.toolBar.subviews.lastObject;
-	float newWidth = lastToolbarSubview.frame.origin.x + lastToolbarSubview.frame.size.width;
+	self.toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, [self currentScreenBoundsDependOnOrientation].size.width, 40)];
+	self.toolBar.delegate = self;
+	self.toolBar.dataSource = self;
+	self.inputAccessoryView = self.toolBar;
 	
-	CGFloat screenWidth = [self currentScreenBoundsDependOnOrientation].size.width;
-	CGRect toolBarRect = self.toolBar.frame;
-	toolBarRect.size.width = newWidth;
+	[self updateToolbarState];
+}
+
+- (void)setSelectedTextRange:(UITextRange *)selectedTextRange
+{
+	[super setSelectedTextRange:selectedTextRange];
 	
-	if (toolBarRect.size.width < screenWidth)
-		toolBarRect.size.width = screenWidth;
-	
-	self.toolBar.frame = toolBarRect;
-	self.toolBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	
-	UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, toolBarRect.size.height)];
-	scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	scrollView.backgroundColor =[UIColor yellowColor];
-	scrollView.backgroundColor = [UIColor whiteColor];
-	scrollView.contentSize = CGSizeMake(newWidth, 35);
-	[scrollView addSubview:self.toolBar];
-	self.inputAccessoryView = scrollView;
+	[self updateToolbarState];
 }
 
 #pragma mark - RichTextEditorToolbarDelegate Methods -
@@ -96,6 +99,18 @@
 
 #pragma mark - Private Methods -
 
+- (void)updateToolbarState
+{
+	if (self.attributedText.length)
+	{
+		int location = [self offsetFromPosition:self.beginningOfDocument toPosition:self.selectedTextRange.start];
+		if (location == self.text.length)
+			location --;
+		
+		[self.toolBar updateStateWithAttributes:[self.attributedText attributesAtIndex:location effectiveRange:nil]];
+	}
+}
+
 - (UIFont *)fontAtIndex:(NSInteger)index
 {
 	NSDictionary *dictionary = [self.attributedText attributesAtIndex:index effectiveRange:nil];
@@ -111,6 +126,12 @@
 		
 		[self setAttributedText:attributedString];
 		[self setSelectedRange:range];
+		
+		[self updateToolbarState];
+	}
+	else
+	{
+		// Add to typingAttribute ?
 	}
 }
 
@@ -126,64 +147,85 @@
 
 - (void)applyFontAttributesWithBoldTrait:(NSNumber *)isBold italicTrait:(NSNumber *)isItalic fontName:(NSString *)fontName fontSize:(NSNumber *)fontSize toTextAtRange:(NSRange)range
 {
-	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-	
-	[attributedString beginEditing];
-	[attributedString enumerateAttributesInRange:range
-										 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
-									  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
-										  
-										  UIFont *newFont = nil;
-										  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-										  BOOL newBold = (isBold) ? isBold.intValue : [font isBold];
-										  BOOL newItalic = (isItalic) ? isItalic.intValue : [font isItalic];
-										  CGFloat newFontSize = (fontSize) ? fontSize.floatValue : font.pointSize;
-										  
-										  if (fontName)
-										  {
-											  newFont = [UIFont fontWithName:fontName size:newFontSize boldTrait:newBold italicTrait:newItalic];
-										  }
-										  else
-										  {
-											  newFont = [font fontWithBoldTrait:newBold italicTrait:newItalic andSize:newFontSize];
-										  }
-										  
-										  if (newFont)
-											  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
-									  }];
-	[attributedString endEditing];
-	self.attributedText = attributedString;
-	
-	[self setSelectedRange:range];
+	if (range.length > 0)
+	{
+		NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+		
+		[attributedString beginEditing];
+		[attributedString enumerateAttributesInRange:range
+											 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+										  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
+											  
+											  UIFont *newFont = nil;
+											  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
+											  BOOL newBold = (isBold) ? isBold.intValue : [font isBold];
+											  BOOL newItalic = (isItalic) ? isItalic.intValue : [font isItalic];
+											  CGFloat newFontSize = (fontSize) ? fontSize.floatValue : font.pointSize;
+											  
+											  if (fontName)
+											  {
+												  newFont = [UIFont fontWithName:fontName size:newFontSize boldTrait:newBold italicTrait:newItalic];
+											  }
+											  else
+											  {
+												  newFont = [font fontWithBoldTrait:newBold italicTrait:newItalic andSize:newFontSize];
+											  }
+											  
+											  if (newFont)
+												  [attributedString addAttributes:[NSDictionary dictionaryWithObject:newFont forKey:NSFontAttributeName] range:range];
+										  }];
+		[attributedString endEditing];
+		self.attributedText = attributedString;
+		
+		[self setSelectedRange:range];
+		
+		[self updateToolbarState];
+	}
+	else
+	{
+		// Add to typingAttribute ?
+	}
 }
 
 - (CGRect)currentScreenBoundsDependOnOrientation
 {
-	
     CGRect screenBounds = [UIScreen mainScreen].bounds ;
     CGFloat width = CGRectGetWidth(screenBounds)  ;
     CGFloat height = CGRectGetHeight(screenBounds) ;
     UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
 	
-    if(UIInterfaceOrientationIsPortrait(interfaceOrientation)){
+    if (UIInterfaceOrientationIsPortrait(interfaceOrientation))
+	{
         screenBounds.size = CGSizeMake(width, height);
-    }else if(UIInterfaceOrientationIsLandscape(interfaceOrientation)){
+    }
+	else if (UIInterfaceOrientationIsLandscape(interfaceOrientation))
+	{
         screenBounds.size = CGSizeMake(height, width);
     }
+	
     return screenBounds ;
 }
 
-#pragma mark - Setter & Getter -
+#pragma mark - RichTextEditorToolbarDataSource Methods -
 
-- (RichTextEditorToolbar *)toolBar
+- (NSArray *)fontFamilySelectionForichTextEditorToolbar
 {
-	if (!_toolBar)
+	if (self.dataSource && [self.dataSource respondsToSelector:@selector(fontFamilySelectionForRichTextEditor:)])
 	{
-		_toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, self.window.frame.size.width, 40)];
-		_toolBar.delegate = self;
+		return [self.dataSource fontFamilySelectionForRichTextEditor:self];
 	}
 	
-	return _toolBar;
+	return nil;
+}
+
+- (NSArray *)fontSizeSelectionForRichTextEditorToolbar
+{
+	if (self.dataSource && [self.dataSource respondsToSelector:@selector(fontSizeSelectionForRichTextEditor:)])
+	{
+		return [self.dataSource fontSizeSelectionForRichTextEditor:self];
+	}
+	
+	return nil;
 }
 
 @end

@@ -10,7 +10,7 @@
 
 @implementation UIFont (RichTextEditor)
 
-+ (UIFont *)fontWithName:(NSString *)name size:(float)size boldTrait:(BOOL)isBold italicTrait:(BOOL)isItalic
++ (UIFont *)fontWithName:(NSString *)name size:(CGFloat)size boldTrait:(BOOL)isBold italicTrait:(BOOL)isItalic
 {
 	CTFontSymbolicTraits traits = 0;
 	CTFontRef newFontRef;
@@ -40,11 +40,16 @@
 	return nil;
 }
 
-- (UIFont *)fontWithBoldTrait:(BOOL)bold andItalicTrait:(BOOL)italic
+- (UIFont *)fontWithBoldTrait:(BOOL)bold italicTrait:(BOOL)italic andSize:(CGFloat)size
 {
 	CTFontRef fontRef = (__bridge CTFontRef)self;
 	NSString *familyName = (__bridge NSString *)(CTFontCopyName(fontRef, kCTFontFamilyNameKey));
-	return [[self class] fontWithName:familyName size:self.pointSize boldTrait:bold italicTrait:italic];
+	return [[self class] fontWithName:familyName size:size boldTrait:bold italicTrait:italic];
+}
+
+- (UIFont *)fontWithBoldTrait:(BOOL)bold andItalicTrait:(BOOL)italic
+{
+	return [self fontWithBoldTrait:bold italicTrait:italic andSize:self.pointSize];
 }
 
 - (BOOL)isBold

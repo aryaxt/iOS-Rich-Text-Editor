@@ -7,13 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <QuartzCore/QuartzCore.h>
-#import "RichTextEditorToolbar.h"
-#import "UIFont+RichTextEditor.h"
-#import "NSAttributedString+RichTextEditor.h"
 
-@interface RichTextEditor : UITextView <RichTextEditorToolbarDelegate>
+@class RichTextEditor;
+@protocol RichTextEditorDataSource <NSObject>
+@optional
+- (NSArray *)fontSizeSelectionForRichTextEditor:(RichTextEditor *)richTextEditor;
+- (NSArray *)fontFamilySelectionForRichTextEditor:(RichTextEditor *)richTextEditor;
+@end
 
-@property (nonatomic, strong) RichTextEditorToolbar *toolBar;
+@interface RichTextEditor : UITextView
+
+@property (nonatomic, weak) IBOutlet id <RichTextEditorDataSource> dataSource;
 
 @end

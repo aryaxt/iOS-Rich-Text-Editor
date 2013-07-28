@@ -26,4 +26,16 @@
     // Dispose of any resources that can be recreated.
 }
 
+/*- (NSArray *)fontSizeSelectionForRichTextEditor:(RichTextEditor *)richTextEditor
+{
+	// pas an array of NSNumbers
+	return @[@5, @20, @30];
+}
+
+- (NSArray *)fontFamilySelectionForRichTextEditor:(RichTextEditor *)richTextEditor
+{
+	// Pass an array of valid font family names
+	return @[@"Helvetica"];
+}*/
+
 @end
