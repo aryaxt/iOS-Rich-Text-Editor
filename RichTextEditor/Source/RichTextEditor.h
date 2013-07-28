@@ -7,12 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RichTextEditorToolbar.h"
 
 @class RichTextEditor;
 @protocol RichTextEditorDataSource <NSObject>
 @optional
 - (NSArray *)fontSizeSelectionForRichTextEditor:(RichTextEditor *)richTextEditor;
 - (NSArray *)fontFamilySelectionForRichTextEditor:(RichTextEditor *)richTextEditor;
+- (RichTextEditorToolbarPresentationStyle)presentarionStyleForRichTextEditor:(RichTextEditor *)richTextEditor;
+- (UIModalPresentationStyle)modalPresentationStyleForRichTextEditor:(RichTextEditor *)richTextEditor;
+- (UIModalTransitionStyle)modalTransitionStyleForRichTextEditor:(RichTextEditor *)richTextEditor;
 @end
 
 @interface RichTextEditor : UITextView

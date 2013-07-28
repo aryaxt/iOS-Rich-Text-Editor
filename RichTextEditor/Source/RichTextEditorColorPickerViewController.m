@@ -46,6 +46,32 @@
 	self.colorsImageView.layer.borderWidth = 1;
 	[self.view addSubview:self.colorsImageView];
 	
+	if ([self.dataSource richTextEditorColorPickerViewControllerShouldDisplayToolbar])
+	{
+		UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+		toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+		[self.view addSubview:toolbar];
+		
+		UIBarButtonItem *flexibleSpaceItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+																						   target:nil
+																						   action:nil];
+		
+		UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+																	  style:UIBarButtonItemStyleDone
+																	 target:self
+																	 action:@selector(doneSelected:)];
+		
+		UIBarButtonItem *closeItem = [[UIBarButtonItem alloc] initWithTitle:@"Close"
+																	  style:UIBarButtonItemStyleDone
+																	 target:self
+																	 action:@selector(closeSelected:)];
+		
+		UIBarButtonItem *selectedColorItem = [[UIBarButtonItem alloc] initWithCustomView:self.selectedColorView];
+		
+		[toolbar setItems:@[doneItem, selectedColorItem, flexibleSpaceItem , closeItem]];
+		[self.view addSubview:toolbar];
+	}
+	
 	self.contentSizeForViewInPopover = CGSizeMake(300, 240);
 }
 

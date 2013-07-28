@@ -8,9 +8,9 @@
 
 #import "RichTextEditor.h"
 #import <QuartzCore/QuartzCore.h>
-#import "RichTextEditorToolbar.h"
 #import "UIFont+RichTextEditor.h"
 #import "NSAttributedString+RichTextEditor.h"
+#import "UIView+RichTextEditor.h"
 
 @interface RichTextEditor() <RichTextEditorToolbarDelegate, RichTextEditorToolbarDataSource>
 @property (nonatomic, strong) RichTextEditorToolbar *toolBar;
@@ -208,7 +208,7 @@
 
 #pragma mark - RichTextEditorToolbarDataSource Methods -
 
-- (NSArray *)fontFamilySelectionForichTextEditorToolbar
+- (NSArray *)fontFamilySelectionForRichTextEditorToolbar
 {
 	if (self.dataSource && [self.dataSource respondsToSelector:@selector(fontFamilySelectionForRichTextEditor:)])
 	{
@@ -226,6 +226,45 @@
 	}
 	
 	return nil;
+}
+
+- (RichTextEditorToolbarPresentationStyle)presentarionStyleForRichTextEditorToolbar
+{
+	if (self.dataSource && [self.dataSource respondsToSelector:@selector(presentarionStyleForRichTextEditor:)])
+	{
+		return [self.dataSource presentarionStyleForRichTextEditor:self];
+	}
+
+	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ?
+		RichTextEditorToolbarPresentationStylePopover :
+		RichTextEditorToolbarPresentationStyleModal;
+}
+
+- (UIModalPresentationStyle)modalPresentationStyleForRichTextEditorToolbar
+{
+	if (self.dataSource && [self.dataSource respondsToSelector:@selector(modalPresentationStyleForRichTextEditor:)])
+	{
+		return [self.dataSource modalPresentationStyleForRichTextEditor:self];
+	}
+	
+	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ?
+		UIModalPresentationFormSheet :
+		UIModalPresentationFullScreen;
+}
+
+- (UIModalTransitionStyle)modalTransitionStyleForRichTextEditorToolbar
+{
+	if (self.dataSource && [self.dataSource respondsToSelector:@selector(modalTransitionStyleForRichTextEditor:)])
+	{
+		return [self.dataSource modalTransitionStyleForRichTextEditor:self];
+	}
+	
+	return UIModalTransitionStyleCoverVertical;
+}
+
+- (UIViewController *)firsAvailableViewControllerForRichTextEditorToolbar
+{
+	return [self firstAvailableViewController];
 }
 
 @end

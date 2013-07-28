@@ -7,12 +7,20 @@
 //
 
 #import "RichTextEditorToolbar.h"
+#import <CoreText/CoreText.h>
+#import "RichTextEditorPopover.h"
+#import "RichTextEditorFontSizePickerViewController.h"
+#import "RichTextEditorFontPickerViewController.h"
+#import "RichTextEditorColorPickerViewController.h"
+#import "WEPopoverController.h"
+#import "RichTextEditorToggleButton.h"
+#import "UIFont+RichTextEditor.h"
 
 #define ITEM_SEPARATOR_SPACE 5
 #define ITEM_TOP_AND_BOTTOM_BORDER 5
 #define ITEM_WITH 40
 
-@interface RichTextEditorToolbar()
+@interface RichTextEditorToolbar() <RichTextEditorFontSizePickerViewControllerDelegate, RichTextEditorFontSizePickerViewControllerDataSource, RichTextEditorFontPickerViewControllerDelegate, RichTextEditorFontPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDelegate>
 @property (nonatomic, strong) id <RichTextEditorPopover> popover;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnBold;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnItalic;
@@ -173,17 +181,18 @@
 - (void)fontSizeSelected:(UIButton *)sender
 {
 	RichTextEditorFontSizePickerViewController *fontSizePicker = [[RichTextEditorFontSizePickerViewController alloc] init];
-	fontSizePicker.fontSizes = [self.dataSource fontSizeSelectionForRichTextEditorToolbar];
 	fontSizePicker.delegate = self;
-	[self presentPopoverWithViewController:fontSizePicker fromView:sender];
+	fontSizePicker.dataSource = self;
+	[self presentViewController:fontSizePicker fromView:sender];
 }
 
 - (void)fontSelected:(UIButton *)sender
 {
 	RichTextEditorFontPickerViewController *fontPicker= [[RichTextEditorFontPickerViewController alloc] init];
-	fontPicker.fontNames = [self.dataSource fontFamilySelectionForichTextEditorToolbar];
+	fontPicker.fontNames = [self.dataSource fontFamilySelectionForRichTextEditorToolbar];
 	fontPicker.delegate = self;
-	[self presentPopoverWithViewController:fontPicker fromView:sender];
+	fontPicker.dataSource = self;
+	[self presentViewController:fontPicker fromView:sender];
 }
 
 - (void)textBackgroundColorSelected:(UIButton *)sender
@@ -191,7 +200,8 @@
 	RichTextEditorColorPickerViewController *colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
 	colorPicker.action = RichTextEditorColorPickerActionTextBackgroundColor;
 	colorPicker.delegate = self;
-	[self presentPopoverWithViewController:colorPicker fromView:sender];
+	colorPicker.dataSource = self;
+	[self presentViewController:colorPicker fromView:sender];
 }
 
 - (void)textForegroundColorSelected:(UIButton *)sender
@@ -199,7 +209,8 @@
 	RichTextEditorColorPickerViewController *colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
 	colorPicker.action = RichTextEditorColorPickerActionTextForegroudColor;
 	colorPicker.delegate = self;
-	[self presentPopoverWithViewController:colorPicker fromView:sender];
+	colorPicker.dataSource = self;
+	[self presentViewController:colorPicker fromView:sender];
 }
 
 - (void)textAlignmentSelected:(UIButton *)sender
@@ -270,10 +281,19 @@
 	self.contentSize = CGSizeMake(maxViewlocation+ITEM_SEPARATOR_SPACE, self.frame.size.height);
 }
 
-- (void)presentPopoverWithViewController:(UIViewController *)viewController fromView:(UIView *)view
+- (void)presentViewController:(UIViewController *)viewController fromView:(UIView *)view
 {
-	id <RichTextEditorPopover> popover = [self popoverWithViewController:viewController];
-	[popover presentPopoverFromRect:view.frame inView:self permittedArrowDirections:UIPopoverArrowDirectionDown animated:YES];
+	if ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal)
+	{
+		viewController.modalPresentationStyle = [self.dataSource modalPresentationStyleForRichTextEditorToolbar];
+		viewController.modalTransitionStyle = [self.dataSource modalTransitionStyleForRichTextEditorToolbar];
+		[[self.dataSource firsAvailableViewControllerForRichTextEditorToolbar] presentViewController:viewController animated:YES completion:nil];
+	}
+	else if ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStylePopover)
+	{
+		id <RichTextEditorPopover> popover = [self popoverWithViewController:viewController];
+		[popover presentPopoverFromRect:view.frame inView:self permittedArrowDirections:UIPopoverArrowDirectionDown animated:YES];
+	}
 }
 
 - (id <RichTextEditorPopover>)popoverWithViewController:(UIViewController *)viewController
@@ -298,7 +318,19 @@
 	return popover;
 }
 
-#pragma mark - RichTextEditorColorPickerViewControllerDelegate Methods -
+- (void)dismissViewController
+{
+	if ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal)
+	{
+		[[self.dataSource firsAvailableViewControllerForRichTextEditorToolbar] dismissViewControllerAnimated:YES completion:NO];
+	}
+	else if ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStylePopover)
+	{
+		[self.popover dismissPopoverAnimated:YES];
+	}
+}
+
+#pragma mark - RichTextEditorColorPickerViewControllerDelegate & RichTextEditorColorPickerViewControllerDataSource Methods -
 
 - (void)richTextEditorColorPickerViewControllerDidSelectColor:(UIColor *)color withAction:(RichTextEditorColorPickerAction)action
 {
@@ -311,28 +343,63 @@
 		[self.delegate richTextEditorToolbarDidSelectTextForegroundColor:color];
 	}
 	
-	[self.popover dismissPopoverAnimated:YES];
+	[self dismissViewController];
 }
 
 - (void)richTextEditorColorPickerViewControllerDidSelectClose
 {
-	[self.popover dismissPopoverAnimated:YES];
+	[self dismissViewController];
 }
 
-#pragma mark - RichTextEditorFontSizePickerViewControllerDelegate Methods -
+- (BOOL)richTextEditorColorPickerViewControllerShouldDisplayToolbar
+{
+	return ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
+}
+
+#pragma mark - RichTextEditorFontSizePickerViewControllerDelegate & RichTextEditorFontSizePickerViewControllerDataSource Methods -
 
 - (void)richTextEditorFontSizePickerViewControllerDidSelectFontSize:(NSNumber *)fontSize
 {
 	[self.delegate richTextEditorToolbarDidSelectFontSize:fontSize];
-	[self.popover dismissPopoverAnimated:YES];
+	[self dismissViewController];
 }
 
-#pragma mark - RichTextEditorFontPickerViewControllerDelegate Methods -
+- (void)richTextEditorFontSizePickerViewControllerDidSelectClose
+{
+	[self dismissViewController];
+}
 
-- (void)richTextEditorFontPickerViewControllerDidSelectFonteWithNam:(NSString *)fontName
+- (BOOL)richTextEditorFontSizePickerViewControllerShouldDisplayToolbar
+{
+	return ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
+}
+
+- (NSArray *)richTextEditorFontSizePickerViewControllerCustomFontSizesForSelection
+{
+	return [self.dataSource fontSizeSelectionForRichTextEditorToolbar];
+}
+
+#pragma mark - RichTextEditorFontPickerViewControllerDelegate & RichTextEditorFontPickerViewControllerDataSource Methods -
+
+- (void)richTextEditorFontPickerViewControllerDidSelectFontWithName:(NSString *)fontName
 {
 	[self.delegate richTextEditorToolbarDidSelectFontWithName:fontName];
-	[self.popover dismissPopoverAnimated:YES];
+	[self dismissViewController];
+}
+
+- (void)richTextEditorFontPickerViewControllerDidSelectClose
+{
+	[self dismissViewController];
+}
+
+- (NSArray *)richTextEditorFontPickerViewControllerCustomFontFamilyNamesForSelection
+{
+	return [self.dataSource fontFamilySelectionForRichTextEditorToolbar];
+}
+
+- (BOOL)richTextEditorFontPickerViewControllerShouldDisplayToolbar
+{
+	return ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
 }
 
 @end

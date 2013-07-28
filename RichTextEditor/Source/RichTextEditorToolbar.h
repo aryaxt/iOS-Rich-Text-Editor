@@ -7,14 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <CoreText/CoreText.h>
-#import "RichTextEditorPopover.h"
-#import "RichTextEditorFontSizePickerViewController.h"
-#import "RichTextEditorFontPickerViewController.h"
-#import "RichTextEditorColorPickerViewController.h"
-#import "WEPopoverController.h"
-#import "RichTextEditorToggleButton.h"
-#import "UIFont+RichTextEditor.h"
+
+typedef enum{
+	RichTextEditorToolbarPresentationStyleModal,
+	RichTextEditorToolbarPresentationStylePopover
+}RichTextEditorToolbarPresentationStyle;
 
 @protocol RichTextEditorToolbarDelegate <UIScrollViewDelegate>
 - (void)richTextEditorToolbarDidSelectBold;
@@ -29,10 +26,14 @@
 
 @protocol RichTextEditorToolbarDataSource
 - (NSArray *)fontSizeSelectionForRichTextEditorToolbar;
-- (NSArray *)fontFamilySelectionForichTextEditorToolbar;
+- (NSArray *)fontFamilySelectionForRichTextEditorToolbar;
+- (RichTextEditorToolbarPresentationStyle)presentarionStyleForRichTextEditorToolbar;
+- (UIModalPresentationStyle)modalPresentationStyleForRichTextEditorToolbar;
+- (UIModalTransitionStyle)modalTransitionStyleForRichTextEditorToolbar;
+- (UIViewController *)firsAvailableViewControllerForRichTextEditorToolbar;
 @end
 
-@interface RichTextEditorToolbar : UIScrollView <RichTextEditorFontSizePickerViewControllerDelegate, RichTextEditorFontPickerViewControllerDelegate, RichTextEditorColorPickerViewControllerDelegate>
+@interface RichTextEditorToolbar : UIScrollView
 
 @property (nonatomic, weak) id <RichTextEditorToolbarDelegate> delegate;
 @property (nonatomic, weak) id <RichTextEditorToolbarDataSource> dataSource;

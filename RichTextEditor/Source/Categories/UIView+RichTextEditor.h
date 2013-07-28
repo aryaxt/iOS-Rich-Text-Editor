@@ -12,5 +12,6 @@
 @interface UIView (RichTextEditor)
 
 - (UIColor *)colorOfPoint:(CGPoint)point;
+- (UIViewController *)firstAvailableViewController;
 
 @end

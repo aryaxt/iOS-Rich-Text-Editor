@@ -14,12 +14,47 @@
 {
     [super viewDidLoad];
 	
-	if (!self.fontSizes)
+	NSArray *customizedFontSizes = [self.dataSource richTextEditorFontSizePickerViewControllerCustomFontSizesForSelection];
+	
+	if (customizedFontSizes)
+		self.fontSizes = customizedFontSizes;
+	else
 		self.fontSizes = @[@8, @10, @12, @14, @16, @18, @20, @22, @24, @26, @28, @30];
+	
+	if ([self.dataSource richTextEditorFontSizePickerViewControllerShouldDisplayToolbar])
+	{
+		UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+		toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+		[self.view addSubview:toolbar];
+		
+		UIBarButtonItem *flexibleSpaceItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+																						   target:nil
+																						   action:nil];
+		
+		UIBarButtonItem *closeItem = [[UIBarButtonItem alloc] initWithTitle:@"Close"
+																	  style:UIBarButtonItemStyleDone
+																	 target:self
+																	 action:@selector(closeSelected:)];
+		
+		[toolbar setItems:@[flexibleSpaceItem , closeItem]];
+		
+		self.tableview.frame = CGRectMake(0, 44, self.view.frame.size.width, self.view.frame.size.height - 44);
+	}
+	else
+	{
+		self.tableview.frame = self.view.bounds;
+	}
 	
 	[self.view addSubview:self.tableview];
 	
 	self.contentSizeForViewInPopover = CGSizeMake(100, 400);
+}
+
+#pragma mark - IBActions -
+
+- (void)closeSelected:(id)sender
+{
+	[self.delegate richTextEditorFontSizePickerViewControllerDidSelectClose];
 }
 
 #pragma mark - UITableView Delegate & Datasrouce -
@@ -57,7 +92,7 @@
 	if (!_tableview)
 	{
 		_tableview = [[UITableView alloc] initWithFrame:self.view.bounds];
-		_tableview.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+		_tableview.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
 		_tableview.delegate = self;
 		_tableview.dataSource = self;
 	}

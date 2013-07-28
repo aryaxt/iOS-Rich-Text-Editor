@@ -32,10 +32,19 @@
 	return @[@5, @20, @30];
 }
 
-- (NSArray *)fontFamilySelectionForRichTextEditor:(RichTextEditor *)richTextEditor
+- (RichTextEditorToolbarPresentationStyle)presentarionStyleForRichTextEditor:(RichTextEditor *)richTextEditor
 {
-	// Pass an array of valid font family names
-	return @[@"Helvetica"];
+	return RichTextEditorToolbarPresentationStyleModal;
+}
+
+- (UIModalPresentationStyle)modalPresentationStyleForRichTextEditor:(RichTextEditor *)richTextEditor
+{
+	return UIModalPresentationFormSheet;
+}
+
+- (UIModalTransitionStyle)modalTransitionStyleForRichTextEditor:(RichTextEditor *)richTextEditor
+{
+	return UIModalTransitionStyleFlipHorizontal;
 }*/
 
 @end

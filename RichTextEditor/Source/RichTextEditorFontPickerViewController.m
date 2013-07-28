@@ -14,12 +14,47 @@
 {
     [super viewDidLoad];
 	
-	if (!self.fontNames)
+	NSArray *customizedFontFamilies = [self.dataSource richTextEditorFontPickerViewControllerCustomFontFamilyNamesForSelection];
+	
+	if (customizedFontFamilies)
+		self.fontNames = customizedFontFamilies;
+	else
 		self.fontNames = [UIFont familyNames];
+	
+	if ([self.dataSource richTextEditorFontPickerViewControllerShouldDisplayToolbar])
+	{
+		UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+		toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+		[self.view addSubview:toolbar];
+		
+		UIBarButtonItem *flexibleSpaceItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+																						   target:nil
+																						   action:nil];
+		
+		UIBarButtonItem *closeItem = [[UIBarButtonItem alloc] initWithTitle:@"Close"
+																	  style:UIBarButtonItemStyleDone
+																	 target:self
+																	 action:@selector(closeSelected:)];
+		
+		[toolbar setItems:@[flexibleSpaceItem , closeItem]];
+		
+		self.tableview.frame = CGRectMake(0, 44, self.view.frame.size.width, self.view.frame.size.height - 44);
+	}
+	else
+	{
+		self.tableview.frame = self.view.bounds;
+	}
 	
 	[self.view addSubview:self.tableview];
 	
 	self.contentSizeForViewInPopover = CGSizeMake(250, 400);
+}
+
+#pragma mark - IBActions -
+
+- (void)closeSelected:(id)sender
+{
+	[self.delegate richTextEditorFontPickerViewControllerDidSelectClose];
 }
 
 #pragma mark - UITableView Delegate & Datasrouce -
@@ -47,7 +82,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	NSString *fontName = [self.fontNames objectAtIndex:indexPath.row];
-	[self.delegate richTextEditorFontPickerViewControllerDidSelectFonteWithNam:fontName];
+	[self.delegate richTextEditorFontPickerViewControllerDidSelectFontWithName:fontName];
 }
 
 #pragma mark - Setter & Getter -

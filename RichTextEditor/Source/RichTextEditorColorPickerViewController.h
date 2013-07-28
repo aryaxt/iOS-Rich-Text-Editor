@@ -20,9 +20,14 @@ typedef enum {
 - (void)richTextEditorColorPickerViewControllerDidSelectClose;
 @end
 
+@protocol RichTextEditorColorPickerViewControllerDataSource <NSObject>
+- (BOOL)richTextEditorColorPickerViewControllerShouldDisplayToolbar;
+@end
+
 @interface RichTextEditorColorPickerViewController : UIViewController
 
-@property (nonatomic, weak) id<RichTextEditorColorPickerViewControllerDelegate> delegate;
+@property (nonatomic, weak) id <RichTextEditorColorPickerViewControllerDelegate> delegate;
+@property (nonatomic, weak) id <RichTextEditorColorPickerViewControllerDataSource> dataSource;
 @property (nonatomic, assign) RichTextEditorColorPickerAction action;
 @property (nonatomic, strong) UIImageView *colorsImageView;
 @property (nonatomic, strong) UIView *selectedColorView;

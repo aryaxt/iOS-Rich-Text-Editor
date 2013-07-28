@@ -9,12 +9,19 @@
 #import <UIKit/UIKit.h>
 
 @protocol RichTextEditorFontPickerViewControllerDelegate <NSObject>
-- (void)richTextEditorFontPickerViewControllerDidSelectFonteWithNam:(NSString *)fontName;
+- (void)richTextEditorFontPickerViewControllerDidSelectFontWithName:(NSString *)fontName;
+- (void)richTextEditorFontPickerViewControllerDidSelectClose;
+@end
+
+@protocol RichTextEditorFontPickerViewControllerDataSource <NSObject>
+- (NSArray *)richTextEditorFontPickerViewControllerCustomFontFamilyNamesForSelection;
+- (BOOL)richTextEditorFontPickerViewControllerShouldDisplayToolbar;
 @end
 
 @interface RichTextEditorFontPickerViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, weak) id<RichTextEditorFontPickerViewControllerDelegate> delegate;
+@property (nonatomic, weak) id <RichTextEditorFontPickerViewControllerDelegate> delegate;
+@property (nonatomic, weak) id <RichTextEditorFontPickerViewControllerDataSource> dataSource;
 @property (nonatomic, strong) UITableView *tableview;
 @property (nonatomic, strong) NSArray *fontNames;
 
