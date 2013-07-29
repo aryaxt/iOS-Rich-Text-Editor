@@ -16,3 +16,8 @@ Features:
 ![alt tag](https://raw.github.com/aryaxt/iOS-Rich-Text-Editor/master/ipadScreenShot.png)
 
 ![alt tag](https://raw.github.com/aryaxt/iOS-Rich-Text-Editor/master/iphoneScreenshot.png)
+
+Credits
+==================
+iPhone popover by werner77
+https://github.com/werner77/WEPopover
