@@ -120,6 +120,8 @@
 		RichTextEditorFeature features = [self.dataSource featuresEnabledForRichTextEditorToolbar];
 		UIView *lastAddedView = nil;
 		
+		self.hidden = (features & RichTextEditorFeatureNone) ? YES : NO;
+		
 		// Add Font
 		if (features & RichTextEditorFeatureFont || features & RichTextEditorFeatureAll)
 		{
@@ -177,7 +179,7 @@
 		if (features & RichTextEditorFeatureTextAlignmentCenter || features & RichTextEditorFeatureAll)
 		{
 			[self addView:self.btnTextAlignmentCenter afterView:lastAddedView withSpacing:YES];
-			lastAddedView = self.btnTextAlignmentLeft;
+			lastAddedView = self.btnTextAlignmentCenter;
 		}
 		
 		if (features & RichTextEditorFeatureTextAlignmentRight || features & RichTextEditorFeatureAll)
