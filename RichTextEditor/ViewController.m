@@ -47,4 +47,9 @@
 	return UIModalTransitionStyleFlipHorizontal;
 }*/
 
+- (RichTextEditorFeature)featuresEnabledForRichTextEditor:(RichTextEditor *)richTextEditor
+{
+	return RichTextEditorFeatureFontSize | RichTextEditorFeatureFont | RichTextEditorFeatureAll;
+}
+
 @end

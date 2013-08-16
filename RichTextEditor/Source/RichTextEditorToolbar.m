@@ -44,6 +44,7 @@
 @property (nonatomic, strong) RichTextEditorToggleButton *btnBold;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnItalic;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnUnderline;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnStrikeThrough;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnFontSize;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnFont;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnBackgroundColor;
@@ -58,79 +59,157 @@
 
 #pragma mark - Initialization -
 
-- (id)initWithFrame:(CGRect)frame
+- (id)initWithFrame:(CGRect)frame delegate:(id <RichTextEditorToolbarDelegate>)delegate dataSource:(id <RichTextEditorToolbarDataSource>)dataSource
 {
 	if (self = [super initWithFrame:frame])
 	{
-		self.backgroundColor = [UIColor lightGrayColor];
+		self.delegate = delegate;
+		self.dataSource = dataSource;
 		
-		self.btnFont = [self buttonWithStyle:RichTextEditorToggleButtonStyleNormal
-								  imageNamed:@"dropDownTriangle.png"
+		self.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1];
+		self.layer.borderWidth = .7;
+		self.layer.borderColor = [UIColor lightGrayColor].CGColor;
+		self.btnFont = [self buttonWithImageNamed:@"dropDownTriangle.png"
 										width:120
 								 andSelector:@selector(fontSelected:)];
 		[self.btnFont setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 10)];
 		[self.btnFont setTitle:@"Font" forState:UIControlStateNormal];
 		
 		
-		self.btnFontSize = [self buttonWithStyle:RichTextEditorToggleButtonStyleNormal
-									  imageNamed:@"dropDownTriangle.png"
+		self.btnFontSize = [self buttonWithImageNamed:@"dropDownTriangle.png"
 											width:50
 									 andSelector:@selector(fontSizeSelected:)];
 		[self.btnFontSize setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 10)];
 		[self.btnFontSize setTitle:@"14" forState:UIControlStateNormal];
 		
-		self.btnBold = [self buttonWithStyle:RichTextEditorToggleButtonStyleLeft
-								  imageNamed:@"bold.png"
+		self.btnBold = [self buttonWithImageNamed:@"bold.png"
 								 andSelector:@selector(boldSelected:)];
 		
 		
-		self.btnItalic = [self buttonWithStyle:RichTextEditorToggleButtonStyleCenter
-									imageNamed:@"italic.png"
+		self.btnItalic = [self buttonWithImageNamed:@"italic.png"
 								   andSelector:@selector(italicSelected:)];
 		
 		
-		self.btnUnderline = [self buttonWithStyle:RichTextEditorToggleButtonStyleRight
-									   imageNamed:@"underline.png"
+		self.btnUnderline = [self buttonWithImageNamed:@"underline.png"
 									  andSelector:@selector(underLineSelected:)];
 		
+		self.btnStrikeThrough = [self buttonWithImageNamed:@"strikeThrough"
+										  andSelector:@selector(strikeThroughSelected:)];
 		
-		self.btnTextAlignmentLeft = [self buttonWithStyle:RichTextEditorToggleButtonStyleLeft
-											   imageNamed:@"justifyleft.png"
+		
+		self.btnTextAlignmentLeft = [self buttonWithImageNamed:@"justifyleft.png"
 											  andSelector:@selector(textAlignmentSelected:)];
 		
 		
-		self.btnTextAlignmentCenter = [self buttonWithStyle:RichTextEditorToggleButtonStyleCenter
-												 imageNamed:@"justifycenter.png"
+		self.btnTextAlignmentCenter = [self buttonWithImageNamed:@"justifycenter.png"
 												andSelector:@selector(textAlignmentSelected:)];
 		
 		
-		self.btnTextAlignmentRight = [self buttonWithStyle:RichTextEditorToggleButtonStyleCenter
-												imageNamed:@"justifyright.png"
+		self.btnTextAlignmentRight = [self buttonWithImageNamed:@"justifyright.png"
 											   andSelector:@selector(textAlignmentSelected:)];
 		
-		self.btnTextAlignmentJustified = [self buttonWithStyle:RichTextEditorToggleButtonStyleRight
-													imageNamed:@"justifyfull.png"
+		self.btnTextAlignmentJustified = [self buttonWithImageNamed:@"justifyfull.png"
 												   andSelector:@selector(textAlignmentSelected:)];
 		
-		self.btnForegroundColor = [self buttonWithStyle:RichTextEditorToggleButtonStyleNormal
-											 imageNamed:@"forecolor.png"
+		self.btnForegroundColor = [self buttonWithImageNamed:@"forecolor.png"
 											andSelector:@selector(textForegroundColorSelected:)];
 		
-		self.btnBackgroundColor = [self buttonWithStyle:RichTextEditorToggleButtonStyleNormal
-											 imageNamed:@"backcolor.png"
+		self.btnBackgroundColor = [self buttonWithImageNamed:@"backcolor.png"
 											andSelector:@selector(textBackgroundColorSelected:)];
 		
-		[self addView:self.btnFont afterView:nil withSpacing:YES];
-		[self addView:self.btnFontSize afterView:self.btnFont withSpacing:YES];
-		[self addView:self.btnBold afterView:self.btnFontSize withSpacing:YES];
-		[self addView:self.btnItalic afterView:self.btnBold withSpacing:NO];
-		[self addView:self.btnUnderline afterView:self.btnItalic withSpacing:NO];
-		[self addView:self.btnTextAlignmentLeft afterView:self.self.btnUnderline withSpacing:YES];
-		[self addView:self.btnTextAlignmentCenter afterView:self.self.btnTextAlignmentLeft withSpacing:NO];
-		[self addView:self.btnTextAlignmentRight afterView:self.self.btnTextAlignmentCenter withSpacing:NO];
-		[self addView:self.btnTextAlignmentJustified afterView:self.self.btnTextAlignmentRight withSpacing:NO];
-		[self addView:self.btnForegroundColor afterView:self.self.btnTextAlignmentJustified withSpacing:YES];
-		[self addView:self.btnBackgroundColor afterView:self.self.btnForegroundColor withSpacing:YES];
+		RichTextEditorFeature features = [self.dataSource featuresEnabledForRichTextEditorToolbar];
+		UIView *lastAddedView = nil;
+		
+		// Add Font
+		if (features & RichTextEditorFeatureFont || features & RichTextEditorFeatureAll)
+		{
+			UIView *separatorView = [self separatorView];
+			[self addView:self.btnFont afterView:lastAddedView withSpacing:YES];
+			[self addView:separatorView afterView:self.btnFont withSpacing:YES];
+			lastAddedView = separatorView;
+		}
+		
+		if (features & RichTextEditorFeatureFontSize || features & RichTextEditorFeatureAll)
+		{
+			UIView *separatorView = [self separatorView];
+			[self addView:self.btnFontSize afterView:lastAddedView withSpacing:YES];
+			[self addView:separatorView afterView:self.btnFontSize withSpacing:YES];
+			lastAddedView = separatorView;
+		}
+		
+		if (features & RichTextEditorFeatureBold || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnBold afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnBold;
+		}
+		
+		if (features & RichTextEditorFeatureItalic || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnItalic afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnItalic;
+		}
+		
+		if (features & RichTextEditorFeatureUnderline || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnUnderline afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnUnderline;
+		}
+		
+		if (features & RichTextEditorFeatureStrikeThrough || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnStrikeThrough afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnStrikeThrough;
+		}
+		
+		if (features & RichTextEditorFeatureBold || features & RichTextEditorFeatureItalic || features & RichTextEditorFeatureUnderline || features & RichTextEditorFeatureStrikeThrough || features & RichTextEditorFeatureAll)
+		{
+			UIView *separatorView = [self separatorView];
+			[self addView:separatorView afterView:lastAddedView withSpacing:YES];
+			lastAddedView = separatorView;
+		}
+		
+		if (features & RichTextEditorFeatureTextAlignmentLeft || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnTextAlignmentLeft afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnTextAlignmentLeft;
+		}
+		
+		if (features & RichTextEditorFeatureTextAlignmentCenter || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnTextAlignmentCenter afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnTextAlignmentLeft;
+		}
+		
+		if (features & RichTextEditorFeatureTextAlignmentRight || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnTextAlignmentRight afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnTextAlignmentRight;
+		}
+		
+		if (features & RichTextEditorFeatureTextAlignmentJustified || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnTextAlignmentJustified afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnTextAlignmentJustified;
+		}
+		
+		if (features & RichTextEditorFeatureTextAlignmentLeft || features & RichTextEditorFeatureTextAlignmentCenter || features & RichTextEditorFeatureTextAlignmentRight || features & RichTextEditorFeatureTextAlignmentJustified || features & RichTextEditorFeatureAll)
+		{
+			UIView *separatorView = [self separatorView];
+			[self addView:separatorView afterView:lastAddedView withSpacing:YES];
+			lastAddedView = separatorView;
+		}
+		
+		if (features & RichTextEditorFeatureTextBackgroundColor || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnBackgroundColor afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnBackgroundColor;
+		}
+		
+		if (features & RichTextEditorFeatureTextForegroundColor || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnForegroundColor afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnForegroundColor;
+		}
 	}
 	
 	return self;
@@ -178,6 +257,9 @@
 	
 	NSNumber *existingUnderlineStyle = [attributes objectForKey:NSUnderlineStyleAttributeName];
 	self.btnUnderline.on = (!existingUnderlineStyle || existingUnderlineStyle.intValue == NSUnderlineStyleNone) ? NO :YES;
+	
+	NSNumber *existingStrikeThrough = [attributes objectForKey:NSStrikethroughStyleAttributeName];
+	self.btnStrikeThrough.on = (!existingStrikeThrough || existingStrikeThrough.intValue == NSUnderlineStyleNone) ? NO :YES;
 }
 
 #pragma mark - IBActions -
@@ -195,6 +277,11 @@
 - (void)underLineSelected:(UIButton *)sender
 {
 	[self.delegate richTextEditorToolbarDidSelectUnderline];
+}
+
+- (void)strikeThroughSelected:(UIButton *)sender
+{
+	[self.delegate richTextEditorToolbarDidSelectStrikeThrough];
 }
 
 - (void)fontSizeSelected:(UIButton *)sender
@@ -250,9 +337,9 @@
 
 #pragma mark - Private Methods -
 
-- (RichTextEditorToggleButton *)buttonWithStyle:(RichTextEditorToggleButtonStyle)style imageNamed:(NSString *)image width:(NSInteger)width andSelector:(SEL)selector
+- (RichTextEditorToggleButton *)buttonWithImageNamed:(NSString *)image width:(NSInteger)width andSelector:(SEL)selector
 {
-	RichTextEditorToggleButton *button = [[RichTextEditorToggleButton alloc] initWithStyle:style];
+	RichTextEditorToggleButton *button = [[RichTextEditorToggleButton alloc] init];
 	[button addTarget:self action:selector forControlEvents:UIControlEventTouchUpInside];
 	[button setFrame:CGRectMake(0, 0, width, 0)];
 	[button.titleLabel setFont:[UIFont boldSystemFontOfSize:10]];
@@ -263,9 +350,17 @@
 	return button;
 }
 
-- (RichTextEditorToggleButton *)buttonWithStyle:(RichTextEditorToggleButtonStyle)style imageNamed:(NSString *)image andSelector:(SEL)selector
+- (RichTextEditorToggleButton *)buttonWithImageNamed:(NSString *)image andSelector:(SEL)selector
 {
-	return [self buttonWithStyle:style imageNamed:image width:ITEM_WITH andSelector:selector];
+	return [self buttonWithImageNamed:image width:ITEM_WITH andSelector:selector];
+}
+
+- (UIView *)separatorView
+{
+	UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, self.frame.size.height)];
+	view.backgroundColor = [UIColor lightGrayColor];
+	
+	return view;
 }
 
 - (void)addView:(UIView *)view afterView:(UIView *)otherView withSpacing:(BOOL)space

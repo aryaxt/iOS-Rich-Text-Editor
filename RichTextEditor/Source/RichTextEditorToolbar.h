@@ -32,10 +32,28 @@ typedef enum{
 	RichTextEditorToolbarPresentationStylePopover
 }RichTextEditorToolbarPresentationStyle;
 
+typedef enum{
+	RichTextEditorFeatureNone					= 0,
+	RichTextEditorFeatureFont					= 1 << 0,
+	RichTextEditorFeatureFontSize				= 1 << 1,
+	RichTextEditorFeatureBold					= 1 << 2,
+	RichTextEditorFeatureItalic					= 1 << 3,
+	RichTextEditorFeatureUnderline				= 1 << 4,
+	RichTextEditorFeatureStrikeThrough			= 1 << 5,
+	RichTextEditorFeatureTextAlignmentLeft		= 1 << 6,
+	RichTextEditorFeatureTextAlignmentCenter	= 1 << 7,
+	RichTextEditorFeatureTextAlignmentRight		= 1 << 8,
+	RichTextEditorFeatureTextAlignmentJustified	= 1 << 9,
+	RichTextEditorFeatureTextBackgroundColor	= 1 << 10,
+	RichTextEditorFeatureTextForegroundColor	= 1 << 11,
+	RichTextEditorFeatureAll					= 1 << 12
+}RichTextEditorFeature;
+
 @protocol RichTextEditorToolbarDelegate <UIScrollViewDelegate>
 - (void)richTextEditorToolbarDidSelectBold;
 - (void)richTextEditorToolbarDidSelectItalic;
 - (void)richTextEditorToolbarDidSelectUnderline;
+- (void)richTextEditorToolbarDidSelectStrikeThrough;
 - (void)richTextEditorToolbarDidSelectFontSize:(NSNumber *)fontSize;
 - (void)richTextEditorToolbarDidSelectFontWithName:(NSString *)fontName;
 - (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color;
@@ -43,13 +61,14 @@ typedef enum{
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment;
 @end
 
-@protocol RichTextEditorToolbarDataSource
+@protocol RichTextEditorToolbarDataSource <NSObject>
 - (NSArray *)fontSizeSelectionForRichTextEditorToolbar;
 - (NSArray *)fontFamilySelectionForRichTextEditorToolbar;
 - (RichTextEditorToolbarPresentationStyle)presentarionStyleForRichTextEditorToolbar;
 - (UIModalPresentationStyle)modalPresentationStyleForRichTextEditorToolbar;
 - (UIModalTransitionStyle)modalTransitionStyleForRichTextEditorToolbar;
 - (UIViewController *)firsAvailableViewControllerForRichTextEditorToolbar;
+- (RichTextEditorFeature)featuresEnabledForRichTextEditorToolbar;
 @end
 
 @interface RichTextEditorToolbar : UIScrollView
@@ -57,6 +76,7 @@ typedef enum{
 @property (nonatomic, weak) id <RichTextEditorToolbarDelegate> delegate;
 @property (nonatomic, weak) id <RichTextEditorToolbarDataSource> dataSource;
 
+- (id)initWithFrame:(CGRect)frame delegate:(id <RichTextEditorToolbarDelegate>)delegate dataSource:(id <RichTextEditorToolbarDataSource>)dataSource;
 - (void)updateStateWithAttributes:(NSDictionary *)attributes;
 
 @end

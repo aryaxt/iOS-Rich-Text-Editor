@@ -27,18 +27,10 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum{
-	RichTextEditorToggleButtonStyleLeft,
-	RichTextEditorToggleButtonStyleCenter,
-	RichTextEditorToggleButtonStyleRight,
-	RichTextEditorToggleButtonStyleNormal
-}RichTextEditorToggleButtonStyle;
-
 @interface RichTextEditorToggleButton : UIButton
 
-- (id)initWithStyle:(RichTextEditorToggleButtonStyle)style;
+- (id)init;
 
-@property (nonatomic, readonly) RichTextEditorToggleButtonStyle style;
 @property (nonatomic, assign) BOOL on;
 
 @end

@@ -29,12 +29,12 @@
 
 @implementation RichTextEditorToggleButton
 
-- (id)initWithStyle:(RichTextEditorToggleButtonStyle)aStyle
+- (id)init
 {
 	if (self = [super init])
 	{
-		_style = aStyle;
 		self.on = NO;
+		[self setBackgroundImage:[UIImage imageNamed:@"buttonSelected.png"] forState:UIControlStateHighlighted];
 	}
 	
 	return self;
@@ -51,38 +51,12 @@
 {
 	if (self.on)
 	{
-		switch (self.style)
-		{
-			case RichTextEditorToggleButtonStyleLeft:
-				return [UIImage imageNamed:@"buttonleftSelected.png"];
-			case RichTextEditorToggleButtonStyleCenter:
-				return [UIImage imageNamed:@"buttoncenterSelected.png"];
-			case RichTextEditorToggleButtonStyleRight:
-				return [UIImage imageNamed:@"buttonrightSelected.png"];
-			case RichTextEditorToggleButtonStyleNormal:
-				return [UIImage imageNamed:@"buttonSelected.png"];
-			default:
-				return nil;;
-		}
+		return [UIImage imageNamed:@"buttonSelected.png"];
 	}
 	else
 	{
-		switch (self.style)
-		{
-			case RichTextEditorToggleButtonStyleLeft:
-				return [UIImage imageNamed:@"buttonleft.png"];
-			case RichTextEditorToggleButtonStyleCenter:
-				return [UIImage imageNamed:@"buttoncenter.png"];
-			case RichTextEditorToggleButtonStyleRight:
-				return [UIImage imageNamed:@"buttonright.png"];
-			case RichTextEditorToggleButtonStyleNormal:
-				return [UIImage imageNamed:@"button.png"];
-			default:
-				return nil;;
-		}
+		return nil;
 	}
-	
-	return nil;
 }
 
 @end

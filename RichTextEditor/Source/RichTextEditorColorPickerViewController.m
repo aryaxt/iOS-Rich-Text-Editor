@@ -89,6 +89,8 @@
 		
 		[toolbar setItems:@[doneItem, selectedColorItem, flexibleSpaceItem , closeItem]];
 		[self.view addSubview:toolbar];
+		
+		self.colorsImageView.frame = CGRectMake(2, 46, self.view.frame.size.width-4, self.view.frame.size.height - 46 - 2);
 	}
 	
 	self.contentSizeForViewInPopover = CGSizeMake(300, 240);
