@@ -29,11 +29,19 @@
 
 @implementation UIFont (RichTextEditor)
 
++ (NSString *)postscriptNameFromFullName:(NSString *)fullName
+{
+	UIFont *font = [UIFont fontWithName:fullName size:1];
+	return (__bridge NSString *)(CTFontCopyPostScriptName((__bridge CTFontRef)(font)));
+}
+
 + (UIFont *)fontWithName:(NSString *)name size:(CGFloat)size boldTrait:(BOOL)isBold italicTrait:(BOOL)isItalic
 {
+	NSString *postScriptName = [UIFont postscriptNameFromFullName:name];
+	
 	CTFontSymbolicTraits traits = 0;
 	CTFontRef newFontRef;
-	CTFontRef fontWithoutTrait = CTFontCreateWithName((__bridge CFStringRef)(name), size, NULL);
+	CTFontRef fontWithoutTrait = CTFontCreateWithName((__bridge CFStringRef)(postScriptName), size, NULL);
 	
 	if (isItalic)
 		traits |= kCTFontItalicTrait;
@@ -63,7 +71,8 @@
 {
 	CTFontRef fontRef = (__bridge CTFontRef)self;
 	NSString *familyName = (__bridge NSString *)(CTFontCopyName(fontRef, kCTFontFamilyNameKey));
-	return [[self class] fontWithName:familyName size:size boldTrait:bold italicTrait:italic];
+	NSString *postScriptName = [UIFont postscriptNameFromFullName:familyName];
+	return [[self class] fontWithName:postScriptName size:size boldTrait:bold italicTrait:italic];
 }
 
 - (UIFont *)fontWithBoldTrait:(BOOL)bold andItalicTrait:(BOOL)italic
@@ -90,6 +99,5 @@
 	
 	return NO;
 }
-
 
 @end

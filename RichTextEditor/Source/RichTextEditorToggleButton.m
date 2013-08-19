@@ -49,14 +49,7 @@
 
 - (UIImage *)imageForState
 {
-	if (self.on)
-	{
-		return [UIImage imageNamed:@"buttonSelected.png"];
-	}
-	else
-	{
-		return nil;
-	}
+	return (self.on) ? [UIImage imageNamed:@"buttonSelected.png"] :nil;
 }
 
 @end

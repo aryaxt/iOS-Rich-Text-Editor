@@ -29,8 +29,8 @@
 
 @interface RichTextEditorToggleButton : UIButton
 
-- (id)init;
-
 @property (nonatomic, assign) BOOL on;
+
+- (id)init;
 
 @end

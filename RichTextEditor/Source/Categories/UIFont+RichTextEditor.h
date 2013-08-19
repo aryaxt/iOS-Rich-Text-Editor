@@ -30,6 +30,7 @@
 
 @interface UIFont (RichTextEditor)
 
++ (NSString *)postscriptNameFromFullName:(NSString *)fullName;
 + (UIFont *)fontWithName:(NSString *)name size:(CGFloat)size boldTrait:(BOOL)isBold italicTrait:(BOOL)isItalic;
 - (UIFont *)fontWithBoldTrait:(BOOL)bold italicTrait:(BOOL)italic andSize:(CGFloat)size;
 - (UIFont *)fontWithBoldTrait:(BOOL)bold andItalicTrait:(BOOL)italic;

@@ -111,7 +111,7 @@
 	if (!_tableview)
 	{
 		_tableview = [[UITableView alloc] initWithFrame:self.view.bounds];
-		_tableview.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
+		_tableview.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		_tableview.delegate = self;
 		_tableview.dataSource = self;
 	}
