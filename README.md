@@ -46,7 +46,7 @@ Font family selection can be customized by implementing the following data sourc
 
 Presentation Style
 -------------------------
-You can switch between popover, or modal by implementing the following data source method
+You can switch between popover, or modal (presenting font-picker, font-size-picker, color-picker dialogs) by implementing the following data source method
 ```objective-c
 - (RichTextEditorToolbarPresentationStyle)presentarionStyleForRichTextEditor:(RichTextEditor *)richTextEditor
 {
