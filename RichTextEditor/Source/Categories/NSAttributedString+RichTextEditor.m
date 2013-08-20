@@ -63,7 +63,7 @@
 		}
 	}
 	
-	end = (end == -1) ? self.string.length-1 : end;
+	end = (end == -1) ? self.string.length : end;
 	length = end - start;
 	
 	return NSMakeRange(start, length);

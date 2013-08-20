@@ -170,7 +170,7 @@
 				paragraphStyle.firstLineHeadIndent = 0;
 		}
 		
-		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:NSMakeRange(startRange, endRange)];
+		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:NSMakeRange(startRange, endRange-startRange)];
 	}
 }
 
@@ -200,7 +200,7 @@
 		
 		paragraphStyle.alignment = textAlignment;
 		
-		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:NSMakeRange(startRange, endRange)];
+		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:NSMakeRange(startRange, endRange-startRange)];
 	}
 }
 
