@@ -29,7 +29,7 @@
 
 @implementation NSAttributedString (RichTextEditor)
 
-- (NSRange)paragraphRangeFromTextRange:(NSRange)range
+- (NSRange)firstParagraphRangeFromTextRange:(NSRange)range
 {
 	NSInteger start = -1;
 	NSInteger end = -1;
@@ -67,6 +67,25 @@
 	length = end - start;
 	
 	return NSMakeRange(start, length);
+}
+
+- (NSArray *)rangeOfParagraphsFromTextRange:(NSRange)textRange
+{
+	NSMutableArray *paragraphRanges = [NSMutableArray array];
+	NSInteger rangeStartIndex = textRange.location;
+	
+	while (true)
+	{
+		NSRange range = [self firstParagraphRangeFromTextRange:NSMakeRange(rangeStartIndex, 0)];
+		rangeStartIndex = range.location + range.length + 1;
+		
+		[paragraphRanges addObject:[NSValue valueWithRange:range]];
+		
+		if (range.location + range.length >= textRange.location + textRange.length)
+			break;
+	}
+	
+	return paragraphRanges;
 }
 
 @end

@@ -29,6 +29,7 @@
 
 @interface NSAttributedString (RichTextEditor)
 
-- (NSRange)paragraphRangeFromTextRange:(NSRange)range;
+- (NSRange)firstParagraphRangeFromTextRange:(NSRange)range;
+- (NSArray *)rangeOfParagraphsFromTextRange:(NSRange)textRange;
 
 @end

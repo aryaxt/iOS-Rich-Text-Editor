@@ -131,45 +131,77 @@
 
 - (void)richTextEditorToolbarDidSelectParagraphIndentation:(ParagraphIndentation)paragraphIndentation
 {
-	NSDictionary *dictionary = [self dictionaryAtIndex:self.selectedRange.location];
-	NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+	#warning reuse this logic in richTextEditorToolbarDidSelectTextAlignment & richTextEditorToolbarDidSelectParagraphIndentation
 	
-	if (!paragraphStyle)
-		paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+	NSInteger startRange = 0;
+	NSInteger endRange = 0;
 	
-	if (paragraphIndentation == ParagraphIndentationIncrease)
+	for (int i=0 ; i<rangeOfParagraphsInSelectedText.count ; i++)
 	{
-		paragraphStyle.headIndent += self.defaultIndentationSize;
-		paragraphStyle.firstLineHeadIndent += self.defaultIndentationSize;
-	}
-	else if (paragraphIndentation == ParagraphIndentationDecrease)
-	{
-		paragraphStyle.headIndent -= self.defaultIndentationSize;
-		paragraphStyle.firstLineHeadIndent -= self.defaultIndentationSize;
+		NSValue *value = [rangeOfParagraphsInSelectedText objectAtIndex:i];
+		NSRange range = [value rangeValue];
 		
-		if (paragraphStyle.headIndent < 0)
-			paragraphStyle.headIndent = 0;
+		if (i == 0)
+			startRange = range.location;
 		
-		if (paragraphStyle.firstLineHeadIndent < 0)
-			paragraphStyle.firstLineHeadIndent = 0;
+		endRange = range.location + range.length;
+		
+		NSDictionary *dictionary = [self dictionaryAtIndex:range.location];
+		NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+		
+		if (!paragraphStyle)
+			paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+		
+		if (paragraphIndentation == ParagraphIndentationIncrease)
+		{
+			paragraphStyle.headIndent += self.defaultIndentationSize;
+			paragraphStyle.firstLineHeadIndent += self.defaultIndentationSize;
+		}
+		else if (paragraphIndentation == ParagraphIndentationDecrease)
+		{
+			paragraphStyle.headIndent -= self.defaultIndentationSize;
+			paragraphStyle.firstLineHeadIndent -= self.defaultIndentationSize;
+			
+			if (paragraphStyle.headIndent < 0)
+				paragraphStyle.headIndent = 0;
+			
+			if (paragraphStyle.firstLineHeadIndent < 0)
+				paragraphStyle.firstLineHeadIndent = 0;
+		}
+		
+		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:NSMakeRange(startRange, endRange)];
 	}
-	
-	NSRange rangeOfParagraph = [self.attributedText paragraphRangeFromTextRange:self.selectedRange];
-	[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:rangeOfParagraph];
 }
 
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
 {
-	NSDictionary *dictionary = [self dictionaryAtIndex:self.selectedRange.location];
-	NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+	#warning reuse this logic in richTextEditorToolbarDidSelectTextAlignment & richTextEditorToolbarDidSelectParagraphIndentation
 	
-	if (!paragraphStyle)
-		paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+	NSInteger startRange = 0;
+	NSInteger endRange = 0;
 	
-	paragraphStyle.alignment = textAlignment;
-	
-	NSRange paragraphRange = [self.attributedText paragraphRangeFromTextRange:self.selectedRange];
-	[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:paragraphRange];
+	for (int i=0 ; i<rangeOfParagraphsInSelectedText.count ; i++)
+	{
+		NSValue *value = [rangeOfParagraphsInSelectedText objectAtIndex:i];
+		NSRange range = [value rangeValue];
+		
+		if (i == 0)
+			startRange = range.location;
+		
+		endRange = range.location + range.length;
+		
+		NSDictionary *dictionary = [self dictionaryAtIndex:range.location];
+		NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+		
+		if (!paragraphStyle)
+			paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+		
+		paragraphStyle.alignment = textAlignment;
+		
+		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:NSMakeRange(startRange, endRange)];
+	}
 }
 
 #pragma mark - Private Methods -
@@ -193,9 +225,6 @@
 
 - (UIFont *)fontAtIndex:(NSInteger)index
 {
-	#warning Does this logic make sense?
-	#warning Reuse this logic
-	
 	// If index at end of string, get attributes starting from previous character
 	if (index > 0 && index == self.attributedText.string.length-1)
 		index--;
@@ -210,9 +239,6 @@
 
 - (NSDictionary *)dictionaryAtIndex:(NSInteger)index
 {
-	#warning Does this logic make sense?
-	#warning Reuse this logic
-	
 	// If index at end of string, get attributes starting from previous character
 	if (index > 0 && index == self.attributedText.string.length-1)
 		index--;
