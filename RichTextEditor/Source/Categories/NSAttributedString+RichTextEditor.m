@@ -29,6 +29,8 @@
 
 @implementation NSAttributedString (RichTextEditor)
 
+#pragma mark - Public MEthods -
+
 - (NSRange)firstParagraphRangeFromTextRange:(NSRange)range
 {
 	NSInteger start = -1;
@@ -86,6 +88,128 @@
 	}
 	
 	return paragraphRanges;
+}
+
+- (NSString *)htmlString
+{
+	NSMutableString *htmlString = [NSMutableString string];
+	NSArray *paragraphRanges = [self rangeOfParagraphsFromTextRange:NSMakeRange(0, self.string.length-1)];
+	
+	for (int i=0 ; i<paragraphRanges.count ; i++)
+	{
+		NSValue *value = [paragraphRanges objectAtIndex:i];
+		NSRange range = [value rangeValue];
+		NSDictionary *paragraphDictionary = [self attributesAtIndex:range.location effectiveRange:nil];
+		NSParagraphStyle *paragraphStyle = [paragraphDictionary objectForKey:NSParagraphStyleAttributeName];
+		NSString *textAlignmentString = [self htmlTextAlignmentString:paragraphStyle.alignment];
+		
+		[htmlString appendString:@"<p "];
+		
+		if (textAlignmentString)
+			[htmlString appendFormat:@"align=\"%@\" ", textAlignmentString];
+		
+		[htmlString appendFormat:@"style=\""];
+		
+		if (paragraphStyle.firstLineHeadIndent > 0)
+			[htmlString appendFormat:@"text-indent:%.0f; ", paragraphStyle.firstLineHeadIndent];
+		
+		if (paragraphStyle.headIndent > 0)
+			[htmlString appendFormat:@"margin-left:%.0f; ", paragraphStyle.headIndent];
+			
+		
+		[htmlString appendString:@" \">"];
+		
+		[self enumerateAttributesInRange:range
+											 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+										  usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
+											  
+											  NSMutableString *fontString = [NSMutableString string];
+											  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
+											  UIColor *forgroundColor = [dictionary objectForKey:NSForegroundColorAttributeName];
+											  UIColor *backGroundColor = [dictionary objectForKey:NSBackgroundColorAttributeName];
+											  NSNumber *underline = [dictionary objectForKey:NSUnderlineStyleAttributeName];
+											  BOOL hasUnderline = (!underline || underline.intValue == NSUnderlineStyleNone) ? NO :YES;
+											  NSNumber *strikeThrough = [dictionary objectForKey:NSStrikethroughStyleAttributeName];
+											  BOOL hasStrikeThrough = (!strikeThrough || strikeThrough.intValue == NSUnderlineStyleNone) ? NO :YES;
+											  
+											  [fontString appendFormat:@"<font "];
+											  [fontString appendFormat:@"face=\"%@\" ", font.familyName];
+											  [fontString appendFormat:@"size=\"%.0f\" ", font.pointSize];
+											  
+												#warning UIDeviceWhiteColorSpace is a private class, not reliable to use, find a better way
+											  if (forgroundColor && ![NSStringFromClass([forgroundColor class]) isEqual:@"UIDeviceWhiteColorSpace"])
+												  [fontString appendFormat:@"color=\"%@\" ", [self htmlRgbColor:forgroundColor]];
+											  
+											  if (backGroundColor)
+												  [fontString appendFormat:@"style=\"BACKGROUND-COLOR: %@\" ", [self htmlRgbColor:backGroundColor]];
+											  
+											  [fontString appendString:@">"];
+											  [fontString appendString:[[self.string substringFromIndex:range.location] substringToIndex:range.length]];
+											  [fontString appendString:@"</font>"];
+											  
+											  if ([font isBold])
+											  {
+												  [fontString insertString:@"<b>" atIndex:0];
+												  [fontString insertString:@"</b>" atIndex:fontString.length];
+											  }
+											  
+											  if ([font isItalic])
+											  {
+												  [fontString insertString:@"<i>" atIndex:0];
+												  [fontString insertString:@"</i>" atIndex:fontString.length];
+											  }
+											  
+											  if (hasUnderline)
+											  {
+												  [fontString insertString:@"<u>" atIndex:0];
+												  [fontString insertString:@"</u>" atIndex:fontString.length];
+											  }
+											  
+											  if (hasStrikeThrough)
+											  {
+												  [fontString insertString:@"<strike>" atIndex:0];
+												  [fontString insertString:@"</strike>" atIndex:fontString.length];
+											  }
+											  
+											  
+											  [htmlString appendString:fontString];
+
+										  }];
+		
+		[htmlString appendString:@"</p>"];
+	}
+	
+	return htmlString;
+}
+
+#pragma mark - Helper Methods -
+
+- (NSString *)htmlTextAlignmentString:(NSTextAlignment)textAlignment
+{
+	switch (textAlignment)
+	{
+		case NSTextAlignmentLeft:
+			return @"left";
+	
+		case NSTextAlignmentCenter:
+			return @"center";
+			
+		case NSTextAlignmentRight:
+			return @"right";
+			
+		case NSTextAlignmentJustified:
+			return @"justify";
+			
+		default:
+			return nil;
+	}
+}
+
+- (NSString *)htmlRgbColor:(UIColor *)color
+{
+	CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
+	[color getRed:&red green:&green blue:&blue alpha:&alpha];
+	return [NSString stringWithFormat:@"rgb(%.0f,%.0f,%.0f)", red, green, blue];
 }
 
 @end

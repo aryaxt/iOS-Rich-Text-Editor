@@ -67,6 +67,13 @@
 	self.typingAttributesInProgress = NO;
 }
 
+#pragma mark - Public Methods -
+
+- (NSString *)htmlString
+{
+	return [self.attributedText htmlString];
+}
+
 #pragma mark - RichTextEditorToolbarDelegate Methods -
 
 - (void)richTextEditorToolbarDidSelectBold

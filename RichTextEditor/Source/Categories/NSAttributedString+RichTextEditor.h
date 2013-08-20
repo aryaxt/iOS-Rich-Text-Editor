@@ -26,10 +26,12 @@
 // THE SOFTWARE.
 
 #import <Foundation/Foundation.h>
+#import "UIFont+RichTextEditor.h"
 
 @interface NSAttributedString (RichTextEditor)
 
 - (NSRange)firstParagraphRangeFromTextRange:(NSRange)range;
 - (NSArray *)rangeOfParagraphsFromTextRange:(NSRange)textRange;
+- (NSString *)htmlString;
 
 @end
