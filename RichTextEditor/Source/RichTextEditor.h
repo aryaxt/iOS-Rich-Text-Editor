@@ -42,5 +42,6 @@
 @interface RichTextEditor : UITextView
 
 @property (nonatomic, weak) IBOutlet id <RichTextEditorDataSource> dataSource;
+@property (nonatomic, assign) CGFloat defaultIndentationSize;
 
 @end

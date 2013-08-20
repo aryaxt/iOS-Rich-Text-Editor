@@ -54,6 +54,7 @@
 	self.inputAccessoryView = self.toolBar;
 	
 	self.typingAttributesInProgress = NO;
+	self.defaultIndentationSize = 15;
 	
 	[self updateToolbarState];
 }
@@ -128,13 +129,47 @@
 	[self applyAttrubutesToSelectedRange:existingUnderlineStyle forKey:NSStrikethroughStyleAttributeName];
 }
 
+- (void)richTextEditorToolbarDidSelectParagraphIndentation:(ParagraphIndentation)paragraphIndentation
+{
+	NSDictionary *dictionary = [self dictionaryAtIndex:self.selectedRange.location];
+	NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+	
+	if (!paragraphStyle)
+		paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+	
+	if (paragraphIndentation == ParagraphIndentationIncrease)
+	{
+		paragraphStyle.headIndent += self.defaultIndentationSize;
+		paragraphStyle.firstLineHeadIndent += self.defaultIndentationSize;
+	}
+	else if (paragraphIndentation == ParagraphIndentationDecrease)
+	{
+		paragraphStyle.headIndent -= self.defaultIndentationSize;
+		paragraphStyle.firstLineHeadIndent -= self.defaultIndentationSize;
+		
+		if (paragraphStyle.headIndent < 0)
+			paragraphStyle.headIndent = 0;
+		
+		if (paragraphStyle.firstLineHeadIndent < 0)
+			paragraphStyle.firstLineHeadIndent = 0;
+	}
+	
+	NSRange rangeOfParagraph = [self.attributedText paragraphRangeFromTextRange:self.selectedRange];
+	[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:rangeOfParagraph];
+}
+
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
 {
-	NSMutableParagraphStyle *mutParaStyle = [[NSMutableParagraphStyle alloc] init];
-	mutParaStyle.alignment = textAlignment;
+	NSDictionary *dictionary = [self dictionaryAtIndex:self.selectedRange.location];
+	NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+	
+	if (!paragraphStyle)
+		paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+	
+	paragraphStyle.alignment = textAlignment;
 	
 	NSRange paragraphRange = [self.attributedText paragraphRangeFromTextRange:self.selectedRange];
-	[self applyAttributes:mutParaStyle forKey:NSParagraphStyleAttributeName atRange:paragraphRange];
+	[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:paragraphRange];
 }
 
 #pragma mark - Private Methods -

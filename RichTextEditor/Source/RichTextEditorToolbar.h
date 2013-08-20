@@ -33,6 +33,11 @@ typedef enum{
 }RichTextEditorToolbarPresentationStyle;
 
 typedef enum{
+	ParagraphIndentationIncrease,
+	ParagraphIndentationDecrease
+}ParagraphIndentation;
+
+typedef enum{
 	RichTextEditorFeatureNone					= 0,
 	RichTextEditorFeatureFont					= 1 << 0,
 	RichTextEditorFeatureFontSize				= 1 << 1,
@@ -46,7 +51,8 @@ typedef enum{
 	RichTextEditorFeatureTextAlignmentJustified	= 1 << 9,
 	RichTextEditorFeatureTextBackgroundColor	= 1 << 10,
 	RichTextEditorFeatureTextForegroundColor	= 1 << 11,
-	RichTextEditorFeatureAll					= 1 << 12
+	RichTextEditorFeatureParagraphIndentation	= 1 << 12,
+	RichTextEditorFeatureAll					= 1 << 13
 }RichTextEditorFeature;
 
 @protocol RichTextEditorToolbarDelegate <UIScrollViewDelegate>
@@ -54,6 +60,8 @@ typedef enum{
 - (void)richTextEditorToolbarDidSelectItalic;
 - (void)richTextEditorToolbarDidSelectUnderline;
 - (void)richTextEditorToolbarDidSelectStrikeThrough;
+- (void)richTextEditorToolbarDidSelectBulletPoint;
+- (void)richTextEditorToolbarDidSelectParagraphIndentation:(ParagraphIndentation)paragraphIndentation;
 - (void)richTextEditorToolbarDidSelectFontSize:(NSNumber *)fontSize;
 - (void)richTextEditorToolbarDidSelectFontWithName:(NSString *)fontName;
 - (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color;

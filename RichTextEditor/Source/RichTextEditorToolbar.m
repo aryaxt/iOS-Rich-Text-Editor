@@ -53,6 +53,9 @@
 @property (nonatomic, strong) RichTextEditorToggleButton *btnTextAlignmentCenter;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnTextAlignmentRight;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnTextAlignmentJustified;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphIndent;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphOutdent;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnBulletPoint;
 @end
 
 @implementation RichTextEditorToolbar
@@ -116,6 +119,15 @@
 		
 		self.btnBackgroundColor = [self buttonWithImageNamed:@"backcolor.png"
 											andSelector:@selector(textBackgroundColorSelected:)];
+		
+		self.btnBulletPoint = [self buttonWithImageNamed:@"bullist.png"
+												 andSelector:@selector(bulletPointSelected:)];
+		
+		self.btnParagraphIndent = [self buttonWithImageNamed:@"indent.png"
+											 andSelector:@selector(paragraphIndentSelected:)];
+		
+		self.btnParagraphOutdent = [self buttonWithImageNamed:@"outdent.png"
+											 andSelector:@selector(paragraphOutdentSelected:)];
 		
 		RichTextEditorFeature features = [self.dataSource featuresEnabledForRichTextEditorToolbar];
 		UIView *lastAddedView = nil;
@@ -201,6 +213,16 @@
 			lastAddedView = separatorView;
 		}
 		
+		if (features & RichTextEditorFeatureParagraphIndentation || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnParagraphOutdent afterView:lastAddedView  withSpacing:YES];
+			[self addView:self.btnParagraphIndent afterView:self.btnParagraphOutdent withSpacing:YES];
+			
+			UIView *separatorView = [self separatorView];
+			[self addView:separatorView afterView:self.btnParagraphIndent withSpacing:YES];
+			lastAddedView = separatorView;
+		}
+		
 		if (features & RichTextEditorFeatureTextBackgroundColor || features & RichTextEditorFeatureAll)
 		{
 			[self addView:self.btnBackgroundColor afterView:lastAddedView withSpacing:YES];
@@ -212,6 +234,19 @@
 			[self addView:self.btnForegroundColor afterView:lastAddedView withSpacing:YES];
 			lastAddedView = self.btnForegroundColor;
 		}
+		
+		if (features & RichTextEditorFeatureTextBackgroundColor || features & RichTextEditorFeatureTextForegroundColor || features & RichTextEditorFeatureAll)
+		{
+			UIView *separatorView = [self separatorView];
+			[self addView:separatorView afterView:lastAddedView withSpacing:YES];
+			lastAddedView = separatorView;
+		}
+		
+		/*if (features & RichTextEditorFeatureBulletPoint || features & RichTextEditorFeatureAll)
+		{
+			[self addView:self.btnBulletPoint afterView:lastAddedView withSpacing:YES];
+			lastAddedView = self.btnBulletPoint;
+		}*/
 	}
 	
 	return self;
@@ -284,6 +319,21 @@
 - (void)strikeThroughSelected:(UIButton *)sender
 {
 	[self.delegate richTextEditorToolbarDidSelectStrikeThrough];
+}
+
+- (void)bulletPointSelected:(UIButton *)sender
+{
+	[self.delegate richTextEditorToolbarDidSelectBulletPoint];
+}
+
+- (void)paragraphIndentSelected:(UIButton *)sender
+{
+	[self.delegate richTextEditorToolbarDidSelectParagraphIndentation:ParagraphIndentationIncrease];
+}
+
+- (void)paragraphOutdentSelected:(UIButton *)sender
+{
+	[self.delegate richTextEditorToolbarDidSelectParagraphIndentation:ParagraphIndentationDecrease];
 }
 
 - (void)fontSizeSelected:(UIButton *)sender
