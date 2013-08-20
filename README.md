@@ -84,6 +84,6 @@ Features can be turned on/off by iplementing the following data source method
 ```
 
 Credits
-==================
+-------------------------
 iPhone popover by werner77
 https://github.com/werner77/WEPopover
