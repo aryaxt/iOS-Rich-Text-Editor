@@ -55,8 +55,6 @@
 	
 	self.typingAttributesInProgress = NO;
 	self.defaultIndentationSize = 15;
-	
-	[self updateToolbarState];
 }
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
