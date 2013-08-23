@@ -35,10 +35,11 @@
 	
 	NSArray *customizedFontFamilies = [self.dataSource richTextEditorFontPickerViewControllerCustomFontFamilyNamesForSelection];
 	
-	if (customizedFontFamilies)
+	if (customizedFontFamilies) {
 		self.fontNames = customizedFontFamilies;
-	else
-		self.fontNames = [UIFont familyNames];
+	} else {
+		self.fontNames = [[UIFont familyNames] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+    }
 	
 	if ([self.dataSource richTextEditorFontPickerViewControllerShouldDisplayToolbar])
 	{
