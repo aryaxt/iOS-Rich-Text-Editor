@@ -143,7 +143,11 @@
 {
 	#warning reuse this logic in richTextEditorToolbarDidSelectTextAlignment & richTextEditorToolbarDidSelectParagraphIndentation
 	
-	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+    //rangeOfParagraphsFromTextRange crashes if there is no text
+	NSArray *rangeOfParagraphsInSelectedText = nil;
+    if ([self hasText]) {
+        rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+    }
 	NSInteger startRange = 0;
 	NSInteger endRange = 0;
 	
@@ -187,8 +191,12 @@
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
 {
 	#warning reuse this logic in richTextEditorToolbarDidSelectTextAlignment & richTextEditorToolbarDidSelectParagraphIndentation
-	
-	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+
+    //rangeOfParagraphsFromTextRange crashes if there is no text
+	NSArray *rangeOfParagraphsInSelectedText = nil;
+    if ([self hasText]) {
+        rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+    }
 	NSInteger startRange = 0;
 	NSInteger endRange = 0;
 	
