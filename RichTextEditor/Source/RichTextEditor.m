@@ -214,7 +214,7 @@
 - (void)updateToolbarState
 {
 	// If no text exists or typing attributes is in progress update toolbar using typing attributes instead of selected text
-	if (self.typingAttributesInProgress || !self.attributedText.string.length)
+	if (self.typingAttributesInProgress || ![self hasText])
 	{
 		[self.toolBar updateStateWithAttributes:self.typingAttributes];
 	}
@@ -231,27 +231,27 @@
 - (UIFont *)fontAtIndex:(NSInteger)index
 {
 	// If index at end of string, get attributes starting from previous character
-	if (index > 0 && index == self.attributedText.string.length-1)
-		index--;
-	
+	if (index == self.attributedText.string.length && [self hasText]) {
+		--index;
+    }
 	// If no text exists get font from typing attributes
-	NSDictionary *dictionary = (self.attributedText.string.length > 0) ?
-		[self.attributedText attributesAtIndex:index effectiveRange:nil] :
-		self.typingAttributes;
-	
-	return [dictionary objectForKey:NSFontAttributeName];
+    NSDictionary *dictionary = ([self hasText]) ?
+        [self.attributedText attributesAtIndex:index effectiveRange:nil] :
+        self.typingAttributes;
+    
+    return [dictionary objectForKey:NSFontAttributeName];
 }
 
 - (NSDictionary *)dictionaryAtIndex:(NSInteger)index
 {
 	// If index at end of string, get attributes starting from previous character
-	if (index > 0 && index == self.attributedText.string.length-1)
-		index--;
-	
-	// If no text exists get font from typing attributes
-	return  (self.attributedText.string.length > 0) ?
-		[self.attributedText attributesAtIndex:index effectiveRange:nil] :
-		self.typingAttributes;
+	if (index == self.attributedText.string.length && [self hasText]) {
+        --index;
+    }
+    // If no text exists get font from typing attributes
+    return  ([self hasText]) ?
+        [self.attributedText attributesAtIndex:index effectiveRange:nil] :
+        self.typingAttributes;
 }
 
 - (void)applyAttributeToTypingAttribute:(id)attribute forKey:(NSString *)key
@@ -328,8 +328,9 @@
 										 fontName:fontName
 										 fontSize:fontSize
 								   fromDictionary:self.typingAttributes];
-		
-		[self applyAttributeToTypingAttribute:newFont forKey:NSFontAttributeName];
+		if (newFont) {
+            [self applyAttributeToTypingAttribute:newFont forKey:NSFontAttributeName];
+        }
 	}
 	
 	[self updateToolbarState];
