@@ -55,6 +55,11 @@
 	
 	self.typingAttributesInProgress = NO;
 	self.defaultIndentationSize = 15;
+    
+    //If there is text already, then we do want to update the toolbar. Otherwise we don't.
+    if ([self hasText]) {
+        [self updateToolbarState];
+    }
 }
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
@@ -138,7 +143,11 @@
 {
 	#warning reuse this logic in richTextEditorToolbarDidSelectTextAlignment & richTextEditorToolbarDidSelectParagraphIndentation
 	
-	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+    //rangeOfParagraphsFromTextRange crashes if there is no text
+	NSArray *rangeOfParagraphsInSelectedText = nil;
+    if ([self hasText]) {
+        rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+    }
 	NSInteger startRange = 0;
 	NSInteger endRange = 0;
 	
@@ -182,8 +191,12 @@
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
 {
 	#warning reuse this logic in richTextEditorToolbarDidSelectTextAlignment & richTextEditorToolbarDidSelectParagraphIndentation
-	
-	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+
+    //rangeOfParagraphsFromTextRange crashes if there is no text
+	NSArray *rangeOfParagraphsInSelectedText = nil;
+    if ([self hasText]) {
+        rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+    }
 	NSInteger startRange = 0;
 	NSInteger endRange = 0;
 	
@@ -267,6 +280,10 @@
 	if (range.length > 0)
 	{
 		NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
+        //Workaround for when there is only one paragraph, sometimes the attributedString is actually longer by one then the displayed text, and this results in not being able to set to lef align anymore.
+        if (range.length == attributedString.length-1 && range.length == self.text.length) {
+            ++range.length;
+        }
 		[attributedString addAttributes:[NSDictionary dictionaryWithObject:attribute forKey:key] range:range];
 		
 		[self setAttributedText:attributedString];
