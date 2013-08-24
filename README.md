@@ -83,7 +83,7 @@ Features can be turned on/off by iplementing the following data source method
 }
 ```
 
-Hide/Show Toolbar
+Enable/Disable RichText Toolbar
 -------------------------
 You can hide the rich text toolbar by implementing the following method. This method gets called everytime textView becomes first responder.
 This can be usefull when you don't want the toolbar, instead you want to use the basic features (bold, italic, underline, strikeThrough), thoguht the UIMeMenuController
