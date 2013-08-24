@@ -125,7 +125,7 @@
 											  
 											  NSMutableString *fontString = [NSMutableString string];
 											  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
-											  UIColor *forgroundColor = [dictionary objectForKey:NSForegroundColorAttributeName];
+											  UIColor *foregroundColor = [dictionary objectForKey:NSForegroundColorAttributeName];
 											  UIColor *backGroundColor = [dictionary objectForKey:NSBackgroundColorAttributeName];
 											  NSNumber *underline = [dictionary objectForKey:NSUnderlineStyleAttributeName];
 											  BOOL hasUnderline = (!underline || underline.intValue == NSUnderlineStyleNone) ? NO :YES;
@@ -134,14 +134,19 @@
 											  
 											  [fontString appendFormat:@"<font "];
 											  [fontString appendFormat:@"face=\"%@\" ", font.familyName];
-											  [fontString appendFormat:@"size=\"%.0f\" ", font.pointSize];
+											  [fontString appendFormat:@"size=\"%.0fpx\" ", font.pointSize];
 											  
-												#warning UIDeviceWhiteColorSpace is a private class, not reliable to use, find a better way
-											  if (forgroundColor && ![NSStringFromClass([forgroundColor class]) isEqual:@"UIDeviceWhiteColorSpace"])
-												  [fontString appendFormat:@"color=\"%@\" ", [self htmlRgbColor:forgroundColor]];
+											  // Begin style
+											  [fontString appendString:@" style=\" "];
 											  
-											  if (backGroundColor)
-												  [fontString appendFormat:@"style=\"BACKGROUND-COLOR: %@\" ", [self htmlRgbColor:backGroundColor]];
+											  if (foregroundColor && [foregroundColor isKindOfClass:[UIColor class]])
+												  [fontString appendFormat:@"color:%@; ", [self htmlRgbColor:foregroundColor]];
+											  
+											  if (backGroundColor && [backGroundColor isKindOfClass:[UIColor class]])
+												  [fontString appendFormat:@"background-color:%@;", [self htmlRgbColor:backGroundColor]];
+											  
+											  [fontString appendString:@"\" "];
+											  // End Style
 											  
 											  [fontString appendString:@">"];
 											  [fontString appendString:[[self.string substringFromIndex:range.location] substringToIndex:range.length]];
@@ -209,7 +214,7 @@
 {
 	CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
 	[color getRed:&red green:&green blue:&blue alpha:&alpha];
-	return [NSString stringWithFormat:@"rgb(%.0f,%.0f,%.0f)", red, green, blue];
+	return [NSString stringWithFormat:@"rgb(%d,%d,%d)",(int)(red*255.0), (int)(green*255.0), (int)(blue*255.0)];
 }
 
 @end
