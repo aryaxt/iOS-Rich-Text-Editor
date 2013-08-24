@@ -83,6 +83,27 @@ Features can be turned on/off by iplementing the following data source method
 }
 ```
 
+Hide/Show Toolbar
+-------------------------
+You can hide the rich text toolbar by implementing the following method. This method gets called everytime textView becomes first responder.
+This can be usefull when you don't want the toolbar, instead you want to use the basic features (bold, italic, underline, strikeThrough), thoguht the UIMeMenuController
+```objective-c
+- (BOOL)shouldDisplayToolbarForRichTextEditor:(RichTextEditor *)richTextEditor
+{
+   return YES;
+} 
+```
+
+Enable/Disable UIMenuController Options
+-------------------------
+On default the UIMenuController options (bold, italic, underline, strikeThrough) are turned off. You can implement the follwing method if you want these features to be available through the UIMenuController along with copy/paste/selectAll etc.
+```objective-c
+- (BOOL)shouldDisplayRichTextOptionsInMenuControllerForRichTextrEditor:(RichTextEditor *)richTextEdiotor
+{
+   return YES;
+} 
+```
+
 Credits
 -------------------------
 iPhone popover by werner77
