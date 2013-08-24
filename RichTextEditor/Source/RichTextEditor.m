@@ -51,10 +51,11 @@
 	self.toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, [self currentScreenBoundsDependOnOrientation].size.width, 40)
 													   delegate:self
 													 dataSource:self];
-	self.inputAccessoryView = self.toolBar;
 	
 	self.typingAttributesInProgress = NO;
 	self.defaultIndentationSize = 15;
+	
+	[self setupMenuItems];
     
     //If there is text already, then we do want to update the toolbar. Otherwise we don't.
     if ([self hasText]) {
@@ -68,6 +69,44 @@
 	
 	[self updateToolbarState];
 	self.typingAttributesInProgress = NO;
+}
+
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{	
+	RichTextEditorFeature features = [self featuresEnabledForRichTextEditorToolbar];
+	
+	if ([self.dataSource respondsToSelector:@selector(shouldDisplayRichTextOptionsInMenuControllerForRichTextrEditor:)] &&
+		[self.dataSource shouldDisplayRichTextOptionsInMenuControllerForRichTextrEditor:self])
+	{
+		if (action == @selector(richTextEditorToolbarDidSelectBold) && (features & RichTextEditorFeatureBold  || features & RichTextEditorFeatureAll))
+			return YES;
+		
+		if (action == @selector(richTextEditorToolbarDidSelectItalic) && (features & RichTextEditorFeatureItalic  || features & RichTextEditorFeatureAll))
+			return YES;
+		
+		if (action == @selector(richTextEditorToolbarDidSelectUnderline) && (features & RichTextEditorFeatureUnderline  || features & RichTextEditorFeatureAll))
+			return YES;
+		
+		if (action == @selector(richTextEditorToolbarDidSelectStrikeThrough) && (features & RichTextEditorFeatureStrikeThrough  || features & RichTextEditorFeatureAll))
+			return YES;
+	}
+	
+	return [super canPerformAction:action withSender:sender];
+}
+
+- (BOOL)canBecomeFirstResponder
+{
+	if (![self.dataSource respondsToSelector:@selector(shouldDisplayToolbarForRichTextEditor:)] ||
+		[self.dataSource shouldDisplayToolbarForRichTextEditor:self])
+	{
+		self.inputAccessoryView = self.toolBar;
+	}
+	else
+	{
+		self.inputAccessoryView = nil;
+	}
+	
+	return [super canBecomeFirstResponder];
 }
 
 #pragma mark - Public Methods -
@@ -223,6 +262,16 @@
 }
 
 #pragma mark - Private Methods -
+
+- (void)setupMenuItems
+{
+	UIMenuItem *boldItem = [[UIMenuItem alloc] initWithTitle:@"Bold" action:@selector(richTextEditorToolbarDidSelectBold)];
+	UIMenuItem *italicItem = [[UIMenuItem alloc] initWithTitle:@"Italic" action:@selector(richTextEditorToolbarDidSelectItalic)];
+	UIMenuItem *underlineItem = [[UIMenuItem alloc] initWithTitle:@"Underline" action:@selector(richTextEditorToolbarDidSelectUnderline)];
+	UIMenuItem *strikeThroughItem = [[UIMenuItem alloc] initWithTitle:@"Strike" action:@selector(richTextEditorToolbarDidSelectStrikeThrough)];
+	
+	[[UIMenuController sharedMenuController] setMenuItems:@[boldItem, italicItem, underlineItem, strikeThroughItem]];
+}
 
 - (void)updateToolbarState
 {
