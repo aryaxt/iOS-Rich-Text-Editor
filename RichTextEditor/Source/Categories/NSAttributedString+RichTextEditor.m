@@ -111,10 +111,10 @@
 		[htmlString appendFormat:@"style=\""];
 		
 		if (paragraphStyle.firstLineHeadIndent > 0)
-			[htmlString appendFormat:@"text-indent:%.0f; ", paragraphStyle.firstLineHeadIndent];
+			[htmlString appendFormat:@"text-indent:%.0fpx; ", paragraphStyle.firstLineHeadIndent];
 		
 		if (paragraphStyle.headIndent > 0)
-			[htmlString appendFormat:@"margin-left:%.0f; ", paragraphStyle.headIndent];
+			[htmlString appendFormat:@"margin-left:%.0fpx; ", paragraphStyle.headIndent];
 			
 		
 		[htmlString appendString:@" \">"];
@@ -134,7 +134,9 @@
 											  
 											  [fontString appendFormat:@"<font "];
 											  [fontString appendFormat:@"face=\"%@\" ", font.familyName];
-											  [fontString appendFormat:@"size=\"%.0fpx\" ", font.pointSize];
+                                              //Since <font size=> is only 1-7, with 3 being the default we need to modify the pointSize we are sending.
+                                              // If we want exact sizes we need to change to <span> with font-size css styles
+											  [fontString appendFormat:@"size=\"%.0f\" ", floorf((font.pointSize - 2.f) / 4.f)];
 											  
 											  // Begin style
 											  [fontString appendString:@" style=\" "];
