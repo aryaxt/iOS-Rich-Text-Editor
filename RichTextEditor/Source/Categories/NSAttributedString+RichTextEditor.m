@@ -134,18 +134,17 @@
 											  
 											  [fontString appendFormat:@"<font "];
 											  [fontString appendFormat:@"face=\"%@\" ", font.familyName];
-                                              //Since <font size=> is only 1-7, with 3 being the default we need to modify the pointSize we are sending.
-                                              // If we want exact sizes we need to change to <span> with font-size css styles
-											  [fontString appendFormat:@"size=\"%.0f\" ", floorf((font.pointSize - 2.f) / 4.f)];
 											  
 											  // Begin style
 											  [fontString appendString:@" style=\" "];
+											  
+											  [fontString appendFormat:@"font-size:%.0fpx; ", font.pointSize];
 											  
 											  if (foregroundColor && [foregroundColor isKindOfClass:[UIColor class]])
 												  [fontString appendFormat:@"color:%@; ", [self htmlRgbColor:foregroundColor]];
 											  
 											  if (backGroundColor && [backGroundColor isKindOfClass:[UIColor class]])
-												  [fontString appendFormat:@"background-color:%@;", [self htmlRgbColor:backGroundColor]];
+												  [fontString appendFormat:@"background-color:%@; ", [self htmlRgbColor:backGroundColor]];
 											  
 											  [fontString appendString:@"\" "];
 											  // End Style
