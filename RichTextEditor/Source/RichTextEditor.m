@@ -108,8 +108,8 @@
 {	
 	RichTextEditorFeature features = [self featuresEnabledForRichTextEditorToolbar];
 	
-	if ([self.dataSource respondsToSelector:@selector(shouldDisplayRichTextOptionsInMenuControllerForRichTextrEditor:)] &&
-		[self.dataSource shouldDisplayRichTextOptionsInMenuControllerForRichTextrEditor:self])
+	if ([self.dataSource respondsToSelector:@selector(shouldDisplayRichTextOptionsInMenuControllerForRichTextEditor:)] &&
+		[self.dataSource shouldDisplayRichTextOptionsInMenuControllerForRichTextEditor:self])
 	{
 		if (action == @selector(richTextEditorToolbarDidSelectBold) && (features & RichTextEditorFeatureBold  || features & RichTextEditorFeatureAll))
 			return YES;
@@ -497,11 +497,11 @@
 	return nil;
 }
 
-- (RichTextEditorToolbarPresentationStyle)presentarionStyleForRichTextEditorToolbar
+- (RichTextEditorToolbarPresentationStyle)presentationStyleForRichTextEditorToolbar
 {
-	if (self.dataSource && [self.dataSource respondsToSelector:@selector(presentarionStyleForRichTextEditor:)])
+	if (self.dataSource && [self.dataSource respondsToSelector:@selector(presentationStyleForRichTextEditor:)])
 	{
-		return [self.dataSource presentarionStyleForRichTextEditor:self];
+		return [self.dataSource presentationStyleForRichTextEditor:self];
 	}
 
 	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ?

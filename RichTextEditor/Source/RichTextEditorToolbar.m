@@ -449,13 +449,13 @@
 
 - (void)presentViewController:(UIViewController *)viewController fromView:(UIView *)view
 {
-	if ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal)
+	if ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal)
 	{
 		viewController.modalPresentationStyle = [self.dataSource modalPresentationStyleForRichTextEditorToolbar];
 		viewController.modalTransitionStyle = [self.dataSource modalTransitionStyleForRichTextEditorToolbar];
 		[[self.dataSource firsAvailableViewControllerForRichTextEditorToolbar] presentViewController:viewController animated:YES completion:nil];
 	}
-	else if ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStylePopover)
+	else if ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStylePopover)
 	{
 		id <RichTextEditorPopover> popover = [self popoverWithViewController:viewController];
 		[popover presentPopoverFromRect:view.frame inView:self permittedArrowDirections:UIPopoverArrowDirectionDown animated:YES];
@@ -486,11 +486,11 @@
 
 - (void)dismissViewController
 {
-	if ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal)
+	if ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal)
 	{
 		[[self.dataSource firsAvailableViewControllerForRichTextEditorToolbar] dismissViewControllerAnimated:YES completion:NO];
 	}
-	else if ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStylePopover)
+	else if ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStylePopover)
 	{
 		[self.popover dismissPopoverAnimated:YES];
 	}
@@ -519,7 +519,7 @@
 
 - (BOOL)richTextEditorColorPickerViewControllerShouldDisplayToolbar
 {
-	return ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
+	return ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
 }
 
 #pragma mark - RichTextEditorFontSizePickerViewControllerDelegate & RichTextEditorFontSizePickerViewControllerDataSource Methods -
@@ -537,7 +537,7 @@
 
 - (BOOL)richTextEditorFontSizePickerViewControllerShouldDisplayToolbar
 {
-	return ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
+	return ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
 }
 
 - (NSArray *)richTextEditorFontSizePickerViewControllerCustomFontSizesForSelection
@@ -565,7 +565,7 @@
 
 - (BOOL)richTextEditorFontPickerViewControllerShouldDisplayToolbar
 {
-	return ([self.dataSource presentarionStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
+	return ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
 }
 
 @end
