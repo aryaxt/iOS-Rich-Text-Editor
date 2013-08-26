@@ -46,6 +46,9 @@
 @property (nonatomic, weak) IBOutlet id <RichTextEditorDataSource> dataSource;
 @property (nonatomic, assign) CGFloat defaultIndentationSize;
 
+- (void)setBorderColor:(UIColor*)borderColor;
+- (void)setBorderWidth:(CGFloat)borderWidth;
+
 - (NSString *)htmlString;
 
 @end

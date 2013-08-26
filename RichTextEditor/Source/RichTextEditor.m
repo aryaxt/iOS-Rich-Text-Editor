@@ -41,13 +41,29 @@
 
 @implementation RichTextEditor
 
-- (void)awakeFromNib
+- (id)init
 {
-	[super awakeFromNib];
-	
-	self.layer.borderColor = [UIColor lightGrayColor].CGColor;
-	self.layer.borderWidth = 1;
-	
+    self = [super init];
+    if (self) {
+        [self commonInitialization];
+    }
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self commonInitialization];
+    }
+    return self;
+}
+
+- (void)commonInitialization
+{
+    self.borderColor = [UIColor lightGrayColor];
+    self.borderWidth = 1.0;
+
 	self.toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, [self currentScreenBoundsDependOnOrientation].size.width, 40)
 													   delegate:self
 													 dataSource:self];
@@ -61,6 +77,23 @@
     if ([self hasText]) {
         [self updateToolbarState];
     }
+}
+
+- (void)awakeFromNib
+{
+	[super awakeFromNib];
+	
+    [self commonInitialization];
+}
+
+- (void)setBorderColor:(UIColor *)borderColor
+{
+    self.layer.borderColor = borderColor.CGColor;
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth
+{
+    self.layer.borderWidth = borderWidth;
 }
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
