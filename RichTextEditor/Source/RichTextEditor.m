@@ -64,7 +64,7 @@
     self.borderColor = [UIColor lightGrayColor];
     self.borderWidth = 1.0;
 
-	self.toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, [self currentScreenBoundsDependOnOrientation].size.width, 40)
+	self.toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, [self currentScreenBoundsDependOnOrientation].size.width, RICHTEXTEDITOR_TOOLBARHEIGHT)
 													   delegate:self
 													 dataSource:self];
 	
