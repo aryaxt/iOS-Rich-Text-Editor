@@ -58,9 +58,8 @@
 	[self setupMenuItems];
     
     //If there is text already, then we do want to update the toolbar. Otherwise we don't.
-    if ([self hasText]) {
+    if ([self hasText])
         [self updateToolbarState];
-    }
 }
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
@@ -132,6 +131,8 @@
 	
 	NSRange range = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
 	[self setSelectedRange:range];
+
+	[[UIMenuController sharedMenuController] setTargetRect:[self frameOfTextAtRange:self.selectedRange] inView:self];
 	[[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
 }
 
@@ -248,6 +249,22 @@
 }
 
 #pragma mark - Private Methods -
+
+- (CGRect)frameOfTextAtRange:(NSRange)range
+{
+	UITextRange *selectionRange = [self selectedTextRange];
+	NSArray *selectionRects = [self selectionRectsForRange:selectionRange];
+	CGRect completeRect = CGRectNull;
+	
+	for (UITextSelectionRect *selectionRect in selectionRects)
+	{
+		completeRect = (CGRectIsNull(completeRect))
+			? selectionRect.rect
+			: CGRectUnion(completeRect,selectionRect.rect);
+	}
+	
+	return completeRect;
+}
 
 - (void)enumarateThroughParagraphsInRange:(NSRange)range withBlock:(void (^)(NSRange paragraphRange))block
 {
