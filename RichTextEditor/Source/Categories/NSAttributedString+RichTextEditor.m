@@ -111,7 +111,7 @@
 		[htmlString appendFormat:@"style=\""];
 		
 		if (paragraphStyle.firstLineHeadIndent > 0)
-			[htmlString appendFormat:@"text-indent:%.0fpx; ", paragraphStyle.firstLineHeadIndent];
+			[htmlString appendFormat:@"text-indent:%.0fpx; ", paragraphStyle.firstLineHeadIndent - paragraphStyle.headIndent];
 		
 		if (paragraphStyle.headIndent > 0)
 			[htmlString appendFormat:@"margin-left:%.0fpx; ", paragraphStyle.headIndent];
