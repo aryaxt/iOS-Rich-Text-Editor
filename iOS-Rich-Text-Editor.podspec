@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
       :file => 'License.txt'
     }
     s.author = {'Aryan Gh' => 'https://github.com/aryaxt/iOS-Rich-Text-Editor'}
-    s.source = {:git => 'https://github.com/aryaxt/iOS-Rich-Text-Editor.git', :commit => '78d66f652328c85562e2580a16ab2e344fe60f9d'}
+    s.source = {:git => 'https://github.com/aryaxt/iOS-Rich-Text-Editor.git', :tag => '0.0.1'}
     s.platform = :ios, '6.0'
     s.source_files = 'RichTextEditor/Source/*.{h,m}','RichTextEditor/Source/Categories/*.{h,m}'
     s.resources = ['RichTextEditor/Source/Assets/**/*']
