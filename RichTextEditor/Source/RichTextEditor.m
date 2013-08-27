@@ -294,6 +294,11 @@
 	}
 }
 
+- (void)richTextEditorToolbarDidSelectBulletPoint
+{
+    // TODO: implement this
+}
+
 #pragma mark - Private Methods -
 
 - (void)setupMenuItems
