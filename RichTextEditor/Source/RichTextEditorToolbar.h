@@ -86,5 +86,6 @@ typedef enum{
 
 - (id)initWithFrame:(CGRect)frame delegate:(id <RichTextEditorToolbarDelegate>)delegate dataSource:(id <RichTextEditorToolbarDataSource>)dataSource;
 - (void)updateStateWithAttributes:(NSDictionary *)attributes;
+- (void)redrawToolbar;
 
 @end
