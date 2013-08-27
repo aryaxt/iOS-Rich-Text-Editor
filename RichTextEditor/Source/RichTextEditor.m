@@ -71,8 +71,25 @@
 	self.typingAttributesInProgress = NO;
 }
 
+- (BOOL)canBecomeFirstResponder
+{
+	if (![self.dataSource respondsToSelector:@selector(shouldDisplayToolbarForRichTextEditor:)] ||
+		[self.dataSource shouldDisplayToolbarForRichTextEditor:self])
+	{
+		self.inputAccessoryView = self.toolBar;
+	}
+	else
+	{
+		self.inputAccessoryView = nil;
+	}
+	
+	return [super canBecomeFirstResponder];
+}
+
+#pragma mark - MenuController Methods -
+
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
-{	
+{
 	RichTextEditorFeature features = [self featuresEnabledForRichTextEditorToolbar];
 	
 	if ([self.dataSource respondsToSelector:@selector(shouldDisplayRichTextOptionsInMenuControllerForRichTextrEditor:)] &&
@@ -91,22 +108,31 @@
 			return YES;
 	}
 	
+	if (action == @selector(selectParagraphSelected:) && self.selectedRange.length > 0)
+		return YES;
+	
 	return [super canPerformAction:action withSender:sender];
 }
 
-- (BOOL)canBecomeFirstResponder
+- (void)setupMenuItems
 {
-	if (![self.dataSource respondsToSelector:@selector(shouldDisplayToolbarForRichTextEditor:)] ||
-		[self.dataSource shouldDisplayToolbarForRichTextEditor:self])
-	{
-		self.inputAccessoryView = self.toolBar;
-	}
-	else
-	{
-		self.inputAccessoryView = nil;
-	}
+	UIMenuItem *selectParagraph = [[UIMenuItem alloc] initWithTitle:@"Select Paragraph" action:@selector(selectParagraph:)];
+	UIMenuItem *boldItem = [[UIMenuItem alloc] initWithTitle:@"Bold" action:@selector(richTextEditorToolbarDidSelectBold)];
+	UIMenuItem *italicItem = [[UIMenuItem alloc] initWithTitle:@"Italic" action:@selector(richTextEditorToolbarDidSelectItalic)];
+	UIMenuItem *underlineItem = [[UIMenuItem alloc] initWithTitle:@"Underline" action:@selector(richTextEditorToolbarDidSelectUnderline)];
+	UIMenuItem *strikeThroughItem = [[UIMenuItem alloc] initWithTitle:@"Strike" action:@selector(richTextEditorToolbarDidSelectStrikeThrough)];
 	
-	return [super canBecomeFirstResponder];
+	[[UIMenuController sharedMenuController] setMenuItems:@[selectParagraph, boldItem, italicItem, underlineItem, strikeThroughItem]];
+}
+
+- (void)selectParagraph:(id)sender
+{
+    if (![self hasText])
+		return;
+	
+	NSRange range = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
+	[self setSelectedRange:range];
+	[[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
 }
 
 #pragma mark - Public Methods -
@@ -153,7 +179,6 @@
 - (void)richTextEditorToolbarDidSelectUnderline
 {
 	NSDictionary *dictionary = [self dictionaryAtIndex:self.selectedRange.location];
-	
 	NSNumber *existingUnderlineStyle = [dictionary objectForKey:NSUnderlineStyleAttributeName];
 	
 	if (!existingUnderlineStyle || existingUnderlineStyle.intValue == NSUnderlineStyleNone)
@@ -167,7 +192,6 @@
 - (void)richTextEditorToolbarDidSelectStrikeThrough
 {
 	NSDictionary *dictionary = [self dictionaryAtIndex:self.selectedRange.location];
-	
 	NSNumber *existingUnderlineStyle = [dictionary objectForKey:NSStrikethroughStyleAttributeName];
 	
 	if (!existingUnderlineStyle || existingUnderlineStyle.intValue == NSUnderlineStyleNone)
@@ -180,27 +204,8 @@
 
 - (void)richTextEditorToolbarDidSelectParagraphIndentation:(ParagraphIndentation)paragraphIndentation
 {
-	#warning reuse this logic in richTextEditorToolbarDidSelectTextAlignment & richTextEditorToolbarDidSelectParagraphIndentation
-	
-    //rangeOfParagraphsFromTextRange crashes if there is no text
-	NSArray *rangeOfParagraphsInSelectedText = nil;
-    if ([self hasText]) {
-        rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
-    }
-	NSInteger startRange = 0;
-	NSInteger endRange = 0;
-	
-	for (int i=0 ; i<rangeOfParagraphsInSelectedText.count ; i++)
-	{
-		NSValue *value = [rangeOfParagraphsInSelectedText objectAtIndex:i];
-		NSRange range = [value rangeValue];
-		
-		if (i == 0)
-			startRange = range.location;
-		
-		endRange = range.location + range.length;
-		
-		NSDictionary *dictionary = [self dictionaryAtIndex:range.location];
+	[self enumarateThroughParagraphsInRange:self.selectedRange withBlock:^(NSRange paragraphRange){
+		NSDictionary *dictionary = [self dictionaryAtIndex:paragraphRange.location];
 		NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
 		
 		if (!paragraphStyle)
@@ -223,19 +228,34 @@
 				paragraphStyle.firstLineHeadIndent = 0;
 		}
 		
-		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:NSMakeRange(startRange, endRange-startRange)];
-	}
+		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:paragraphRange];
+	}];
 }
 
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
 {
-	#warning reuse this logic in richTextEditorToolbarDidSelectTextAlignment & richTextEditorToolbarDidSelectParagraphIndentation
+	[self enumarateThroughParagraphsInRange:self.selectedRange withBlock:^(NSRange paragraphRange){
+		NSDictionary *dictionary = [self dictionaryAtIndex:paragraphRange.location];
+		NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+		
+		if (!paragraphStyle)
+			paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+		
+		paragraphStyle.alignment = textAlignment;
+		
+		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:paragraphRange];
+	}];
+}
 
-    //rangeOfParagraphsFromTextRange crashes if there is no text
+#pragma mark - Private Methods -
+
+- (void)enumarateThroughParagraphsInRange:(NSRange)range withBlock:(void (^)(NSRange paragraphRange))block
+{
 	NSArray *rangeOfParagraphsInSelectedText = nil;
-    if ([self hasText]) {
+	
+    if ([self hasText])
         rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
-    }
+    
 	NSInteger startRange = 0;
 	NSInteger endRange = 0;
 	
@@ -249,28 +269,8 @@
 		
 		endRange = range.location + range.length;
 		
-		NSDictionary *dictionary = [self dictionaryAtIndex:range.location];
-		NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
-		
-		if (!paragraphStyle)
-			paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-		
-		paragraphStyle.alignment = textAlignment;
-		
-		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:NSMakeRange(startRange, endRange-startRange)];
+		block(NSMakeRange(startRange, endRange-startRange));
 	}
-}
-
-#pragma mark - Private Methods -
-
-- (void)setupMenuItems
-{
-	UIMenuItem *boldItem = [[UIMenuItem alloc] initWithTitle:@"Bold" action:@selector(richTextEditorToolbarDidSelectBold)];
-	UIMenuItem *italicItem = [[UIMenuItem alloc] initWithTitle:@"Italic" action:@selector(richTextEditorToolbarDidSelectItalic)];
-	UIMenuItem *underlineItem = [[UIMenuItem alloc] initWithTitle:@"Underline" action:@selector(richTextEditorToolbarDidSelectUnderline)];
-	UIMenuItem *strikeThroughItem = [[UIMenuItem alloc] initWithTitle:@"Strike" action:@selector(richTextEditorToolbarDidSelectStrikeThrough)];
-	
-	[[UIMenuController sharedMenuController] setMenuItems:@[boldItem, italicItem, underlineItem, strikeThroughItem]];
 }
 
 - (void)updateToolbarState
@@ -283,6 +283,7 @@
 	else
 	{
 		int location = [self offsetFromPosition:self.beginningOfDocument toPosition:self.selectedTextRange.start];
+		
 		if (location == self.text.length)
 			location --;
 		
@@ -293,13 +294,13 @@
 - (UIFont *)fontAtIndex:(NSInteger)index
 {
 	// If index at end of string, get attributes starting from previous character
-	if (index == self.attributedText.string.length && [self hasText]) {
+	if (index == self.attributedText.string.length && [self hasText])
 		--index;
-    }
+    
 	// If no text exists get font from typing attributes
-    NSDictionary *dictionary = ([self hasText]) ?
-        [self.attributedText attributesAtIndex:index effectiveRange:nil] :
-        self.typingAttributes;
+    NSDictionary *dictionary = ([self hasText])
+		? [self.attributedText attributesAtIndex:index effectiveRange:nil]
+		: self.typingAttributes;
     
     return [dictionary objectForKey:NSFontAttributeName];
 }
@@ -307,13 +308,13 @@
 - (NSDictionary *)dictionaryAtIndex:(NSInteger)index
 {
 	// If index at end of string, get attributes starting from previous character
-	if (index == self.attributedText.string.length && [self hasText]) {
+	if (index == self.attributedText.string.length && [self hasText])
         --index;
-    }
+	
     // If no text exists get font from typing attributes
-    return  ([self hasText]) ?
-        [self.attributedText attributesAtIndex:index effectiveRange:nil] :
-        self.typingAttributes;
+    return  ([self hasText])
+		? [self.attributedText attributesAtIndex:index effectiveRange:nil]
+		: self.typingAttributes;
 }
 
 - (void)applyAttributeToTypingAttribute:(id)attribute forKey:(NSString *)key
@@ -329,10 +330,13 @@
 	if (range.length > 0)
 	{
 		NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
-        //Workaround for when there is only one paragraph, sometimes the attributedString is actually longer by one then the displayed text, and this results in not being able to set to lef align anymore.
-        if (range.length == attributedString.length-1 && range.length == self.text.length) {
+		
+        // Workaround for when there is only one paragraph,
+		// sometimes the attributedString is actually longer by one then the displayed text,
+		// and this results in not being able to set to lef align anymore.
+        if (range.length == attributedString.length-1 && range.length == self.text.length)
             ++range.length;
-        }
+        
 		[attributedString addAttributes:[NSDictionary dictionaryWithObject:attribute forKey:key] range:range];
 		
 		[self setAttributedText:attributedString];
@@ -394,9 +398,8 @@
 										 fontName:fontName
 										 fontSize:fontSize
 								   fromDictionary:self.typingAttributes];
-		if (newFont) {
+		if (newFont) 
             [self applyAttributeToTypingAttribute:newFont forKey:NSFontAttributeName];
-        }
 	}
 	
 	[self updateToolbarState];
@@ -471,9 +474,9 @@
 		return [self.dataSource presentarionStyleForRichTextEditor:self];
 	}
 
-	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ?
-		RichTextEditorToolbarPresentationStylePopover :
-		RichTextEditorToolbarPresentationStyleModal;
+	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+		? RichTextEditorToolbarPresentationStylePopover
+		: RichTextEditorToolbarPresentationStyleModal;
 }
 
 - (UIModalPresentationStyle)modalPresentationStyleForRichTextEditorToolbar
@@ -483,9 +486,9 @@
 		return [self.dataSource modalPresentationStyleForRichTextEditor:self];
 	}
 	
-	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ?
-		UIModalPresentationFormSheet :
-		UIModalPresentationFullScreen;
+	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+		? UIModalPresentationFormSheet
+		: UIModalPresentationFullScreen;
 }
 
 - (UIModalTransitionStyle)modalTransitionStyleForRichTextEditorToolbar
