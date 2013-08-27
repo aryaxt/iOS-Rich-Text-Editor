@@ -108,7 +108,7 @@
 			return YES;
 	}
 	
-	if (action == @selector(selectParagraphSelected:) && self.selectedRange.length > 0)
+	if (action == @selector(selectParagraph:) && self.selectedRange.length > 0)
 		return YES;
 	
 	return [super canPerformAction:action withSender:sender];
