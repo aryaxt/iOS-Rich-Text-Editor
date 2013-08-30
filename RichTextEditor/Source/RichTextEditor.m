@@ -31,6 +31,8 @@
 #import "NSAttributedString+RichTextEditor.h"
 #import "UIView+RichTextEditor.h"
 
+#define RICHTEXTEDITOR_TOOLBAR_HEIGHT 40
+
 @interface RichTextEditor() <RichTextEditorToolbarDelegate, RichTextEditorToolbarDataSource>
 @property (nonatomic, strong) RichTextEditorToolbar *toolBar;
 
@@ -43,19 +45,21 @@
 
 - (id)init
 {
-    self = [super init];
-    if (self) {
+    if (self = [super init])
+	{
         [self commonInitialization];
     }
+	
     return self;
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:frame];
-    if (self) {
+    if (self = [super initWithFrame:frame])
+	{
         [self commonInitialization];
     }
+	
     return self;
 }
 
@@ -64,7 +68,7 @@
     self.borderColor = [UIColor lightGrayColor];
     self.borderWidth = 1.0;
 
-	self.toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, [self currentScreenBoundsDependOnOrientation].size.width, RICHTEXTEDITOR_TOOLBARHEIGHT)
+	self.toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, [self currentScreenBoundsDependOnOrientation].size.width, RICHTEXTEDITOR_TOOLBAR_HEIGHT)
 													   delegate:self
 													 dataSource:self];
 	
@@ -85,16 +89,6 @@
     [self commonInitialization];
 }
 
-- (void)setBorderColor:(UIColor *)borderColor
-{
-    self.layer.borderColor = borderColor.CGColor;
-}
-
-- (void)setBorderWidth:(CGFloat)borderWidth
-{
-    self.layer.borderWidth = borderWidth;
-}
-
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
 {
 	[super setSelectedTextRange:selectedTextRange];
@@ -109,6 +103,9 @@
 		[self.dataSource shouldDisplayToolbarForRichTextEditor:self])
 	{
 		self.inputAccessoryView = self.toolBar;
+		
+		// Redraw in case enabbled features have changes
+		[self.toolBar redraw];
 	}
 	else
 	{
@@ -174,6 +171,16 @@
 - (NSString *)htmlString
 {
 	return [self.attributedText htmlString];
+}
+
+- (void)setBorderColor:(UIColor *)borderColor
+{
+    self.layer.borderColor = borderColor.CGColor;
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth
+{
+    self.layer.borderWidth = borderWidth;
 }
 
 #pragma mark - RichTextEditorToolbarDelegate Methods -

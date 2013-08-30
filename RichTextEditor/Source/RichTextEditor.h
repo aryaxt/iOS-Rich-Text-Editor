@@ -25,8 +25,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#define RICHTEXTEDITOR_TOOLBARHEIGHT 40
-
 #import <UIKit/UIKit.h>
 #import "RichTextEditorToolbar.h"
 
@@ -50,7 +48,6 @@
 
 - (void)setBorderColor:(UIColor*)borderColor;
 - (void)setBorderWidth:(CGFloat)borderWidth;
-
 - (NSString *)htmlString;
 
 @end
