@@ -41,14 +41,30 @@
 
 @implementation RichTextEditor
 
-- (void)awakeFromNib
+- (id)init
 {
-	[super awakeFromNib];
-	
-	self.layer.borderColor = [UIColor lightGrayColor].CGColor;
-	self.layer.borderWidth = 1;
-	
-	self.toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, [self currentScreenBoundsDependOnOrientation].size.width, 40)
+    self = [super init];
+    if (self) {
+        [self commonInitialization];
+    }
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self commonInitialization];
+    }
+    return self;
+}
+
+- (void)commonInitialization
+{
+    self.borderColor = [UIColor lightGrayColor];
+    self.borderWidth = 1.0;
+
+	self.toolBar = [[RichTextEditorToolbar alloc] initWithFrame:CGRectMake(0, 0, [self currentScreenBoundsDependOnOrientation].size.width, RICHTEXTEDITOR_TOOLBARHEIGHT)
 													   delegate:self
 													 dataSource:self];
 	
@@ -60,6 +76,23 @@
     //If there is text already, then we do want to update the toolbar. Otherwise we don't.
     if ([self hasText])
         [self updateToolbarState];
+}
+
+- (void)awakeFromNib
+{
+	[super awakeFromNib];
+	
+    [self commonInitialization];
+}
+
+- (void)setBorderColor:(UIColor *)borderColor
+{
+    self.layer.borderColor = borderColor.CGColor;
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth
+{
+    self.layer.borderWidth = borderWidth;
 }
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
@@ -91,8 +124,8 @@
 {
 	RichTextEditorFeature features = [self featuresEnabledForRichTextEditorToolbar];
 	
-	if ([self.dataSource respondsToSelector:@selector(shouldDisplayRichTextOptionsInMenuControllerForRichTextrEditor:)] &&
-		[self.dataSource shouldDisplayRichTextOptionsInMenuControllerForRichTextrEditor:self])
+	if ([self.dataSource respondsToSelector:@selector(shouldDisplayRichTextOptionsInMenuControllerForRichTextEditor:)] &&
+		[self.dataSource shouldDisplayRichTextOptionsInMenuControllerForRichTextEditor:self])
 	{
 		if (action == @selector(richTextEditorToolbarDidSelectBold) && (features & RichTextEditorFeatureBold  || features & RichTextEditorFeatureAll))
 			return YES;
@@ -248,6 +281,11 @@
 	}];
 }
 
+- (void)richTextEditorToolbarDidSelectBulletPoint
+{
+    // TODO: implement this
+}
+
 #pragma mark - Private Methods -
 
 - (CGRect)frameOfTextAtRange:(NSRange)range
@@ -289,6 +327,9 @@
 		block(NSMakeRange(startRange, endRange-startRange));
 	}
 }
+
+
+#pragma mark - Private Methods -
 
 - (void)updateToolbarState
 {
@@ -484,11 +525,11 @@
 	return nil;
 }
 
-- (RichTextEditorToolbarPresentationStyle)presentarionStyleForRichTextEditorToolbar
+- (RichTextEditorToolbarPresentationStyle)presentationStyleForRichTextEditorToolbar
 {
-	if (self.dataSource && [self.dataSource respondsToSelector:@selector(presentarionStyleForRichTextEditor:)])
+	if (self.dataSource && [self.dataSource respondsToSelector:@selector(presentationStyleForRichTextEditor:)])
 	{
-		return [self.dataSource presentarionStyleForRichTextEditor:self];
+		return [self.dataSource presentationStyleForRichTextEditor:self];
 	}
 
 	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)

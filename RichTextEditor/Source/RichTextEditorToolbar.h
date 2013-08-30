@@ -72,7 +72,7 @@ typedef enum{
 @protocol RichTextEditorToolbarDataSource <NSObject>
 - (NSArray *)fontSizeSelectionForRichTextEditorToolbar;
 - (NSArray *)fontFamilySelectionForRichTextEditorToolbar;
-- (RichTextEditorToolbarPresentationStyle)presentarionStyleForRichTextEditorToolbar;
+- (RichTextEditorToolbarPresentationStyle)presentationStyleForRichTextEditorToolbar;
 - (UIModalPresentationStyle)modalPresentationStyleForRichTextEditorToolbar;
 - (UIModalTransitionStyle)modalTransitionStyleForRichTextEditorToolbar;
 - (UIViewController *)firsAvailableViewControllerForRichTextEditorToolbar;
@@ -86,5 +86,6 @@ typedef enum{
 
 - (id)initWithFrame:(CGRect)frame delegate:(id <RichTextEditorToolbarDelegate>)delegate dataSource:(id <RichTextEditorToolbarDataSource>)dataSource;
 - (void)updateStateWithAttributes:(NSDictionary *)attributes;
+- (void)redrawToolbar;
 
 @end
