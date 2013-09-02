@@ -61,6 +61,7 @@ typedef enum{
 - (void)richTextEditorToolbarDidSelectUnderline;
 - (void)richTextEditorToolbarDidSelectStrikeThrough;
 - (void)richTextEditorToolbarDidSelectBulletPoint;
+- (void)richTextEditorToolbarDidSelectParagraphFirstLineHeadIndent;
 - (void)richTextEditorToolbarDidSelectParagraphIndentation:(ParagraphIndentation)paragraphIndentation;
 - (void)richTextEditorToolbarDidSelectFontSize:(NSNumber *)fontSize;
 - (void)richTextEditorToolbarDidSelectFontWithName:(NSString *)fontName;

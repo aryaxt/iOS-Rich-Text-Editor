@@ -280,7 +280,7 @@
 	}];
 }
 
-- (void)richTextEditorToolbarDidSelectParagraphFirstLineHEadIndent
+- (void)richTextEditorToolbarDidSelectParagraphFirstLineHeadIndent
 {
 	[self enumarateThroughParagraphsInRange:self.selectedRange withBlock:^(NSRange paragraphRange){
 		NSDictionary *dictionary = [self dictionaryAtIndex:paragraphRange.location];

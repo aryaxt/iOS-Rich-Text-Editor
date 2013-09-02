@@ -55,6 +55,7 @@
 @property (nonatomic, strong) RichTextEditorToggleButton *btnTextAlignmentJustified;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphIndent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphOutdent;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphHeadIndent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnBulletPoint;
 @end
 
@@ -102,6 +103,7 @@
 	self.btnTextAlignmentCenter.on = NO;
 	self.btnTextAlignmentRight.on = NO;
 	self.btnTextAlignmentJustified.on = NO;
+	self.btnParagraphHeadIndent.on = (paragraphTyle.firstLineHeadIndent > paragraphTyle.headIndent) ? YES : NO;
 	
 	switch (paragraphTyle.alignment)
 	{
@@ -167,6 +169,11 @@
 - (void)paragraphOutdentSelected:(UIButton *)sender
 {
 	[self.delegate richTextEditorToolbarDidSelectParagraphIndentation:ParagraphIndentationDecrease];
+}
+
+- (void)paragraphHeadIndentOutdentSelected:(UIButton *)sender
+{
+	[self.delegate richTextEditorToolbarDidSelectParagraphFirstLineHeadIndent];
 }
 
 - (void)fontSizeSelected:(UIButton *)sender
@@ -334,9 +341,10 @@
 	{
 		[self addView:self.btnParagraphOutdent afterView:lastAddedView  withSpacing:YES];
 		[self addView:self.btnParagraphIndent afterView:self.btnParagraphOutdent withSpacing:YES];
+		[self addView:self.btnParagraphHeadIndent afterView:self.btnParagraphIndent withSpacing:YES];
 		
 		UIView *separatorView = [self separatorView];
-		[self addView:separatorView afterView:self.btnParagraphIndent withSpacing:YES];
+		[self addView:separatorView afterView:self.btnParagraphHeadIndent withSpacing:YES];
 		lastAddedView = separatorView;
 	}
 	
@@ -421,6 +429,9 @@
 	
 	self.btnParagraphOutdent = [self buttonWithImageNamed:@"outdent.png"
 											  andSelector:@selector(paragraphOutdentSelected:)];
+	
+	self.btnParagraphHeadIndent = [self buttonWithImageNamed:@"outdent.png"
+												 andSelector:@selector(paragraphHeadIndentOutdentSelected:)];
 }
 
 - (RichTextEditorToggleButton *)buttonWithImageNamed:(NSString *)image width:(NSInteger)width andSelector:(SEL)selector
