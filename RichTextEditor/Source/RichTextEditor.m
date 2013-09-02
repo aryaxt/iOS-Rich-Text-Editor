@@ -43,6 +43,8 @@
 
 @implementation RichTextEditor
 
+#pragma mark - Initialization -
+
 - (id)init
 {
     if (self = [super init])
@@ -61,6 +63,16 @@
     }
 	
     return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+	if (self = [super initWithCoder:aDecoder])
+	{
+		[self commonInitialization];
+	}
+	
+	return self;
 }
 
 - (void)commonInitialization
@@ -82,12 +94,7 @@
         [self updateToolbarState];
 }
 
-- (void)awakeFromNib
-{
-	[super awakeFromNib];
-	
-    [self commonInitialization];
-}
+#pragma mark - Override Methods -
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
 {
@@ -115,8 +122,6 @@
 	return [super canBecomeFirstResponder];
 }
 
-#pragma mark - MenuController Methods -
-
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
 	RichTextEditorFeature features = [self featuresEnabledForRichTextEditorToolbar];
@@ -142,6 +147,8 @@
 	
 	return [super canPerformAction:action withSender:sender];
 }
+
+#pragma mark - MenuController Methods -
 
 - (void)setupMenuItems
 {
@@ -273,6 +280,28 @@
 	}];
 }
 
+- (void)richTextEditorToolbarDidSelectParagraphFirstLineHEadIndent
+{
+	[self enumarateThroughParagraphsInRange:self.selectedRange withBlock:^(NSRange paragraphRange){
+		NSDictionary *dictionary = [self dictionaryAtIndex:paragraphRange.location];
+		NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+		
+		if (!paragraphStyle)
+			paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+		
+		if (paragraphStyle.headIndent == paragraphStyle.firstLineHeadIndent)
+		{
+			paragraphStyle.firstLineHeadIndent += self.defaultIndentationSize;
+		}
+		else
+		{
+			paragraphStyle.firstLineHeadIndent = paragraphStyle.headIndent;
+		}
+		
+		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:paragraphRange];
+	}];
+}
+
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment
 {
 	[self enumarateThroughParagraphsInRange:self.selectedRange withBlock:^(NSRange paragraphRange){
@@ -334,9 +363,6 @@
 		block(NSMakeRange(startRange, endRange-startRange));
 	}
 }
-
-
-#pragma mark - Private Methods -
 
 - (void)updateToolbarState
 {
