@@ -38,21 +38,22 @@ typedef enum{
 }ParagraphIndentation;
 
 typedef enum{
-	RichTextEditorFeatureNone					= 0,
-	RichTextEditorFeatureFont					= 1 << 0,
-	RichTextEditorFeatureFontSize				= 1 << 1,
-	RichTextEditorFeatureBold					= 1 << 2,
-	RichTextEditorFeatureItalic					= 1 << 3,
-	RichTextEditorFeatureUnderline				= 1 << 4,
-	RichTextEditorFeatureStrikeThrough			= 1 << 5,
-	RichTextEditorFeatureTextAlignmentLeft		= 1 << 6,
-	RichTextEditorFeatureTextAlignmentCenter	= 1 << 7,
-	RichTextEditorFeatureTextAlignmentRight		= 1 << 8,
-	RichTextEditorFeatureTextAlignmentJustified	= 1 << 9,
-	RichTextEditorFeatureTextBackgroundColor	= 1 << 10,
-	RichTextEditorFeatureTextForegroundColor	= 1 << 11,
-	RichTextEditorFeatureParagraphIndentation	= 1 << 12,
-	RichTextEditorFeatureAll					= 1 << 13
+	RichTextEditorFeatureNone							= 0,
+	RichTextEditorFeatureFont							= 1 << 0,
+	RichTextEditorFeatureFontSize						= 1 << 1,
+	RichTextEditorFeatureBold							= 1 << 2,
+	RichTextEditorFeatureItalic							= 1 << 3,
+	RichTextEditorFeatureUnderline						= 1 << 4,
+	RichTextEditorFeatureStrikeThrough					= 1 << 5,
+	RichTextEditorFeatureTextAlignmentLeft				= 1 << 6,
+	RichTextEditorFeatureTextAlignmentCenter			= 1 << 7,
+	RichTextEditorFeatureTextAlignmentRight				= 1 << 8,
+	RichTextEditorFeatureTextAlignmentJustified			= 1 << 9,
+	RichTextEditorFeatureTextBackgroundColor			= 1 << 10,
+	RichTextEditorFeatureTextForegroundColor			= 1 << 11,
+	RichTextEditorFeatureParagraphIndentation			= 1 << 12,
+	RichTextEditorFeatureParagraphFirstLineIndentation	= 1 << 13,
+	RichTextEditorFeatureAll							= 1 << 14
 }RichTextEditorFeature;
 
 @protocol RichTextEditorToolbarDelegate <UIScrollViewDelegate>
