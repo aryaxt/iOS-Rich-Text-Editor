@@ -441,7 +441,7 @@
 	self.btnParagraphOutdent = [self buttonWithImageNamed:@"outdent.png"
 											  andSelector:@selector(paragraphOutdentSelected:)];
 	
-	self.btnParagraphFirstLineHeadIndent = [self buttonWithImageNamed:@"outdent.png"
+	self.btnParagraphFirstLineHeadIndent = [self buttonWithImageNamed:@"firstLineIndent.png"
 														  andSelector:@selector(paragraphHeadIndentOutdentSelected:)];
 }
 

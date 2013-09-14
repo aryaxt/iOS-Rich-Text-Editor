@@ -342,26 +342,20 @@
 
 - (void)enumarateThroughParagraphsInRange:(NSRange)range withBlock:(void (^)(NSRange paragraphRange))block
 {
-	NSArray *rangeOfParagraphsInSelectedText = nil;
+	if (![self hasText])
+		return;
 	
-    if ([self hasText])
-        rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
-    
-	NSInteger startRange = 0;
-	NSInteger endRange = 0;
+	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
 	
 	for (int i=0 ; i<rangeOfParagraphsInSelectedText.count ; i++)
 	{
 		NSValue *value = [rangeOfParagraphsInSelectedText objectAtIndex:i];
-		NSRange range = [value rangeValue];
-		
-		if (i == 0)
-			startRange = range.location;
-		
-		endRange = range.location + range.length;
-		
-		block(NSMakeRange(startRange, endRange-startRange));
+		NSRange paragraphRange = [value rangeValue];
+		block(paragraphRange);
 	}
+	
+	NSRange fullRange = [self fullRangeFromArrayOfParagraphRanges:rangeOfParagraphsInSelectedText];
+	[self setSelectedRange:fullRange];
 }
 
 - (void)updateToolbarState
@@ -380,6 +374,16 @@
 		
 		[self.toolBar updateStateWithAttributes:[self.attributedText attributesAtIndex:location effectiveRange:nil]];
 	}
+}
+
+- (NSRange)fullRangeFromArrayOfParagraphRanges:(NSArray *)paragraphRanges
+{
+	if (!paragraphRanges.count)
+		return NSMakeRange(0, 0);
+	
+	NSRange firstRange = [[paragraphRanges objectAtIndex:0] rangeValue];
+	NSRange lastRange = [[paragraphRanges lastObject] rangeValue];
+	return NSMakeRange(firstRange.location, lastRange.location + lastRange.length - firstRange.location);
 }
 
 - (UIFont *)fontAtIndex:(NSInteger)index
