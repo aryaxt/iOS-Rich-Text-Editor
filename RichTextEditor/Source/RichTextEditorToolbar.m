@@ -56,7 +56,7 @@
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphIndent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphOutdent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphFirstLineHeadIndent;
-@property (nonatomic, strong) RichTextEditorToggleButton *btnBulletPoint;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnBulletList;
 @end
 
 @implementation RichTextEditorToolbar
@@ -156,9 +156,9 @@
 	[self.delegate richTextEditorToolbarDidSelectStrikeThrough];
 }
 
-- (void)bulletPointSelected:(UIButton *)sender
+- (void)bulletListSelected:(UIButton *)sender
 {
-	[self.delegate richTextEditorToolbarDidSelectBulletPoint];
+	[self.delegate richTextEditorToolbarDidSelectBulletList];
 }
 
 - (void)paragraphIndentSelected:(UIButton *)sender
@@ -221,7 +221,7 @@
 		textAlignment = NSTextAlignmentCenter;
 	else if (sender == self.btnTextAlignmentRight)
 		textAlignment = NSTextAlignmentRight;
-	else if (sender == self.btnTextAlignmentJustified)
+	else
 		textAlignment = NSTextAlignmentJustified;
 	
 	[self.delegate richTextEditorToolbarDidSelectTextAlignment:textAlignment];
@@ -380,6 +380,13 @@
 		[self addView:separatorView afterView:lastAddedView withSpacing:YES];
 		lastAddedView = separatorView;
 	}
+	
+	// Text color
+	if (features & RichTextEditorFeatureBulletList || features & RichTextEditorFeatureAll)
+	{
+		[self addView:self.btnBulletList afterView:lastAddedView withSpacing:YES];
+		lastAddedView = self.btnBulletList;
+	}
 }
 
 - (void)initializeButtons
@@ -432,8 +439,8 @@
 	self.btnBackgroundColor = [self buttonWithImageNamed:@"backcolor.png"
 											 andSelector:@selector(textBackgroundColorSelected:)];
 	
-	self.btnBulletPoint = [self buttonWithImageNamed:@"bullist.png"
-										 andSelector:@selector(bulletPointSelected:)];
+	self.btnBulletList = [self buttonWithImageNamed:@"bullist.png"
+										 andSelector:@selector(bulletListSelected:)];
 	
 	self.btnParagraphIndent = [self buttonWithImageNamed:@"indent.png"
 											 andSelector:@selector(paragraphIndentSelected:)];

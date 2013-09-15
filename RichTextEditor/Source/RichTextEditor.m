@@ -29,9 +29,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import "UIFont+RichTextEditor.h"
 #import "NSAttributedString+RichTextEditor.h"
+#import "NSString+RichTextEditor.h"
 #import "UIView+RichTextEditor.h"
 
 #define RICHTEXTEDITOR_TOOLBAR_HEIGHT 40
+#define BULLET_STRING @"•\t"
 
 @interface RichTextEditor() <RichTextEditorToolbarDelegate, RichTextEditorToolbarDataSource>
 @property (nonatomic, strong) RichTextEditorToolbar *toolBar;
@@ -317,9 +319,38 @@
 	}];
 }
 
-- (void)richTextEditorToolbarDidSelectBulletPoint
+- (void)richTextEditorToolbarDidSelectBulletList
 {
-    // TODO: implement this
+	NSRange range = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
+	NSMutableAttributedString *currentAttributedString = [self.attributedText mutableCopy];
+	NSDictionary *dictionary = [self dictionaryAtIndex:range.location];
+	NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+	
+	if (!paragraphStyle)
+		paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+	
+	if ([[[currentAttributedString string] substringFromIndex:range.location] startsWithString:BULLET_STRING])
+	{
+		range = NSMakeRange(range.location, range.length-2);
+		
+		[currentAttributedString deleteCharactersInRange:NSMakeRange(range.location, 2)];
+		
+		paragraphStyle.firstLineHeadIndent = 0;
+		paragraphStyle.headIndent = 0;
+	}
+	else
+	{
+		range = NSMakeRange(range.location, range.length+2);
+		
+		NSMutableAttributedString *bulletAttributedString = [[NSMutableAttributedString alloc] initWithString:BULLET_STRING attributes:dictionary];
+		[currentAttributedString insertAttributedString:bulletAttributedString atIndex:range.location];
+		
+		paragraphStyle.firstLineHeadIndent = 0;
+		paragraphStyle.headIndent = 27;
+	}
+	
+	self.attributedText = currentAttributedString;
+	[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:range];
 }
 
 #pragma mark - Private Methods -
