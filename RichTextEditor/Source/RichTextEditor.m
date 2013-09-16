@@ -344,9 +344,12 @@
 		
 		NSMutableAttributedString *bulletAttributedString = [[NSMutableAttributedString alloc] initWithString:BULLET_STRING attributes:dictionary];
 		[currentAttributedString insertAttributedString:bulletAttributedString atIndex:range.location];
+		CGSize expectedStringSize = [BULLET_STRING sizeWithFont:[dictionary objectForKey:NSFontAttributeName]
+											  constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)
+												  lineBreakMode:NSLineBreakByWordWrapping];
 		
 		paragraphStyle.firstLineHeadIndent = 0;
-		paragraphStyle.headIndent = 27;
+		paragraphStyle.headIndent = expectedStringSize.width;
 	}
 	
 	self.attributedText = currentAttributedString;
