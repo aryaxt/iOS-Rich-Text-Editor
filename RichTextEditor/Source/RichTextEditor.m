@@ -321,39 +321,51 @@
 
 - (void)richTextEditorToolbarDidSelectBulletList
 {
-	NSRange range = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
-	NSMutableAttributedString *currentAttributedString = [self.attributedText mutableCopy];
-	NSDictionary *dictionary = [self dictionaryAtIndex:range.location];
-	NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+	__block NSInteger rangeOffset = 0;
 	
-	if (!paragraphStyle)
-		paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+	[self enumarateThroughParagraphsInRange:self.selectedRange withBlock:^(NSRange paragraphRange){
+		NSRange range = NSMakeRange(paragraphRange.location + rangeOffset, paragraphRange.length);
+		NSMutableAttributedString *currentAttributedString = [self.attributedText mutableCopy];
+		NSDictionary *dictionary = [self dictionaryAtIndex:range.location];
+		NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+		
+		if (!paragraphStyle)
+			paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+		
+		if (([[[currentAttributedString string] substringFromIndex:range.location] startsWithString:BULLET_STRING]))
+		{
+			range = NSMakeRange(range.location, range.length-2);
+			
+			[currentAttributedString deleteCharactersInRange:NSMakeRange(range.location, 2)];
+			
+			paragraphStyle.firstLineHeadIndent = 0;
+			paragraphStyle.headIndent = 0;
+			
+			rangeOffset = rangeOffset - 2;
+		}
+		else
+		{
+			range = NSMakeRange(range.location, range.length+2);
+			
+			NSMutableAttributedString *bulletAttributedString = [[NSMutableAttributedString alloc] initWithString:BULLET_STRING attributes:dictionary];
+			[currentAttributedString insertAttributedString:bulletAttributedString atIndex:range.location];
+			CGSize expectedStringSize = [BULLET_STRING sizeWithFont:[dictionary objectForKey:NSFontAttributeName]
+												  constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)
+													  lineBreakMode:NSLineBreakByWordWrapping];
+			
+			paragraphStyle.firstLineHeadIndent = 0;
+			paragraphStyle.headIndent = expectedStringSize.width;
+			
+			rangeOffset = rangeOffset + 2;
+		}
+		
+		self.attributedText = currentAttributedString;
+		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:range];
+	}];
 	
-	if ([[[currentAttributedString string] substringFromIndex:range.location] startsWithString:BULLET_STRING])
-	{
-		range = NSMakeRange(range.location, range.length-2);
-		
-		[currentAttributedString deleteCharactersInRange:NSMakeRange(range.location, 2)];
-		
-		paragraphStyle.firstLineHeadIndent = 0;
-		paragraphStyle.headIndent = 0;
-	}
-	else
-	{
-		range = NSMakeRange(range.location, range.length+2);
-		
-		NSMutableAttributedString *bulletAttributedString = [[NSMutableAttributedString alloc] initWithString:BULLET_STRING attributes:dictionary];
-		[currentAttributedString insertAttributedString:bulletAttributedString atIndex:range.location];
-		CGSize expectedStringSize = [BULLET_STRING sizeWithFont:[dictionary objectForKey:NSFontAttributeName]
-											  constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)
-												  lineBreakMode:NSLineBreakByWordWrapping];
-		
-		paragraphStyle.firstLineHeadIndent = 0;
-		paragraphStyle.headIndent = expectedStringSize.width;
-	}
-	
-	self.attributedText = currentAttributedString;
-	[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:range];
+	NSRange fullRange = [self fullRangeFromArrayOfParagraphRanges:rangeOfParagraphsInSelectedText];
+	[self setSelectedRange:NSMakeRange(fullRange.location, fullRange.length+rangeOffset)];
 }
 
 #pragma mark - Private Methods -
