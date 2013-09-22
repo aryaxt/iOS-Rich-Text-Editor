@@ -321,6 +321,7 @@
 
 - (void)richTextEditorToolbarDidSelectBulletList
 {
+	NSRange initialSelectedRange = self.selectedRange;
 	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
 	NSRange rangeOfFirstParagraphRange = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
 	BOOL firstParagraphHasBullet = ([[[self.attributedText string] substringFromIndex:rangeOfFirstParagraphRange.location] startsWithString:BULLET_STRING]) ? YES: NO;
@@ -391,8 +392,15 @@
 	}
 	else
 	{
-		NSRange fullRange = [self fullRangeFromArrayOfParagraphRanges:rangeOfParagraphsInSelectedText];
-		[self setSelectedRange:NSMakeRange(fullRange.location, fullRange.length+rangeOffset)];
+		if (initialSelectedRange.length == 0)
+		{
+			[self setSelectedRange:NSMakeRange(initialSelectedRange.location+rangeOffset, 0)];
+		}
+		else
+		{
+			NSRange fullRange = [self fullRangeFromArrayOfParagraphRanges:rangeOfParagraphsInSelectedText];
+			[self setSelectedRange:NSMakeRange(fullRange.location, fullRange.length+rangeOffset)];
+		}
 	}
 }
 
