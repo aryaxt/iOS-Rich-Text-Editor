@@ -322,6 +322,9 @@
 - (void)richTextEditorToolbarDidSelectBulletList
 {
 	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+	NSRange rangeOfFirstParagraphRange = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
+	BOOL firstParagraphHasBullet = ([[[self.attributedText string] substringFromIndex:rangeOfFirstParagraphRange.location] startsWithString:BULLET_STRING]) ? YES: NO;
+	
 	__block NSInteger rangeOffset = 0;
 	
 	[self enumarateThroughParagraphsInRange:self.selectedRange withBlock:^(NSRange paragraphRange){
@@ -333,7 +336,12 @@
 		if (!paragraphStyle)
 			paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 		
-		if (([[[currentAttributedString string] substringFromIndex:range.location] startsWithString:BULLET_STRING]))
+		BOOL currentParagraphHasBullet = ([[[currentAttributedString string] substringFromIndex:range.location] startsWithString:BULLET_STRING]) ? YES : NO;
+		
+		if (firstParagraphHasBullet != currentParagraphHasBullet)
+			return;
+		
+		if (currentParagraphHasBullet)
 		{
 			range = NSMakeRange(range.location, range.length-2);
 			
@@ -348,8 +356,20 @@
 		{
 			range = NSMakeRange(range.location, range.length+2);
 			
-			NSMutableAttributedString *bulletAttributedString = [[NSMutableAttributedString alloc] initWithString:BULLET_STRING attributes:dictionary];
+			// The bullet should be bold
+			NSMutableDictionary *bulletDictionary = [dictionary mutableCopy];
+			UIFont *font = [bulletDictionary objectForKey:NSFontAttributeName];
+			UIFont *boldFont = [font fontWithBoldTrait:YES andItalicTrait:NO];
+			[bulletDictionary setObject:boldFont forKey:NSFontAttributeName];
+			NSMutableAttributedString *bulletAttributedString = [[NSMutableAttributedString alloc] initWithString:BULLET_STRING attributes:nil];
+			[bulletAttributedString setAttributes:bulletDictionary range:NSMakeRange(0, 1)];
+			
+			// The tab after bullet should be similar to existing attributes
+			[bulletDictionary setObject:font forKey:NSFontAttributeName];
+			[bulletAttributedString setAttributes:bulletDictionary range:NSMakeRange(1, 1)];
+			
 			[currentAttributedString insertAttributedString:bulletAttributedString atIndex:range.location];
+			
 			CGSize expectedStringSize = [BULLET_STRING sizeWithFont:[dictionary objectForKey:NSFontAttributeName]
 												  constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)
 													  lineBreakMode:NSLineBreakByWordWrapping];
@@ -364,8 +384,16 @@
 		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:range];
 	}];
 	
-	NSRange fullRange = [self fullRangeFromArrayOfParagraphRanges:rangeOfParagraphsInSelectedText];
-	[self setSelectedRange:NSMakeRange(fullRange.location, fullRange.length+rangeOffset)];
+	// If paragraph is empty move cursor to front of bullet, so the user can start typing right away
+	if (rangeOfParagraphsInSelectedText.count == 1 && rangeOfFirstParagraphRange.length == 0)
+	{
+		[self setSelectedRange:NSMakeRange(rangeOfFirstParagraphRange.location+2, 0)];
+	}
+	else
+	{
+		NSRange fullRange = [self fullRangeFromArrayOfParagraphRanges:rangeOfParagraphsInSelectedText];
+		[self setSelectedRange:NSMakeRange(fullRange.location, fullRange.length+rangeOffset)];
+	}
 }
 
 #pragma mark - Private Methods -
