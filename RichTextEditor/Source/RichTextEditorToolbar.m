@@ -132,6 +132,8 @@
 	
 	NSNumber *existingStrikeThrough = [attributes objectForKey:NSStrikethroughStyleAttributeName];
 	self.btnStrikeThrough.on = (!existingStrikeThrough || existingStrikeThrough.intValue == NSUnderlineStyleNone) ? NO :YES;
+	
+	[self populateToolbar];
 }
 
 #pragma mark - IBActions -
@@ -231,6 +233,10 @@
 
 - (void)populateToolbar
 {
+	CGRect visibleRect;
+	visibleRect.origin = self.contentOffset;
+	visibleRect.size = self.bounds.size;
+	
     // Remove any existing subviews.
     for (UIView *subView in self.subviews)
 	{
@@ -250,6 +256,11 @@
 	if (features & RichTextEditorFeatureFont || features & RichTextEditorFeatureAll)
 	{
 		UIView *separatorView = [self separatorView];
+		CGSize size = [self.btnFont sizeThatFits:CGSizeZero];
+		CGRect rect = self.btnFont.frame;
+		rect.size.width = MAX(size.width + 25, 120);
+		self.btnFont.frame = rect;
+		
 		[self addView:self.btnFont afterView:lastAddedView withSpacing:YES];
 		[self addView:separatorView afterView:self.btnFont withSpacing:YES];
 		lastAddedView = separatorView;
@@ -387,6 +398,8 @@
 		[self addView:self.btnBulletList afterView:lastAddedView withSpacing:YES];
 		lastAddedView = self.btnBulletList;
 	}
+	
+	[self scrollRectToVisible:visibleRect animated:NO];
 }
 
 - (void)initializeButtons
