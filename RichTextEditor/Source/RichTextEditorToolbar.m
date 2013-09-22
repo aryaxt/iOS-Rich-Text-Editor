@@ -381,7 +381,7 @@
 		lastAddedView = separatorView;
 	}
 	
-	// Text color
+	// Bullet List
 	if (features & RichTextEditorFeatureBulletList || features & RichTextEditorFeatureAll)
 	{
 		[self addView:self.btnBulletList afterView:lastAddedView withSpacing:YES];
