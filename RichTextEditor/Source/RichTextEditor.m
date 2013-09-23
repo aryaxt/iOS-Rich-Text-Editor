@@ -424,9 +424,6 @@
 
 - (void)enumarateThroughParagraphsInRange:(NSRange)range withBlock:(void (^)(NSRange paragraphRange))block
 {
-	if (![self hasText])
-		return;
-	
 	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
 	
 	for (int i=0 ; i<rangeOfParagraphsInSelectedText.count ; i++)
