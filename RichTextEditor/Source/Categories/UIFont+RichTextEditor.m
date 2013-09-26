@@ -58,6 +58,9 @@
 		newFontRef = CTFontCreateCopyWithSymbolicTraits(fontWithoutTrait, 0.0, NULL, traits, traits);
 	}
 	
+	if (fontWithoutTrait)
+		CFRelease(fontWithoutTrait);
+	
 	if (newFontRef)
 	{
 		NSString *fontNameKey = (__bridge NSString *)(CTFontCopyName(newFontRef, kCTFontPostScriptNameKey));
