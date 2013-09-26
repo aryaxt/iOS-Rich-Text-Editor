@@ -640,15 +640,13 @@
 	
 	if (range.location > 0)
 	{
-		NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
-		
-		if ([[[attributedString.string substringFromIndex:range.location-1] substringToIndex:1] isEqual:@"•"])
+		if ([[[self.attributedText.string substringFromIndex:range.location-1] substringToIndex:1] isEqual:@"•"])
 		{
-			[attributedString deleteCharactersInRange:NSMakeRange(range.location-1, 1)];
-			self.attributedText = attributedString;
+			NSMutableAttributedString *mutableAttributedString = [self.attributedText mutableCopy];
+			[mutableAttributedString deleteCharactersInRange:NSMakeRange(range.location-1, 1)];
+			self.attributedText = mutableAttributedString;
 			[self setSelectedRange:NSMakeRange(range.location-1, 0)];
 		}
-		
 	}
 }
 
