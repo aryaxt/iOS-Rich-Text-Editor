@@ -91,9 +91,16 @@
 	
 	[self setupMenuItems];
     
-    //If there is text already, then we do want to update the toolbar. Otherwise we don't.
-    if ([self hasText])
-        [self updateToolbarState];
+	[self updateToolbarState];
+	
+	// When text changes check to see if we need to add bullet, or delete bullet on backspace
+	[[NSNotificationCenter defaultCenter] addObserverForName:UITextViewTextDidChangeNotification
+													  object:self
+													   queue:nil
+												  usingBlock:^(NSNotification *n){
+													  [self applyBulletListIfApplicable];
+													  [self deleteBulletListWhenApplicable];
+												  }];
 }
 
 #pragma mark - Override Methods -
@@ -165,9 +172,6 @@
 
 - (void)selectParagraph:(id)sender
 {
-    if (![self hasText])
-		return;
-	
 	NSRange range = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
 	[self setSelectedRange:range];
 
@@ -617,6 +621,35 @@
     }
 	
     return screenBounds ;
+}
+
+- (void)applyBulletListIfApplicable
+{
+	NSRange rangeOfCurrentParagraph = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
+	if (rangeOfCurrentParagraph.length != 0)
+		return;
+	
+	NSRange rangeOfPreviousParagraph = [self.attributedText firstParagraphRangeFromTextRange:NSMakeRange(rangeOfCurrentParagraph.location-1, 0)];
+	if ([[self.attributedText.string substringFromIndex:rangeOfPreviousParagraph.location] startsWithString:BULLET_STRING])
+		[self richTextEditorToolbarDidSelectBulletList];
+}
+
+- (void)deleteBulletListWhenApplicable
+{
+	NSRange range = self.selectedRange;
+	
+	if (range.location > 0)
+	{
+		NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
+		
+		if ([[[attributedString.string substringFromIndex:range.location-1] substringToIndex:1] isEqual:@"•"])
+		{
+			[attributedString deleteCharactersInRange:NSMakeRange(range.location-1, 1)];
+			self.attributedText = attributedString;
+			[self setSelectedRange:NSMakeRange(range.location-1, 0)];
+		}
+		
+	}
 }
 
 #pragma mark - RichTextEditorToolbarDataSource Methods -
