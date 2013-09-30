@@ -27,6 +27,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
 typedef enum{
 	RichTextEditorToolbarPresentationStyleModal,
 	RichTextEditorToolbarPresentationStylePopover
@@ -54,7 +56,8 @@ typedef enum{
 	RichTextEditorFeatureParagraphIndentation			= 1 << 12,
 	RichTextEditorFeatureParagraphFirstLineIndentation	= 1 << 13,
 	RichTextEditorFeatureBulletList						= 1 << 14,
-	RichTextEditorFeatureAll							= 1 << 15
+	RichTextEditorTextAttachment						= 1 << 15,
+	RichTextEditorFeatureAll							= 1 << 16
 }RichTextEditorFeature;
 
 @protocol RichTextEditorToolbarDelegate <UIScrollViewDelegate>
@@ -63,6 +66,7 @@ typedef enum{
 - (void)richTextEditorToolbarDidSelectUnderline;
 - (void)richTextEditorToolbarDidSelectStrikeThrough;
 - (void)richTextEditorToolbarDidSelectBulletList;
+- (void)richTextEditorToolbarDidSelectTextAttachment:(UIImage *)textAttachment;
 - (void)richTextEditorToolbarDidSelectParagraphFirstLineHeadIndent;
 - (void)richTextEditorToolbarDidSelectParagraphIndentation:(ParagraphIndentation)paragraphIndentation;
 - (void)richTextEditorToolbarDidSelectFontSize:(NSNumber *)fontSize;

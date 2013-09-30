@@ -31,7 +31,6 @@
 #import "NSAttributedString+RichTextEditor.h"
 #import "UIView+RichTextEditor.h"
 
-#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define RICHTEXTEDITOR_TOOLBAR_HEIGHT 40
 #define BULLET_STRING @"\t•\t"
 
@@ -430,6 +429,17 @@
 			[self setSelectedRange:NSMakeRange(fullRange.location, fullRange.length+rangeOffset)];
 		}
 	}
+}
+
+- (void)richTextEditorToolbarDidSelectTextAttachment:(UIImage *)textAttachment
+{
+	NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+	[attachment setImage:textAttachment];
+	NSAttributedString *attributedStringAttachment = [NSAttributedString attributedStringWithAttachment:attachment];
+	
+	NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
+	[attributedString insertAttributedString:attributedStringAttachment atIndex:self.selectedRange.location];
+	self.attributedText = attributedString;
 }
 
 #pragma mark - Private Methods -

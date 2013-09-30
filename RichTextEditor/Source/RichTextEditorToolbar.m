@@ -39,7 +39,7 @@
 #define ITEM_TOP_AND_BOTTOM_BORDER 5
 #define ITEM_WITH 40
 
-@interface RichTextEditorToolbar() <RichTextEditorFontSizePickerViewControllerDelegate, RichTextEditorFontSizePickerViewControllerDataSource, RichTextEditorFontPickerViewControllerDelegate, RichTextEditorFontPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDelegate>
+@interface RichTextEditorToolbar() <RichTextEditorFontSizePickerViewControllerDelegate, RichTextEditorFontSizePickerViewControllerDataSource, RichTextEditorFontPickerViewControllerDelegate, RichTextEditorFontPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDelegate, UIImagePickerControllerDelegate>
 @property (nonatomic, strong) id <RichTextEditorPopover> popover;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnBold;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnItalic;
@@ -57,6 +57,7 @@
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphOutdent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphFirstLineHeadIndent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnBulletList;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnTextAttachment;
 @end
 
 @implementation RichTextEditorToolbar
@@ -229,6 +230,13 @@
 	[self.delegate richTextEditorToolbarDidSelectTextAlignment:textAlignment];
 }
 
+- (void)textAttachmentSelected:(UIButton *)sender
+{
+	UIImagePickerController *vc = [[UIImagePickerController alloc] init];
+	vc.delegate = self;
+	[self presentViewController:vc fromView:self.btnTextAttachment];
+}
+
 #pragma mark - Private Methods -
 
 - (void)populateToolbar
@@ -399,6 +407,20 @@
 		lastAddedView = self.btnBulletList;
 	}
 	
+	// Separator view after color section
+	if (features & RichTextEditorFeatureBulletList || features & RichTextEditorFeatureAll)
+	{
+		UIView *separatorView = [self separatorView];
+		[self addView:separatorView afterView:lastAddedView withSpacing:YES];
+		lastAddedView = separatorView;
+	}
+	
+	if ((features & RichTextEditorFeatureBulletList || features & RichTextEditorFeatureAll) && SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0"))
+	{
+		[self addView:self.btnTextAttachment afterView:lastAddedView withSpacing:YES];
+		lastAddedView = self.btnBulletList;
+	}
+	
 	[self scrollRectToVisible:visibleRect animated:NO];
 }
 
@@ -463,6 +485,9 @@
 	
 	self.btnParagraphFirstLineHeadIndent = [self buttonWithImageNamed:@"firstLineIndent.png"
 														  andSelector:@selector(paragraphHeadIndentOutdentSelected:)];
+	
+	self.btnTextAttachment = [self buttonWithImageNamed:@"image.png"
+														  andSelector:@selector(textAttachmentSelected:)];
 }
 
 - (RichTextEditorToggleButton *)buttonWithImageNamed:(NSString *)image width:(NSInteger)width andSelector:(SEL)selector
@@ -642,6 +667,20 @@
 - (BOOL)richTextEditorFontPickerViewControllerShouldDisplayToolbar
 {
 	return ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
+}
+
+#pragma mark - UIImagePickerViewControllerDelegate -
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+	UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+	[self.delegate richTextEditorToolbarDidSelectTextAttachment:image];
+	[self.popover dismissPopoverAnimated:YES];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+	[self.popover dismissPopoverAnimated:YES];
 }
 
 @end
