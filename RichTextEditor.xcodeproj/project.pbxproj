@@ -60,7 +60,6 @@
 		15B6E20F17A4C2820015867C /* RichTextEditorToggleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 15B6E20E17A4C2820015867C /* RichTextEditorToggleButton.m */; };
 		15BFE3E917E4CFE700D89153 /* firstLineIndent.png in Resources */ = {isa = PBXBuildFile; fileRef = 15BFE3E817E4CFE700D89153 /* firstLineIndent.png */; };
 		15BFE3EB17E4D01100D89153 /* firstLineIndent@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15BFE3EA17E4D01100D89153 /* firstLineIndent@2x.png */; };
-		15BFE3F117EFF8B600D89153 /* NSString+RichTextEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 15BFE3F017EFF8B600D89153 /* NSString+RichTextEditor.m */; };
 		15C4131317A4444B0073D047 /* backcolor.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C412F217A4444B0073D047 /* backcolor.png */; };
 		15C4131417A4444B0073D047 /* bold.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C412F317A4444B0073D047 /* bold.png */; };
 		15C4131517A4444B0073D047 /* bullist.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C412F417A4444B0073D047 /* bullist.png */; };
@@ -189,8 +188,6 @@
 		15B6E20E17A4C2820015867C /* RichTextEditorToggleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RichTextEditorToggleButton.m; sourceTree = "<group>"; };
 		15BFE3E817E4CFE700D89153 /* firstLineIndent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = firstLineIndent.png; sourceTree = "<group>"; };
 		15BFE3EA17E4D01100D89153 /* firstLineIndent@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "firstLineIndent@2x.png"; sourceTree = "<group>"; };
-		15BFE3EF17EFF8B600D89153 /* NSString+RichTextEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+RichTextEditor.h"; sourceTree = "<group>"; };
-		15BFE3F017EFF8B600D89153 /* NSString+RichTextEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+RichTextEditor.m"; sourceTree = "<group>"; };
 		15C412F217A4444B0073D047 /* backcolor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backcolor.png; sourceTree = "<group>"; };
 		15C412F317A4444B0073D047 /* bold.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bold.png; sourceTree = "<group>"; };
 		15C412F417A4444B0073D047 /* bullist.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bullist.png; sourceTree = "<group>"; };
@@ -333,8 +330,6 @@
 			children = (
 				153F955B179F9953005B2487 /* NSAttributedString+RichTextEditor.h */,
 				153F955C179F9953005B2487 /* NSAttributedString+RichTextEditor.m */,
-				15BFE3EF17EFF8B600D89153 /* NSString+RichTextEditor.h */,
-				15BFE3F017EFF8B600D89153 /* NSString+RichTextEditor.m */,
 				153F955D179F9953005B2487 /* UIFont+RichTextEditor.h */,
 				153F955E179F9953005B2487 /* UIFont+RichTextEditor.m */,
 				153F955F179F9953005B2487 /* UIView+RichTextEditor.h */,
@@ -652,7 +647,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15BFE3F117EFF8B600D89153 /* NSString+RichTextEditor.m in Sources */,
 				153F959D179F9953005B2487 /* WEPopoverContainerView.m in Sources */,
 				153F95A4179F9953005B2487 /* RichTextEditorToolbar.m in Sources */,
 				153F959C179F9953005B2487 /* UIBarButtonItem+WEPopover.m in Sources */,
