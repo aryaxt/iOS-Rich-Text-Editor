@@ -29,11 +29,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import "UIFont+RichTextEditor.h"
 #import "NSAttributedString+RichTextEditor.h"
-#import "NSString+RichTextEditor.h"
 #import "UIView+RichTextEditor.h"
 
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define RICHTEXTEDITOR_TOOLBAR_HEIGHT 40
-#define BULLET_STRING @"•\t"
+#define BULLET_STRING @"\t•\t"
 
 @interface RichTextEditor() <RichTextEditorToolbarDelegate, RichTextEditorToolbarDataSource>
 @property (nonatomic, strong) RichTextEditorToolbar *toolBar;
@@ -90,7 +90,6 @@
 	self.defaultIndentationSize = 15;
 	
 	[self setupMenuItems];
-    
 	[self updateToolbarState];
 	
 	// When text changes check to see if we need to add bullet, or delete bullet on backspace
@@ -181,9 +180,42 @@
 
 #pragma mark - Public Methods -
 
+- (void)setHtmlString:(NSString *)htmlString
+{
+	if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0"))
+	{
+		NSLog(@"Method setHtmlString is only supported on iOS 7 and above");
+		return;
+	}
+
+	NSError *error ;
+	NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
+	NSAttributedString *str = [[NSAttributedString alloc] initWithData:data
+							   
+															   options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
+																		 NSCharacterEncodingDocumentAttribute: [NSNumber numberWithInt:NSUTF8StringEncoding]}
+													documentAttributes:nil error:&error];
+	
+	if (error)
+		NSLog(@"%@", error);
+	else
+		self.attributedText = str;
+}
+
 - (NSString *)htmlString
 {
-	return [self.attributedText htmlString];
+	if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0"))
+	{
+		NSLog(@"Method setHtmlString is only supported on iOS 7 and above");
+		return nil;
+	}
+	
+	NSData *data = [self.attributedText dataFromRange:NSMakeRange(0, self.text.length) documentAttributes:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
+																							 NSCharacterEncodingDocumentAttribute: [NSNumber numberWithInt:NSUTF8StringEncoding]}
+								 error:nil];
+	
+	return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	//return [self.attributedText htmlString];
 }
 
 - (void)setBorderColor:(UIColor *)borderColor
@@ -328,50 +360,42 @@
 	NSRange initialSelectedRange = self.selectedRange;
 	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
 	NSRange rangeOfFirstParagraphRange = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
-	BOOL firstParagraphHasBullet = ([[[self.attributedText string] substringFromIndex:rangeOfFirstParagraphRange.location] startsWithString:BULLET_STRING]) ? YES: NO;
+	BOOL firstParagraphHasBullet = ([[[self.attributedText string] substringFromIndex:rangeOfFirstParagraphRange.location] hasPrefix:BULLET_STRING]) ? YES: NO;
 	
 	__block NSInteger rangeOffset = 0;
 	
 	[self enumarateThroughParagraphsInRange:self.selectedRange withBlock:^(NSRange paragraphRange){
 		NSRange range = NSMakeRange(paragraphRange.location + rangeOffset, paragraphRange.length);
 		NSMutableAttributedString *currentAttributedString = [self.attributedText mutableCopy];
-		NSDictionary *dictionary = [self dictionaryAtIndex:range.location];
+		NSDictionary *dictionary = [self dictionaryAtIndex:MAX((int)range.location-1, 0)];
 		NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
 		
 		if (!paragraphStyle)
 			paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 		
-		BOOL currentParagraphHasBullet = ([[[currentAttributedString string] substringFromIndex:range.location] startsWithString:BULLET_STRING]) ? YES : NO;
+		BOOL currentParagraphHasBullet = ([[[currentAttributedString string] substringFromIndex:range.location] hasPrefix:BULLET_STRING]) ? YES : NO;
 		
 		if (firstParagraphHasBullet != currentParagraphHasBullet)
 			return;
 		
 		if (currentParagraphHasBullet)
 		{
-			range = NSMakeRange(range.location, range.length-2);
+			range = NSMakeRange(range.location, range.length - BULLET_STRING.length);
 			
-			[currentAttributedString deleteCharactersInRange:NSMakeRange(range.location, 2)];
+			[currentAttributedString deleteCharactersInRange:NSMakeRange(range.location, BULLET_STRING.length)];
 			
 			paragraphStyle.firstLineHeadIndent = 0;
 			paragraphStyle.headIndent = 0;
 			
-			rangeOffset = rangeOffset - 2;
+			rangeOffset = rangeOffset - BULLET_STRING.length;
 		}
 		else
 		{
-			range = NSMakeRange(range.location, range.length+2);
+			range = NSMakeRange(range.location, range.length + BULLET_STRING.length);
 			
 			// The bullet should be bold
-			NSMutableDictionary *bulletDictionary = [dictionary mutableCopy];
-			UIFont *font = [bulletDictionary objectForKey:NSFontAttributeName];
-			UIFont *boldFont = [font fontWithBoldTrait:YES andItalicTrait:NO];
-			[bulletDictionary setObject:boldFont forKey:NSFontAttributeName];
 			NSMutableAttributedString *bulletAttributedString = [[NSMutableAttributedString alloc] initWithString:BULLET_STRING attributes:nil];
-			[bulletAttributedString setAttributes:bulletDictionary range:NSMakeRange(0, 1)];
-			
-			// The tab after bullet should be similar to existing attributes
-			[bulletDictionary setObject:font forKey:NSFontAttributeName];
-			[bulletAttributedString setAttributes:bulletDictionary range:NSMakeRange(1, 1)];
+			[bulletAttributedString setAttributes:dictionary range:NSMakeRange(0, BULLET_STRING.length)];
 			
 			[currentAttributedString insertAttributedString:bulletAttributedString atIndex:range.location];
 			
@@ -382,7 +406,7 @@
 			paragraphStyle.firstLineHeadIndent = 0;
 			paragraphStyle.headIndent = expectedStringSize.width;
 			
-			rangeOffset = rangeOffset + 2;
+			rangeOffset = rangeOffset + BULLET_STRING.length;
 		}
 		
 		self.attributedText = currentAttributedString;
@@ -392,7 +416,7 @@
 	// If paragraph is empty move cursor to front of bullet, so the user can start typing right away
 	if (rangeOfParagraphsInSelectedText.count == 1 && rangeOfFirstParagraphRange.length == 0)
 	{
-		[self setSelectedRange:NSMakeRange(rangeOfFirstParagraphRange.location+2, 0)];
+		[self setSelectedRange:NSMakeRange(rangeOfFirstParagraphRange.location + BULLET_STRING.length, 0)];
 	}
 	else
 	{
@@ -443,6 +467,10 @@
 
 - (void)updateToolbarState
 {
+	// There is a bug in iOS6 that causes a crash when accessing typingAttribute on an empty text
+	if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") && ![self hasText])
+		return;
+	
 	// If no text exists or typing attributes is in progress update toolbar using typing attributes instead of selected text
 	if (self.typingAttributesInProgress || ![self hasText])
 	{
@@ -450,12 +478,12 @@
 	}
 	else
 	{
-		int location = [self offsetFromPosition:self.beginningOfDocument toPosition:self.selectedTextRange.start];
+		NSInteger location = (self.selectedRange.length == 0)
+			? MAX((int)self.selectedRange.location-1, 0)
+			: (int)self.selectedRange.location;
 		
-		if (location == self.text.length)
-			location --;
-		
-		[self.toolBar updateStateWithAttributes:[self.attributedText attributesAtIndex:location effectiveRange:nil]];
+		NSDictionary *attributes = [self.attributedText attributesAtIndex:location effectiveRange:nil];
+		[self.toolBar updateStateWithAttributes:attributes];
 	}
 }
 
@@ -630,7 +658,7 @@
 		return;
 	
 	NSRange rangeOfPreviousParagraph = [self.attributedText firstParagraphRangeFromTextRange:NSMakeRange(rangeOfCurrentParagraph.location-1, 0)];
-	if ([[self.attributedText.string substringFromIndex:rangeOfPreviousParagraph.location] startsWithString:BULLET_STRING])
+	if ([[self.attributedText.string substringFromIndex:rangeOfPreviousParagraph.location] hasPrefix:BULLET_STRING])
 		[self richTextEditorToolbarDidSelectBulletList];
 }
 
@@ -640,12 +668,12 @@
 	
 	if (range.location > 0)
 	{
-		if ([[[self.attributedText.string substringFromIndex:range.location-1] substringToIndex:1] isEqual:@"•"])
+		if ((int)range.location-2 >= 0 && [[self.attributedText.string substringFromIndex:range.location-2] hasPrefix:@"\t•"])
 		{
 			NSMutableAttributedString *mutableAttributedString = [self.attributedText mutableCopy];
-			[mutableAttributedString deleteCharactersInRange:NSMakeRange(range.location-1, 1)];
+			[mutableAttributedString deleteCharactersInRange:NSMakeRange(range.location-2, 2)];
 			self.attributedText = mutableAttributedString;
-			[self setSelectedRange:NSMakeRange(range.location-1, 0)];
+			[self setSelectedRange:NSMakeRange(range.location-2, 0)];
 		}
 	}
 }
