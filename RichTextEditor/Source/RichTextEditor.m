@@ -437,8 +437,11 @@
 	[attachment setImage:textAttachment];
 	NSAttributedString *attributedStringAttachment = [NSAttributedString attributedStringWithAttachment:attachment];
 	
+	NSDictionary *previousAttributes = [self dictionaryAtIndex:self.selectedRange.location];
+	
 	NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
 	[attributedString insertAttributedString:attributedStringAttachment atIndex:self.selectedRange.location];
+	[attributedString addAttributes:previousAttributes range:NSMakeRange(self.selectedRange.location, 1)];
 	self.attributedText = attributedString;
 }
 
