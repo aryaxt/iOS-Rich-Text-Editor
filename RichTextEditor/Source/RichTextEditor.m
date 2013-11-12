@@ -167,6 +167,12 @@
 	[self updateToolbarState];
 }
 
+- (void)setFont:(UIFont *)font
+{
+	[super setFont:font];
+	[self updateToolbarState];
+}
+
 #pragma mark - MenuController Methods -
 
 - (void)setupMenuItems
