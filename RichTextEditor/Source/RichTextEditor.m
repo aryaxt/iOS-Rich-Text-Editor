@@ -155,6 +155,18 @@
 	return [super canPerformAction:action withSender:sender];
 }
 
+- (void)setAttributedText:(NSAttributedString *)attributedText
+{
+	[super setAttributedText:attributedText];
+	[self updateToolbarState];
+}
+
+- (void)setText:(NSString *)text
+{
+	[super setText:text];
+	[self updateToolbarState];
+}
+
 #pragma mark - MenuController Methods -
 
 - (void)setupMenuItems
