@@ -271,12 +271,18 @@
 
 - (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color
 {
-	[self applyAttrubutesToSelectedRange:color forKey:NSBackgroundColorAttributeName];
+	if (color)
+		[self applyAttrubutesToSelectedRange:color forKey:NSBackgroundColorAttributeName];
+	else
+		[self removeAttributeForKeyFromSelectedRange:NSBackgroundColorAttributeName];
 }
 
 - (void)richTextEditorToolbarDidSelectTextForegroundColor:(UIColor *)color
 {
-	[self applyAttrubutesToSelectedRange:color forKey:NSForegroundColorAttributeName];
+	if (color)
+		[self applyAttrubutesToSelectedRange:color forKey:NSForegroundColorAttributeName];
+	else
+		[self removeAttributeForKeyFromSelectedRange:NSForegroundColorAttributeName];
 }
 
 - (void)richTextEditorToolbarDidSelectUnderline
@@ -587,6 +593,22 @@
 	}
 	
 	[self updateToolbarState];
+}
+
+- (void)removeAttributeForKey:(NSString *)key atRange:(NSRange)range
+{
+	NSRange initialRange = self.selectedRange;
+	
+	NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
+	[attributedString removeAttribute:key range:range];
+	self.attributedText = attributedString;
+	
+	[self setSelectedRange:initialRange];
+}
+
+- (void)removeAttributeForKeyFromSelectedRange:(NSString *)key
+{
+	[self removeAttributeForKey:key atRange:self.selectedRange];
 }
 
 - (void)applyAttrubutesToSelectedRange:(id)attribute forKey:(NSString *)key
