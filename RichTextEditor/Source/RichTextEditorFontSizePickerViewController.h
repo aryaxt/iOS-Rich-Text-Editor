@@ -26,18 +26,9 @@
 // THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
+#import "RichTextEditorFontSizePicker.h"
 
-@protocol RichTextEditorFontSizePickerViewControllerDelegate <NSObject>
-- (void)richTextEditorFontSizePickerViewControllerDidSelectFontSize:(NSNumber *)fontSize;
-- (void)richTextEditorFontSizePickerViewControllerDidSelectClose;
-@end
-
-@protocol RichTextEditorFontSizePickerViewControllerDataSource <NSObject>
-- (BOOL)richTextEditorFontSizePickerViewControllerShouldDisplayToolbar;
-- (NSArray *)richTextEditorFontSizePickerViewControllerCustomFontSizesForSelection;
-@end
-
-@interface RichTextEditorFontSizePickerViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface RichTextEditorFontSizePickerViewController : UIViewController <RichTextEditorFontSizePicker, UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, weak) id<RichTextEditorFontSizePickerViewControllerDelegate> delegate;
 @property (nonatomic, weak) id<RichTextEditorFontSizePickerViewControllerDataSource> dataSource;

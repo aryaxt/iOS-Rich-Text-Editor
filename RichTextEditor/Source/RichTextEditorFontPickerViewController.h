@@ -26,18 +26,9 @@
 // THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
+#import "RichTextEditorFontPicker.h"
 
-@protocol RichTextEditorFontPickerViewControllerDelegate <NSObject>
-- (void)richTextEditorFontPickerViewControllerDidSelectFontWithName:(NSString *)fontName;
-- (void)richTextEditorFontPickerViewControllerDidSelectClose;
-@end
-
-@protocol RichTextEditorFontPickerViewControllerDataSource <NSObject>
-- (NSArray *)richTextEditorFontPickerViewControllerCustomFontFamilyNamesForSelection;
-- (BOOL)richTextEditorFontPickerViewControllerShouldDisplayToolbar;
-@end
-
-@interface RichTextEditorFontPickerViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface RichTextEditorFontPickerViewController : UIViewController <RichTextEditorFontPicker, UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, weak) id <RichTextEditorFontPickerViewControllerDelegate> delegate;
 @property (nonatomic, weak) id <RichTextEditorFontPickerViewControllerDataSource> dataSource;
