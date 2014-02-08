@@ -758,10 +758,20 @@
 	{
 		if ((int)range.location-2 >= 0 && [[self.attributedText.string substringFromIndex:range.location-2] hasPrefix:@"\t•"])
 		{
+			// Get rid of bullet string
 			NSMutableAttributedString *mutableAttributedString = [self.attributedText mutableCopy];
 			[mutableAttributedString deleteCharactersInRange:NSMakeRange(range.location-2, 2)];
 			self.attributedText = mutableAttributedString;
-			[self setSelectedRange:NSMakeRange(range.location-2, 0)];
+			NSRange newRange = NSMakeRange(range.location-2, 0);
+			[self setSelectedRange:newRange];
+			
+			// Get rid of bullet indentation
+			NSRange rangeOfParagraph = [self.attributedText firstParagraphRangeFromTextRange:newRange];
+			NSDictionary *dictionary = [self dictionaryAtIndex:newRange.location];
+			NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+			paragraphStyle.firstLineHeadIndent = 0;
+			paragraphStyle.headIndent = 0;
+			[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:rangeOfParagraph];
 		}
 	}
 }
