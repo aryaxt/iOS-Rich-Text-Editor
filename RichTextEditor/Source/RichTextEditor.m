@@ -247,6 +247,12 @@
 
 #pragma mark - RichTextEditorToolbarDelegate Methods -
 
+- (void)richTextEditorToolbarDidDismissViewController
+{
+	if (![self isFirstResponder])
+		[self becomeFirstResponder];
+}
+
 - (void)richTextEditorToolbarDidSelectBold
 {
 	UIFont *font = [self fontAtIndex:self.selectedRange.location];
@@ -515,9 +521,14 @@
 	}
 	else
 	{
-		NSInteger location = (self.selectedRange.length == 0)
-			? MAX((int)self.selectedRange.location-1, 0)
-			: (int)self.selectedRange.location;
+		NSInteger location = 0;
+		
+		if (self.selectedRange.location != NSNotFound)
+		{
+			location = (self.selectedRange.length == 0)
+				? MAX((int)self.selectedRange.location-1, 0)
+				: (int)self.selectedRange.location;
+		}
 		
 		NSDictionary *attributes = [self.attributedText attributesAtIndex:location effectiveRange:nil];
 		[self.toolBar updateStateWithAttributes:attributes];

@@ -61,6 +61,7 @@ typedef enum{
 }RichTextEditorFeature;
 
 @protocol RichTextEditorToolbarDelegate <UIScrollViewDelegate>
+- (void)richTextEditorToolbarDidDismissViewController;
 - (void)richTextEditorToolbarDidSelectBold;
 - (void)richTextEditorToolbarDidSelectItalic;
 - (void)richTextEditorToolbarDidSelectUnderline;
