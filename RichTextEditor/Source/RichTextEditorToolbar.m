@@ -595,6 +595,8 @@
 	{
 		[self.popover dismissPopoverAnimated:YES];
 	}
+	
+	[self.delegate richTextEditorToolbarDidDismissViewController];
 }
 
 #pragma mark - RichTextEditorColorPickerViewControllerDelegate & RichTextEditorColorPickerViewControllerDataSource Methods -
@@ -675,12 +677,12 @@
 {
 	UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
 	[self.delegate richTextEditorToolbarDidSelectTextAttachment:image];
-	[self.popover dismissPopoverAnimated:YES];
+	[self dismissViewController];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-	[self.popover dismissPopoverAnimated:YES];
+	[self dismissViewController];
 }
 
 @end
