@@ -26,6 +26,9 @@
 // THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
+#import "RichTextEditorColorPicker.h"
+#import "RichTextEditorFontPicker.h"
+#import "RichTextEditorFontSizePicker.h"
 
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
@@ -85,6 +88,9 @@ typedef enum{
 - (UIModalTransitionStyle)modalTransitionStyleForRichTextEditorToolbar;
 - (UIViewController *)firsAvailableViewControllerForRichTextEditorToolbar;
 - (RichTextEditorFeature)featuresEnabledForRichTextEditorToolbar;
+- (UIViewController <RichTextEditorColorPicker> *)colorPickerForRichTextEditorToolbarWithAction:(RichTextEditorColorPickerAction)action;
+- (UIViewController <RichTextEditorFontPicker> *)fontPickerForRichTextEditorToolbar;
+- (UIViewController <RichTextEditorFontSizePicker> *)fontSizePickerForRichTextEditorToolbar;
 @end
 
 @interface RichTextEditorToolbar : UIScrollView

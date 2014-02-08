@@ -181,7 +181,11 @@
 
 - (void)fontSizeSelected:(UIButton *)sender
 {
-	RichTextEditorFontSizePickerViewController *fontSizePicker = [[RichTextEditorFontSizePickerViewController alloc] init];
+	UIViewController <RichTextEditorFontSizePicker> *fontSizePicker = [self.dataSource fontSizePickerForRichTextEditorToolbar];
+	
+	if (!fontSizePicker)
+		fontSizePicker = [[RichTextEditorFontSizePickerViewController alloc] init];
+	
 	fontSizePicker.delegate = self;
 	fontSizePicker.dataSource = self;
 	[self presentViewController:fontSizePicker fromView:sender];
@@ -189,8 +193,11 @@
 
 - (void)fontSelected:(UIButton *)sender
 {
-	RichTextEditorFontPickerViewController *fontPicker= [[RichTextEditorFontPickerViewController alloc] init];
-	fontPicker.fontNames = [self.dataSource fontFamilySelectionForRichTextEditorToolbar];
+	UIViewController <RichTextEditorFontPicker> *fontPicker = [self.dataSource fontPickerForRichTextEditorToolbar];
+	
+	if (!fontPicker)
+		fontPicker= [[RichTextEditorFontPickerViewController alloc] init];
+	
 	fontPicker.delegate = self;
 	fontPicker.dataSource = self;
 	[self presentViewController:fontPicker fromView:sender];
@@ -198,7 +205,11 @@
 
 - (void)textBackgroundColorSelected:(UIButton *)sender
 {
-	RichTextEditorColorPickerViewController *colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
+	UIViewController <RichTextEditorColorPicker> *colorPicker = [self.dataSource colorPickerForRichTextEditorToolbarWithAction:RichTextEditorColorPickerActionTextBackgroundColor];
+	
+	if (!colorPicker)
+		colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
+	
 	colorPicker.action = RichTextEditorColorPickerActionTextBackgroundColor;
 	colorPicker.delegate = self;
 	colorPicker.dataSource = self;
@@ -207,7 +218,11 @@
 
 - (void)textForegroundColorSelected:(UIButton *)sender
 {
-	RichTextEditorColorPickerViewController *colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
+	UIViewController <RichTextEditorColorPicker> *colorPicker = [self.dataSource colorPickerForRichTextEditorToolbarWithAction:RichTextEditorColorPickerActionTextForegroudColor];
+	
+	if (!colorPicker)
+		colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
+	
 	colorPicker.action = RichTextEditorColorPickerActionTextForegroudColor;
 	colorPicker.delegate = self;
 	colorPicker.dataSource = self;

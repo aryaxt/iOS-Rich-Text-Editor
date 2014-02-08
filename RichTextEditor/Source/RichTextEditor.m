@@ -475,6 +475,30 @@
 	self.attributedText = attributedString;
 }
 
+- (UIViewController <RichTextEditorColorPicker> *)colorPickerForRichTextEditorToolbarWithAction:(RichTextEditorColorPickerAction)action
+{
+	if ([self.dataSource respondsToSelector:@selector(colorPickerForRichTextEditor:forAction:)])
+		return [self.dataSource colorPickerForRichTextEditor:self withAction:action];
+	
+	return nil;
+}
+
+- (UIViewController <RichTextEditorFontPicker> *)fontPickerForRichTextEditorToolbar
+{
+	if ([self.dataSource respondsToSelector:@selector(fontPickerForRichTextEditor:)])
+		return [self.dataSource fontPickerForRichTextEditor:self];
+	
+	return nil;
+}
+
+- (UIViewController <RichTextEditorFontSizePicker> *)fontSizePickerForRichTextEditorToolbar
+{
+	if ([self.dataSource respondsToSelector:@selector(fontSizePickerForRichTextEditor:)])
+		return [self.dataSource fontSizePickerForRichTextEditor:self];
+	
+	return nil;
+}
+
 #pragma mark - Private Methods -
 
 - (CGRect)frameOfTextAtRange:(NSRange)range

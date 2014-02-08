@@ -216,6 +216,9 @@
 		15C4133517A48C6D0073D047 /* buttoncenter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buttoncenter.png; sourceTree = "<group>"; };
 		15C4133617A48C6D0073D047 /* buttonleft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buttonleft.png; sourceTree = "<group>"; };
 		15C4133717A48C6D0073D047 /* buttonright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buttonright.png; sourceTree = "<group>"; };
+		15C9AC7818A69C69006E6F27 /* RichTextEditorColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichTextEditorColorPicker.h; sourceTree = "<group>"; };
+		15C9AC7918A69E12006E6F27 /* RichTextEditorFontPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichTextEditorFontPicker.h; sourceTree = "<group>"; };
+		15C9AC7A18A69E6E006E6F27 /* RichTextEditorFontSizePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichTextEditorFontSizePicker.h; sourceTree = "<group>"; };
 		1AFAED6E17C7F9CA00E450B0 /* strikethrough@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "strikethrough@2x.png"; sourceTree = "<group>"; };
 		1AFAED6F17C7F9CA00E450B0 /* italic@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "italic@2x.png"; sourceTree = "<group>"; };
 		1AFAED7017C7F9CA00E450B0 /* underline@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "underline@2x.png"; sourceTree = "<group>"; };
@@ -268,10 +271,13 @@
 				153F9585179F9953005B2487 /* RichTextEditorToolbar.m */,
 				15B6E20D17A4C2820015867C /* RichTextEditorToggleButton.h */,
 				15B6E20E17A4C2820015867C /* RichTextEditorToggleButton.m */,
+				15C9AC7818A69C69006E6F27 /* RichTextEditorColorPicker.h */,
 				153F957D179F9953005B2487 /* RichTextEditorColorPickerViewController.h */,
 				153F957E179F9953005B2487 /* RichTextEditorColorPickerViewController.m */,
+				15C9AC7918A69E12006E6F27 /* RichTextEditorFontPicker.h */,
 				153F957F179F9953005B2487 /* RichTextEditorFontPickerViewController.h */,
 				153F9580179F9953005B2487 /* RichTextEditorFontPickerViewController.m */,
+				15C9AC7A18A69E6E006E6F27 /* RichTextEditorFontSizePicker.h */,
 				153F9581179F9953005B2487 /* RichTextEditorFontSizePickerViewController.h */,
 				153F9582179F9953005B2487 /* RichTextEditorFontSizePickerViewController.m */,
 				153F9583179F9953005B2487 /* RichTextEditorPopover.h */,
