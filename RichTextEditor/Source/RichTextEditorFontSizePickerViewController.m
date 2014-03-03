@@ -66,7 +66,14 @@
 	
 	[self.view addSubview:self.tableview];
 	
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
+    
+    self.preferredContentSize = CGSizeMake(100, 400);
+#else
+    
 	self.contentSizeForViewInPopover = CGSizeMake(100, 400);
+#endif
+
 }
 
 #pragma mark - IBActions -

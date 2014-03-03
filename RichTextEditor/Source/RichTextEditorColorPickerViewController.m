@@ -93,7 +93,14 @@
 		self.colorsImageView.frame = CGRectMake(2, 46, self.view.frame.size.width-4, self.view.frame.size.height - 46 - 2);
 	}
 	
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
+    
+    self.preferredContentSize = CGSizeMake(300, 240);
+#else
+    
 	self.contentSizeForViewInPopover = CGSizeMake(300, 240);
+#endif
+
 }
 
 #pragma mark - Private Methods -
