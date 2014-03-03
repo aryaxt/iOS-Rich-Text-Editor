@@ -67,7 +67,16 @@
 	
 	if ([self.dataSource richTextEditorColorPickerViewControllerShouldDisplayToolbar])
 	{
-		UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+        CGFloat reservedSizeForStatusBar = (
+                                            UIDevice.currentDevice.systemVersion.floatValue >= 7.0
+                                            && !(   UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad
+                                                 && self.modalPresentationStyle==UIModalPresentationFormSheet
+                                                 )
+                                            ) ? 20.:0.; //Add the size of the status bar for iOS 7, not on iPad presenting modal sheet
+
+        CGFloat toolbarHeight = 44 +reservedSizeForStatusBar;
+
+		UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, toolbarHeight)];
 		toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		[self.view addSubview:toolbar];
 		
@@ -88,7 +97,7 @@
 		[toolbar setItems:@[closeItem, flexibleSpaceItem, selectedColorItem, doneItem]];
 		[self.view addSubview:toolbar];
 		
-		self.colorsImageView.frame = CGRectMake(2, 46, self.view.frame.size.width-4, self.view.frame.size.height - 46 - 2);
+		self.colorsImageView.frame = CGRectMake(2, toolbarHeight+2, self.view.frame.size.width-4, self.view.frame.size.height - (toolbarHeight+4));
 	}
 	
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
