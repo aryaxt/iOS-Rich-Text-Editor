@@ -50,10 +50,9 @@
 																						   target:nil
 																						   action:nil];
 		
-		UIBarButtonItem *closeItem = [[UIBarButtonItem alloc] initWithTitle:@"Close"
-																	  style:UIBarButtonItemStyleDone
-																	 target:self
-																	 action:@selector(closeSelected:)];
+		UIBarButtonItem *closeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                                   target:self
+                                                                                   action:@selector(closeSelected:)];
 		
 		[toolbar setItems:@[flexibleSpaceItem , closeItem]];
 		

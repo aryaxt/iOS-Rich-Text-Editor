@@ -75,15 +75,13 @@
 																						   target:nil
 																						   action:nil];
 		
-		UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
-																	  style:UIBarButtonItemStyleDone
-																	 target:self
-																	 action:@selector(doneSelected:)];
+		UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                  target:self
+                                                                                  action:@selector(doneSelected:)];
 		
-		UIBarButtonItem *closeItem = [[UIBarButtonItem alloc] initWithTitle:@"Close"
-																	  style:UIBarButtonItemStyleDone
-																	 target:self
-																	 action:@selector(closeSelected:)];
+		UIBarButtonItem *closeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                                   target:self
+                                                                                   action:@selector(closeSelected:)];
 		
 		UIBarButtonItem *selectedColorItem = [[UIBarButtonItem alloc] initWithCustomView:self.selectedColorView];
 		
