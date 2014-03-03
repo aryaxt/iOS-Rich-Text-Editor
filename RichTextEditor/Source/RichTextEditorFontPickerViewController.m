@@ -54,8 +54,8 @@
 		UIBarButtonItem *closeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                    target:self
                                                                                    action:@selector(closeSelected:)];
+		[toolbar setItems:@[closeItem, flexibleSpaceItem]];
 		
-		[toolbar setItems:@[flexibleSpaceItem , closeItem]];
 		
 		self.tableview.frame = CGRectMake(0, 44, self.view.frame.size.width, self.view.frame.size.height - 44);
 	}
