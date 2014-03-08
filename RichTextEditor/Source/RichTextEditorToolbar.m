@@ -213,7 +213,7 @@
 
 - (void)textAlignmentSelected:(UIButton *)sender
 {
-	NSTextAlignment textAlignment;
+	NSTextAlignment textAlignment = NSTextAlignmentLeft;
 	
 	if (sender == self.btnTextAlignmentLeft)
 		textAlignment = NSTextAlignmentLeft;

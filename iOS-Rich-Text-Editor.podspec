@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
     s.version = '0.0.1'
     s.summary = 'A RichTextEditor for iPhone & iPad.'
     s.homepage = 'https://github.com/aryaxt/iOS-Rich-Text-Editor'
-    s.dependency 'WEPopover', '~> 0.0.1'
+    s.dependency 'WEPopover', '~> 1.0.0'
     s.license = {
       :type => 'MIT',
       :file => 'License.txt'
