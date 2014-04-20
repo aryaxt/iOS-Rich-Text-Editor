@@ -99,7 +99,8 @@
 		
 		UIBarButtonItem *selectedColorItem = [[UIBarButtonItem alloc] initWithCustomView:self.selectedColorView];
 		
-		[toolbar setItems:@[closeItem, clearItem, flexibleSpaceItem, selectedColorItem, doneItem]];
+		[toolbar setItems:@[doneItem, clearItem, flexibleSpaceItem ,selectedColorItem, flexibleSpaceItem , closeItem]];
+		[self.view addSubview:toolbar];
 		
 		self.colorsImageView.frame = CGRectMake(2, toolbarHeight+2, self.view.frame.size.width-4, self.view.frame.size.height - (toolbarHeight+4));
 	}
