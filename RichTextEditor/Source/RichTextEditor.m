@@ -232,7 +232,6 @@
 								 error:nil];
 	
 	return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-	//return [self.attributedText htmlString];
 }
 
 - (void)setBorderColor:(UIColor *)borderColor
