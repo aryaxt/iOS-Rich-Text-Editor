@@ -391,6 +391,11 @@
 	[self setSelectedRange:fullRange];
 }
 
+-(void)setAttributedText:(NSAttributedString *)attributedText{
+    [super setAttributedText:attributedText];
+    [self updateToolbarState];
+}
+
 - (void)updateToolbarState
 {
 	// If no text exists or typing attributes is in progress update toolbar using typing attributes instead of selected text
