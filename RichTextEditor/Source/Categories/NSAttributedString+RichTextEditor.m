@@ -195,6 +195,71 @@
 	return htmlString;
 }
 
+-(NSString *)simpleHtmlString{
+    NSMutableString *htmlString = [NSMutableString string];
+    NSArray *paragraphRanges = [self rangeOfParagraphsFromTextRange:NSMakeRange(0, self.string.length-1)];
+
+    for (int i=0 ; i<paragraphRanges.count ; i++)
+    {
+        NSValue *value = [paragraphRanges objectAtIndex:i];
+        NSRange range = [value rangeValue];
+
+        [htmlString appendString:@"<p>"];
+
+
+        [self enumerateAttributesInRange:range
+                                 options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired
+                              usingBlock:^(NSDictionary *dictionary, NSRange range, BOOL *stop){
+
+                                  NSMutableString *fontString = [NSMutableString string];
+                                  UIFont *font = [dictionary objectForKey:NSFontAttributeName];
+                                  NSNumber *underline = [dictionary objectForKey:NSUnderlineStyleAttributeName];
+                                  BOOL hasUnderline = (!underline || underline.intValue == NSUnderlineStyleNone) ? NO :YES;
+                                  NSNumber *strikeThrough = [dictionary objectForKey:NSStrikethroughStyleAttributeName];
+                                  BOOL hasStrikeThrough = (!strikeThrough || strikeThrough.intValue == NSUnderlineStyleNone) ? NO :YES;
+                                  NSURL *url = [dictionary objectForKey:NSLinkAttributeName];
+
+                                  [fontString appendString:[[self.string substringFromIndex:range.location] substringToIndex:range.length]];
+
+                                  if(url){
+                                      [fontString insertString:[NSString stringWithFormat:@"<a href=\"%@\">",[url absoluteString]] atIndex:0];
+                                      [fontString insertString:@"</a>" atIndex:fontString.length];
+                                  }
+
+                                  if ([font isBold])
+                                  {
+                                      [fontString insertString:@"<b>" atIndex:0];
+                                      [fontString insertString:@"</b>" atIndex:fontString.length];
+                                  }
+
+                                  if ([font isItalic])
+                                  {
+                                      [fontString insertString:@"<i>" atIndex:0];
+                                      [fontString insertString:@"</i>" atIndex:fontString.length];
+                                  }
+
+                                  if (hasUnderline)
+                                  {
+                                      [fontString insertString:@"<u>" atIndex:0];
+                                      [fontString insertString:@"</u>" atIndex:fontString.length];
+                                  }
+
+                                  if (hasStrikeThrough)
+                                  {
+                                      [fontString insertString:@"<strike>" atIndex:0];
+                                      [fontString insertString:@"</strike>" atIndex:fontString.length];
+                                  }
+
+
+                                  [htmlString appendString:fontString];
+                              }];
+
+        [htmlString appendString:@"</p>"];
+    }
+    
+    return htmlString;
+}
+
 #pragma mark - Helper Methods -
 
 - (NSString *)htmlTextAlignmentString:(NSTextAlignment)textAlignment
