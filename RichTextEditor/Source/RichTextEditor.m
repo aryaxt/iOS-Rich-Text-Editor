@@ -94,6 +94,11 @@
         [self updateToolbarState];
 }
 
+-(void)setDataSource:(id<RichTextEditorDataSource>)dataSource{
+    _dataSource = dataSource;
+    [self setupMenuItems];
+}
+
 #pragma mark - Override Methods -
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
@@ -157,8 +162,36 @@
 	UIMenuItem *italicItem = [[UIMenuItem alloc] initWithTitle:@"Italic" action:@selector(richTextEditorToolbarDidSelectItalic)];
 	UIMenuItem *underlineItem = [[UIMenuItem alloc] initWithTitle:@"Underline" action:@selector(richTextEditorToolbarDidSelectUnderline)];
 	UIMenuItem *strikeThroughItem = [[UIMenuItem alloc] initWithTitle:@"Strike" action:@selector(richTextEditorToolbarDidSelectStrikeThrough)];
-	
-	[[UIMenuController sharedMenuController] setMenuItems:@[selectParagraph, boldItem, italicItem, underlineItem, strikeThroughItem]];
+
+    RichTextEditorFeature features = [self featuresEnabledForRichTextEditorToolbar];
+    if(features == RichTextEditorFeatureAll){
+        [[UIMenuController sharedMenuController] setMenuItems:@[selectParagraph, boldItem, italicItem, underlineItem, strikeThroughItem]];
+    }else{
+        NSMutableArray *array = [NSMutableArray array];
+
+        if(features & RichTextEditorFeatureParagraphIndentation){
+            [array addObject:selectParagraph];
+        }
+
+        if(features & RichTextEditorFeatureBold){
+            [array addObject:boldItem];
+        }
+
+        if(features & RichTextEditorFeatureItalic){
+            [array addObject:italicItem];
+        }
+
+        if(features & RichTextEditorFeatureUnderline){
+            [array addObject:underlineItem];
+        }
+
+        if(features & RichTextEditorFeatureStrikeThrough){
+            [array addObject:strikeThroughItem];
+        }
+
+        [[UIMenuController sharedMenuController] setMenuItems:array];
+    }
+    
 }
 
 - (void)selectParagraph:(id)sender
