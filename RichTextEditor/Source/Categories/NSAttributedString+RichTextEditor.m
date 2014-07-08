@@ -131,7 +131,10 @@
 								  BOOL hasUnderline = (!underline || underline.intValue == NSUnderlineStyleNone) ? NO :YES;
 								  NSNumber *strikeThrough = [dictionary objectForKey:NSStrikethroughStyleAttributeName];
 								  BOOL hasStrikeThrough = (!strikeThrough || strikeThrough.intValue == NSUnderlineStyleNone) ? NO :YES;
-								  
+                                  NSURL *url = [dictionary objectForKey:NSLinkAttributeName];
+
+
+
 								  [fontString appendFormat:@"<font "];
 								  [fontString appendFormat:@"face=\"%@\" ", font.familyName];
 								  
@@ -152,7 +155,12 @@
 								  [fontString appendString:@">"];
 								  [fontString appendString:[[self.string substringFromIndex:range.location] substringToIndex:range.length]];
 								  [fontString appendString:@"</font>"];
-								  
+
+                                  if(url){
+                                      [fontString insertString:[NSString stringWithFormat:@"<a href=\"%@\">",[url absoluteString]] atIndex:0];
+                                      [fontString insertString:@"</a>" atIndex:fontString.length];
+                                  }
+
 								  if ([font isBold])
 								  {
 									  [fontString insertString:@"<b>" atIndex:0];

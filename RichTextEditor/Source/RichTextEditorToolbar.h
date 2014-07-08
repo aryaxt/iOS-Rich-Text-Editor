@@ -53,7 +53,8 @@ typedef NS_ENUM(NSUInteger, RichTextEditorFeature) {
 	RichTextEditorFeatureTextForegroundColor			= 1 << 11,
 	RichTextEditorFeatureParagraphIndentation			= 1 << 12,
 	RichTextEditorFeatureParagraphFirstLineIndentation	= 1 << 13,
-	RichTextEditorFeatureAll							= 1 << 14
+	RichTextEditorFeatureAll							= 1 << 14,
+    RichTextEditorFeatureLink                           = 1 << 15
 };
 
 @protocol RichTextEditorToolbarDelegate <UIScrollViewDelegate>
@@ -69,6 +70,7 @@ typedef NS_ENUM(NSUInteger, RichTextEditorFeature) {
 - (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color;
 - (void)richTextEditorToolbarDidSelectTextForegroundColor:(UIColor *)color;
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment;
+- (void)richTextEditorToolbarDidInsertLink:(NSURL*) link displayText:(NSString*)displayText;
 @end
 
 @protocol RichTextEditorToolbarDataSource <NSObject>

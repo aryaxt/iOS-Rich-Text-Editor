@@ -355,6 +355,38 @@
     // TODO: implement this
 }
 
+- (void)richTextEditorToolbarDidInsertLink:(NSURL*) link displayText:(NSString*)displayText{
+
+    NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
+
+    NSMutableDictionary *attributes = [[self dictionaryAtIndex:self.selectedRange.location] mutableCopy];
+    UIFont *font = [attributes objectForKey:NSFontAttributeName];
+    font = [UIFont fontWithName:[font familyName] size:[font pointSize] boldTrait:NO italicTrait:NO];
+    [attributes setObject:font forKey:NSFontAttributeName];
+
+    NSMutableDictionary *cop = [attributes mutableCopy];
+    [cop setObject:link forKey:NSLinkAttributeName];
+    NSAttributedString *string = [[NSAttributedString alloc] initWithString:displayText attributes:cop];
+
+    NSRange oldRange = self.selectedRange;
+    oldRange.length = 0;
+    oldRange.location += displayText.length;
+
+    [attributedString insertAttributedString:string atIndex:self.selectedRange.location];
+
+    NSAttributedString *space = [[NSAttributedString alloc] initWithString:@" " attributes:attributes];
+    [attributedString insertAttributedString:space atIndex:oldRange.location];
+    oldRange.location += 1;
+
+    [self setAttributedText:attributedString];
+
+    [self updateToolbarState];
+    [self resignFirstResponder];
+    [self scrollRangeToVisible:oldRange];
+    [self becomeFirstResponder];
+    [self setSelectedRange:oldRange];
+}
+
 #pragma mark - Private Methods -
 
 - (CGRect)frameOfTextAtRange:(NSRange)range

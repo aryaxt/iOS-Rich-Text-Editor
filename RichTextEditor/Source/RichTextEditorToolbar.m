@@ -31,6 +31,7 @@
 #import "RichTextEditorFontSizePickerViewController.h"
 #import "RichTextEditorFontPickerViewController.h"
 #import "RichTextEditorColorPickerViewController.h"
+#import "RichTextEditorInsertLinkViewController.h"
 #import "WEPopoverController.h"
 #import "RichTextEditorToggleButton.h"
 #import "UIFont+RichTextEditor.h"
@@ -39,7 +40,8 @@
 #define ITEM_TOP_AND_BOTTOM_BORDER 5
 #define ITEM_WITH 40
 
-@interface RichTextEditorToolbar() <RichTextEditorFontSizePickerViewControllerDelegate, RichTextEditorFontSizePickerViewControllerDataSource, RichTextEditorFontPickerViewControllerDelegate, RichTextEditorFontPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDelegate>
+@interface RichTextEditorToolbar() <RichTextEditorFontSizePickerViewControllerDelegate, RichTextEditorFontSizePickerViewControllerDataSource, RichTextEditorFontPickerViewControllerDelegate, RichTextEditorFontPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDelegate,
+    RichTextEditorInsertLinkViewControllerDelegate>
 @property (nonatomic, strong) id <RichTextEditorPopover> popover;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnBold;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnItalic;
@@ -57,6 +59,7 @@
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphOutdent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphFirstLineHeadIndent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnBulletPoint;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnLink;
 @end
 
 @implementation RichTextEditorToolbar
@@ -174,6 +177,14 @@
 - (void)paragraphHeadIndentOutdentSelected:(UIButton *)sender
 {
 	[self.delegate richTextEditorToolbarDidSelectParagraphFirstLineHeadIndent];
+}
+
+- (void)linkSelected:(UIButton *)sender
+{
+    RichTextEditorInsertLinkViewController *linkWriter = [[RichTextEditorInsertLinkViewController alloc] init];
+	linkWriter.delegate = self;
+	[self presentViewController:linkWriter fromView:sender];
+	//[self.delegate richTextEditorToolbarDidSelectLink];
 }
 
 - (void)fontSizeSelected:(UIButton *)sender
@@ -380,6 +391,13 @@
 		[self addView:separatorView afterView:lastAddedView withSpacing:YES];
 		lastAddedView = separatorView;
 	}
+
+ 	// Link color
+	if (features & RichTextEditorFeatureLink || features & RichTextEditorFeatureAll)
+	{
+		[self addView:self.btnLink afterView:lastAddedView withSpacing:YES];
+		lastAddedView = self.btnLink;
+	}
 }
 
 - (void)initializeButtons
@@ -443,6 +461,8 @@
 	
 	self.btnParagraphFirstLineHeadIndent = [self buttonWithImageNamed:@"firstLineIndent.png"
 														  andSelector:@selector(paragraphHeadIndentOutdentSelected:)];
+
+    self.btnLink = [self buttonWithImageNamed:@"link.png" andSelector:@selector(linkSelected:)];
 }
 
 - (RichTextEditorToggleButton *)buttonWithImageNamed:(NSString *)image width:(NSInteger)width andSelector:(SEL)selector
@@ -577,6 +597,15 @@
 {
 	return ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
 }
+
+- (void)richTextEditorInsertLinkViewControllerInsertURL:(NSURL *)url withDisplayText:(NSString *)displayText{
+    [self.delegate richTextEditorToolbarDidInsertLink:url displayText:displayText];
+    [self dismissViewController];
+}
+- (void)richTextEditorInsertLinkViewControllerDidCancel{
+    [self dismissViewController];
+}
+
 
 #pragma mark - RichTextEditorFontSizePickerViewControllerDelegate & RichTextEditorFontSizePickerViewControllerDataSource Methods -
 
