@@ -405,10 +405,16 @@
 	}
 	else
 	{
-		int location = [self offsetFromPosition:self.beginningOfDocument toPosition:self.selectedTextRange.start];
-		
-		if (location == self.text.length)
-			location --;
+		NSInteger location = [self offsetFromPosition:self.beginningOfDocument toPosition:self.selectedTextRange.start];
+        if(self.selectedRange.length > 0){
+            if (location == self.text.length)
+                location --;
+        }else{
+            if (location != 0)
+                location --;
+        }
+
+
 		
 		[self.toolBar updateStateWithAttributes:[self.attributedText attributesAtIndex:location effectiveRange:nil]];
 	}
@@ -427,9 +433,13 @@
 - (UIFont *)fontAtIndex:(NSInteger)index
 {
 	// If index at end of string, get attributes starting from previous character
-	if (index == self.attributedText.string.length && [self hasText])
-		--index;
-    
+    if(self.selectedRange.length > 0){
+        if (index == self.attributedText.string.length && [self hasText])
+            index --;
+    }else{
+        if (index != 0)
+            index --;
+    }
 	// If no text exists get font from typing attributes
     NSDictionary *dictionary = ([self hasText])
 		? [self.attributedText attributesAtIndex:index effectiveRange:nil]
@@ -441,8 +451,13 @@
 - (NSDictionary *)dictionaryAtIndex:(NSInteger)index
 {
 	// If index at end of string, get attributes starting from previous character
-	if (index == self.attributedText.string.length && [self hasText])
-        --index;
+    if(self.selectedRange.length > 0){
+        if (index == self.attributedText.string.length && [self hasText])
+            index --;
+    }else{
+        if (index != 0)
+            index --;
+    }
 	
     // If no text exists get font from typing attributes
     return  ([self hasText])
