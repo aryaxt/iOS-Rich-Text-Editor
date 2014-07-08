@@ -27,18 +27,18 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum{
-	RichTextEditorToolbarPresentationStyleModal,
-	RichTextEditorToolbarPresentationStylePopover
-}RichTextEditorToolbarPresentationStyle;
+typedef NS_ENUM(NSUInteger, RichTextEditorToolbarPresentationStyle) {
+    RichTextEditorToolbarPresentationStyleModal,
+    RichTextEditorToolbarPresentationStylePopover
+};
 
-typedef enum{
-	ParagraphIndentationIncrease,
-	ParagraphIndentationDecrease
-}ParagraphIndentation;
+typedef NS_ENUM(NSUInteger, ParagraphIndentation) {
+    ParagraphIndentationIncrease,
+    ParagraphIndentationDecrease
+};
 
-typedef enum{
-	RichTextEditorFeatureNone							= 0,
+typedef NS_ENUM(NSUInteger, RichTextEditorFeature) {
+    RichTextEditorFeatureNone							= 0,
 	RichTextEditorFeatureFont							= 1 << 0,
 	RichTextEditorFeatureFontSize						= 1 << 1,
 	RichTextEditorFeatureBold							= 1 << 2,
@@ -54,7 +54,7 @@ typedef enum{
 	RichTextEditorFeatureParagraphIndentation			= 1 << 12,
 	RichTextEditorFeatureParagraphFirstLineIndentation	= 1 << 13,
 	RichTextEditorFeatureAll							= 1 << 14
-}RichTextEditorFeature;
+};
 
 @protocol RichTextEditorToolbarDelegate <UIScrollViewDelegate>
 - (void)richTextEditorToolbarDidSelectBold;

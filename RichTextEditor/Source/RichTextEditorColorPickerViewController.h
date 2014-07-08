@@ -29,10 +29,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import "UIView+RichTextEditor.h"
 
-typedef enum {
-	RichTextEditorColorPickerActionTextForegroudColor,
-	RichTextEditorColorPickerActionTextBackgroundColor
-}RichTextEditorColorPickerAction;
+typedef NS_ENUM(NSUInteger, RichTextEditorColorPickerAction) {
+    RichTextEditorColorPickerActionTextForegroudColor,
+    RichTextEditorColorPickerActionTextBackgroundColor
+};
 
 @protocol RichTextEditorColorPickerViewControllerDelegate <NSObject>
 - (void)richTextEditorColorPickerViewControllerDidSelectColor:(UIColor *)color withAction:(RichTextEditorColorPickerAction)action;
