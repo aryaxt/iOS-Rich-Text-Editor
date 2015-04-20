@@ -1,4 +1,4 @@
-RichTextEditor-iOS
+RichTextEditor-iOS [![Version](http://cocoapod-badges.herokuapp.com/v/iOS-Rich-Text-Editor/badge.png)](http://cocoadocs.org/docsets/iOS-Rich-Text-Editor)
 ==================
 RichTextEditor for iPhone &amp; iPad
 
