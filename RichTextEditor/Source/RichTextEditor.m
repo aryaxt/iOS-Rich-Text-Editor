@@ -32,6 +32,7 @@
 #import "UIView+RichTextEditor.h"
 
 #define RICHTEXTEDITOR_TOOLBAR_HEIGHT 40
+#define BULLET_STRING @"\t•\t"
 
 @interface RichTextEditor() <RichTextEditorToolbarDelegate, RichTextEditorToolbarDataSource>
 @property (nonatomic, strong) RichTextEditorToolbar *toolBar;
@@ -88,10 +89,16 @@
 	self.defaultIndentationSize = 15;
 	
 	[self setupMenuItems];
-    
-    //If there is text already, then we do want to update the toolbar. Otherwise we don't.
-    if ([self hasText])
-        [self updateToolbarState];
+	[self updateToolbarState];
+	
+	// When text changes check to see if we need to add bullet, or delete bullet on backspace
+	[[NSNotificationCenter defaultCenter] addObserverForName:UITextViewTextDidChangeNotification
+													  object:self
+													   queue:nil
+												  usingBlock:^(NSNotification *n){
+													  [self applyBulletListIfApplicable];
+													  [self deleteBulletListWhenApplicable];
+												  }];
 }
 
 #pragma mark - Override Methods -
@@ -148,6 +155,24 @@
 	return [super canPerformAction:action withSender:sender];
 }
 
+- (void)setAttributedText:(NSAttributedString *)attributedText
+{
+	[super setAttributedText:attributedText];
+	[self updateToolbarState];
+}
+
+- (void)setText:(NSString *)text
+{
+	[super setText:text];
+	[self updateToolbarState];
+}
+
+- (void)setFont:(UIFont *)font
+{
+	[super setFont:font];
+	[self updateToolbarState];
+}
+
 #pragma mark - MenuController Methods -
 
 - (void)setupMenuItems
@@ -163,9 +188,6 @@
 
 - (void)selectParagraph:(id)sender
 {
-    if (![self hasText])
-		return;
-	
 	NSRange range = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
 	[self setSelectedRange:range];
 
@@ -175,9 +197,41 @@
 
 #pragma mark - Public Methods -
 
+- (void)setHtmlString:(NSString *)htmlString
+{
+	if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0"))
+	{
+		NSLog(@"Method setHtmlString is only supported on iOS 7 and above");
+		return;
+	}
+
+	NSError *error ;
+	NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
+	NSAttributedString *str = [[NSAttributedString alloc] initWithData:data
+							   
+															   options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
+																		 NSCharacterEncodingDocumentAttribute: [NSNumber numberWithInt:NSUTF8StringEncoding]}
+													documentAttributes:nil error:&error];
+	
+	if (error)
+		NSLog(@"%@", error);
+	else
+		self.attributedText = str;
+}
+
 - (NSString *)htmlString
 {
-	return [self.attributedText htmlString];
+	if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0"))
+	{
+		NSLog(@"Method setHtmlString is only supported on iOS 7 and above");
+		return nil;
+	}
+	
+	NSData *data = [self.attributedText dataFromRange:NSMakeRange(0, self.text.length) documentAttributes:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
+																							 NSCharacterEncodingDocumentAttribute: [NSNumber numberWithInt:NSUTF8StringEncoding]}
+								 error:nil];
+	
+	return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
 - (void)setBorderColor:(UIColor *)borderColor
@@ -191,6 +245,12 @@
 }
 
 #pragma mark - RichTextEditorToolbarDelegate Methods -
+
+- (void)richTextEditorToolbarDidDismissViewController
+{
+	if (![self isFirstResponder])
+		[self becomeFirstResponder];
+}
 
 - (void)richTextEditorToolbarDidSelectBold
 {
@@ -216,12 +276,18 @@
 
 - (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color
 {
-	[self applyAttrubutesToSelectedRange:color forKey:NSBackgroundColorAttributeName];
+	if (color)
+		[self applyAttrubutesToSelectedRange:color forKey:NSBackgroundColorAttributeName];
+	else
+		[self removeAttributeForKeyFromSelectedRange:NSBackgroundColorAttributeName];
 }
 
 - (void)richTextEditorToolbarDidSelectTextForegroundColor:(UIColor *)color
 {
-	[self applyAttrubutesToSelectedRange:color forKey:NSForegroundColorAttributeName];
+	if (color)
+		[self applyAttrubutesToSelectedRange:color forKey:NSForegroundColorAttributeName];
+	else
+		[self removeAttributeForKeyFromSelectedRange:NSForegroundColorAttributeName];
 }
 
 - (void)richTextEditorToolbarDidSelectUnderline
@@ -317,9 +383,119 @@
 	}];
 }
 
-- (void)richTextEditorToolbarDidSelectBulletPoint
+- (void)richTextEditorToolbarDidSelectBulletList
 {
-    // TODO: implement this
+	NSRange initialSelectedRange = self.selectedRange;
+	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
+	NSRange rangeOfFirstParagraphRange = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
+	BOOL firstParagraphHasBullet = ([[[self.attributedText string] substringFromIndex:rangeOfFirstParagraphRange.location] hasPrefix:BULLET_STRING]) ? YES: NO;
+	
+	__block NSInteger rangeOffset = 0;
+	
+	[self enumarateThroughParagraphsInRange:self.selectedRange withBlock:^(NSRange paragraphRange){
+		NSRange range = NSMakeRange(paragraphRange.location + rangeOffset, paragraphRange.length);
+		NSMutableAttributedString *currentAttributedString = [self.attributedText mutableCopy];
+		NSDictionary *dictionary = [self dictionaryAtIndex:MAX((int)range.location-1, 0)];
+		NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+		
+		if (!paragraphStyle)
+			paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+		
+		BOOL currentParagraphHasBullet = ([[[currentAttributedString string] substringFromIndex:range.location] hasPrefix:BULLET_STRING]) ? YES : NO;
+		
+		if (firstParagraphHasBullet != currentParagraphHasBullet)
+			return;
+		
+		if (currentParagraphHasBullet)
+		{
+			range = NSMakeRange(range.location, range.length - BULLET_STRING.length);
+			
+			[currentAttributedString deleteCharactersInRange:NSMakeRange(range.location, BULLET_STRING.length)];
+			
+			paragraphStyle.firstLineHeadIndent = 0;
+			paragraphStyle.headIndent = 0;
+			
+			rangeOffset = rangeOffset - BULLET_STRING.length;
+		}
+		else
+		{
+			range = NSMakeRange(range.location, range.length + BULLET_STRING.length);
+			
+			// The bullet should be bold
+			NSMutableAttributedString *bulletAttributedString = [[NSMutableAttributedString alloc] initWithString:BULLET_STRING attributes:nil];
+			[bulletAttributedString setAttributes:dictionary range:NSMakeRange(0, BULLET_STRING.length)];
+			
+			[currentAttributedString insertAttributedString:bulletAttributedString atIndex:range.location];
+			
+			CGSize expectedStringSize = [BULLET_STRING sizeWithFont:[dictionary objectForKey:NSFontAttributeName]
+												  constrainedToSize:CGSizeMake(MAXFLOAT, MAXFLOAT)
+													  lineBreakMode:NSLineBreakByWordWrapping];
+			
+			paragraphStyle.firstLineHeadIndent = 0;
+			paragraphStyle.headIndent = expectedStringSize.width;
+			
+			rangeOffset = rangeOffset + BULLET_STRING.length;
+		}
+		
+		self.attributedText = currentAttributedString;
+		[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:range];
+	}];
+	
+	// If paragraph is empty move cursor to front of bullet, so the user can start typing right away
+	if (rangeOfParagraphsInSelectedText.count == 1 && rangeOfFirstParagraphRange.length == 0)
+	{
+		[self setSelectedRange:NSMakeRange(rangeOfFirstParagraphRange.location + BULLET_STRING.length, 0)];
+	}
+	else
+	{
+		if (initialSelectedRange.length == 0)
+		{
+			[self setSelectedRange:NSMakeRange(initialSelectedRange.location+rangeOffset, 0)];
+		}
+		else
+		{
+			NSRange fullRange = [self fullRangeFromArrayOfParagraphRanges:rangeOfParagraphsInSelectedText];
+			[self setSelectedRange:NSMakeRange(fullRange.location, fullRange.length+rangeOffset)];
+		}
+	}
+}
+
+- (void)richTextEditorToolbarDidSelectTextAttachment:(UIImage *)textAttachment
+{
+	NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+	[attachment setImage:textAttachment];
+	NSAttributedString *attributedStringAttachment = [NSAttributedString attributedStringWithAttachment:attachment];
+	
+	NSDictionary *previousAttributes = [self dictionaryAtIndex:self.selectedRange.location];
+	
+	NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
+	[attributedString insertAttributedString:attributedStringAttachment atIndex:self.selectedRange.location];
+	[attributedString addAttributes:previousAttributes range:NSMakeRange(self.selectedRange.location, 1)];
+	self.attributedText = attributedString;
+}
+
+- (UIViewController <RichTextEditorColorPicker> *)colorPickerForRichTextEditorToolbarWithAction:(RichTextEditorColorPickerAction)action
+{
+	if ([self.dataSource respondsToSelector:@selector(colorPickerForRichTextEditor:forAction:)])
+		return [self.dataSource colorPickerForRichTextEditor:self withAction:action];
+	
+	return nil;
+}
+
+- (UIViewController <RichTextEditorFontPicker> *)fontPickerForRichTextEditorToolbar
+{
+	if ([self.dataSource respondsToSelector:@selector(fontPickerForRichTextEditor:)])
+		return [self.dataSource fontPickerForRichTextEditor:self];
+	
+	return nil;
+}
+
+- (UIViewController <RichTextEditorFontSizePicker> *)fontSizePickerForRichTextEditorToolbar
+{
+	if ([self.dataSource respondsToSelector:@selector(fontSizePickerForRichTextEditor:)])
+		return [self.dataSource fontSizePickerForRichTextEditor:self];
+	
+	return nil;
 }
 
 #pragma mark - Private Methods -
@@ -342,9 +518,6 @@
 
 - (void)enumarateThroughParagraphsInRange:(NSRange)range withBlock:(void (^)(NSRange paragraphRange))block
 {
-	if (![self hasText])
-		return;
-	
 	NSArray *rangeOfParagraphsInSelectedText = [self.attributedText rangeOfParagraphsFromTextRange:self.selectedRange];
 	
 	for (int i=0 ; i<rangeOfParagraphsInSelectedText.count ; i++)
@@ -360,6 +533,10 @@
 
 - (void)updateToolbarState
 {
+	// There is a bug in iOS6 that causes a crash when accessing typingAttribute on an empty text
+	if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") && ![self hasText])
+		return;
+	
 	// If no text exists or typing attributes is in progress update toolbar using typing attributes instead of selected text
 	if (self.typingAttributesInProgress || ![self hasText])
 	{
@@ -367,12 +544,17 @@
 	}
 	else
 	{
-		int location = [self offsetFromPosition:self.beginningOfDocument toPosition:self.selectedTextRange.start];
+		NSInteger location = 0;
 		
-		if (location == self.text.length)
-			location --;
+		if (self.selectedRange.location != NSNotFound)
+		{
+			location = (self.selectedRange.length == 0)
+				? MAX((int)self.selectedRange.location-1, 0)
+				: (int)self.selectedRange.location;
+		}
 		
-		[self.toolBar updateStateWithAttributes:[self.attributedText attributesAtIndex:location effectiveRange:nil]];
+		NSDictionary *attributes = [self.attributedText attributesAtIndex:location effectiveRange:nil];
+		[self.toolBar updateStateWithAttributes:attributes];
 	}
 }
 
@@ -445,6 +627,22 @@
 	}
 	
 	[self updateToolbarState];
+}
+
+- (void)removeAttributeForKey:(NSString *)key atRange:(NSRange)range
+{
+	NSRange initialRange = self.selectedRange;
+	
+	NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
+	[attributedString removeAttribute:key range:range];
+	self.attributedText = attributedString;
+	
+	[self setSelectedRange:initialRange];
+}
+
+- (void)removeAttributeForKeyFromSelectedRange:(NSString *)key
+{
+	[self removeAttributeForKey:key atRange:self.selectedRange];
 }
 
 - (void)applyAttrubutesToSelectedRange:(id)attribute forKey:(NSString *)key
@@ -538,6 +736,43 @@
     }
 	
     return screenBounds ;
+}
+
+- (void)applyBulletListIfApplicable
+{
+	NSRange rangeOfCurrentParagraph = [self.attributedText firstParagraphRangeFromTextRange:self.selectedRange];
+	if (rangeOfCurrentParagraph.length != 0)
+		return;
+	
+	NSRange rangeOfPreviousParagraph = [self.attributedText firstParagraphRangeFromTextRange:NSMakeRange(rangeOfCurrentParagraph.location-1, 0)];
+	if ([[self.attributedText.string substringFromIndex:rangeOfPreviousParagraph.location] hasPrefix:BULLET_STRING])
+		[self richTextEditorToolbarDidSelectBulletList];
+}
+
+- (void)deleteBulletListWhenApplicable
+{
+	NSRange range = self.selectedRange;
+	
+	if (range.location > 0)
+	{
+		if ((int)range.location-2 >= 0 && [[self.attributedText.string substringFromIndex:range.location-2] hasPrefix:@"\t•"])
+		{
+			// Get rid of bullet string
+			NSMutableAttributedString *mutableAttributedString = [self.attributedText mutableCopy];
+			[mutableAttributedString deleteCharactersInRange:NSMakeRange(range.location-2, 2)];
+			self.attributedText = mutableAttributedString;
+			NSRange newRange = NSMakeRange(range.location-2, 0);
+			[self setSelectedRange:newRange];
+			
+			// Get rid of bullet indentation
+			NSRange rangeOfParagraph = [self.attributedText firstParagraphRangeFromTextRange:newRange];
+			NSDictionary *dictionary = [self dictionaryAtIndex:newRange.location];
+			NSMutableParagraphStyle *paragraphStyle = [[dictionary objectForKey:NSParagraphStyleAttributeName] mutableCopy];
+			paragraphStyle.firstLineHeadIndent = 0;
+			paragraphStyle.headIndent = 0;
+			[self applyAttributes:paragraphStyle forKey:NSParagraphStyleAttributeName atRange:rangeOfParagraph];
+		}
+	}
 }
 
 #pragma mark - RichTextEditorToolbarDataSource Methods -

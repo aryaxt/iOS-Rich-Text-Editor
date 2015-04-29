@@ -28,22 +28,9 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import "UIView+RichTextEditor.h"
+#import "RichTextEditorColorPicker.h"
 
-typedef enum {
-	RichTextEditorColorPickerActionTextForegroudColor,
-	RichTextEditorColorPickerActionTextBackgroundColor
-}RichTextEditorColorPickerAction;
-
-@protocol RichTextEditorColorPickerViewControllerDelegate <NSObject>
-- (void)richTextEditorColorPickerViewControllerDidSelectColor:(UIColor *)color withAction:(RichTextEditorColorPickerAction)action;
-- (void)richTextEditorColorPickerViewControllerDidSelectClose;
-@end
-
-@protocol RichTextEditorColorPickerViewControllerDataSource <NSObject>
-- (BOOL)richTextEditorColorPickerViewControllerShouldDisplayToolbar;
-@end
-
-@interface RichTextEditorColorPickerViewController : UIViewController
+@interface RichTextEditorColorPickerViewController : UIViewController <RichTextEditorColorPicker>
 
 @property (nonatomic, weak) id <RichTextEditorColorPickerViewControllerDelegate> delegate;
 @property (nonatomic, weak) id <RichTextEditorColorPickerViewControllerDataSource> dataSource;

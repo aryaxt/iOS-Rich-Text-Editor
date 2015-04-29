@@ -46,7 +46,6 @@
 		1583892C1735A5D7006DE713 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1583892A1735A5D7006DE713 /* MainStoryboard_iPhone.storyboard */; };
 		1583892F1735A5D7006DE713 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1583892D1735A5D7006DE713 /* MainStoryboard_iPad.storyboard */; };
 		158389321735A5D7006DE713 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158389311735A5D7006DE713 /* ViewController.m */; };
-		1583893A1735A5D7006DE713 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389391735A5D7006DE713 /* SenTestingKit.framework */; };
 		1583893B1735A5D7006DE713 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389121735A5D7006DE713 /* UIKit.framework */; };
 		1583893C1735A5D7006DE713 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158389141735A5D7006DE713 /* Foundation.framework */; };
 		158389441735A5D7006DE713 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 158389421735A5D7006DE713 /* InfoPlist.strings */; };
@@ -172,8 +171,7 @@
 		1583892E1735A5D7006DE713 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		158389301735A5D7006DE713 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		158389311735A5D7006DE713 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		158389381735A5D7006DE713 /* RichTextEditorTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RichTextEditorTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		158389391735A5D7006DE713 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		158389381735A5D7006DE713 /* RichTextEditorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RichTextEditorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		158389411735A5D7006DE713 /* RichTextEditorTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RichTextEditorTests-Info.plist"; sourceTree = "<group>"; };
 		158389431735A5D7006DE713 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		158389451735A5D7006DE713 /* RichTextEditorTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RichTextEditorTests.h; sourceTree = "<group>"; };
@@ -216,6 +214,9 @@
 		15C4133517A48C6D0073D047 /* buttoncenter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buttoncenter.png; sourceTree = "<group>"; };
 		15C4133617A48C6D0073D047 /* buttonleft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buttonleft.png; sourceTree = "<group>"; };
 		15C4133717A48C6D0073D047 /* buttonright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buttonright.png; sourceTree = "<group>"; };
+		15C9AC7818A69C69006E6F27 /* RichTextEditorColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichTextEditorColorPicker.h; sourceTree = "<group>"; };
+		15C9AC7918A69E12006E6F27 /* RichTextEditorFontPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichTextEditorFontPicker.h; sourceTree = "<group>"; };
+		15C9AC7A18A69E6E006E6F27 /* RichTextEditorFontSizePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichTextEditorFontSizePicker.h; sourceTree = "<group>"; };
 		1AFAED6E17C7F9CA00E450B0 /* strikethrough@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "strikethrough@2x.png"; sourceTree = "<group>"; };
 		1AFAED6F17C7F9CA00E450B0 /* italic@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "italic@2x.png"; sourceTree = "<group>"; };
 		1AFAED7017C7F9CA00E450B0 /* underline@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "underline@2x.png"; sourceTree = "<group>"; };
@@ -247,7 +248,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1583893A1735A5D7006DE713 /* SenTestingKit.framework in Frameworks */,
 				1583893B1735A5D7006DE713 /* UIKit.framework in Frameworks */,
 				1583893C1735A5D7006DE713 /* Foundation.framework in Frameworks */,
 			);
@@ -268,10 +268,13 @@
 				153F9585179F9953005B2487 /* RichTextEditorToolbar.m */,
 				15B6E20D17A4C2820015867C /* RichTextEditorToggleButton.h */,
 				15B6E20E17A4C2820015867C /* RichTextEditorToggleButton.m */,
+				15C9AC7818A69C69006E6F27 /* RichTextEditorColorPicker.h */,
 				153F957D179F9953005B2487 /* RichTextEditorColorPickerViewController.h */,
 				153F957E179F9953005B2487 /* RichTextEditorColorPickerViewController.m */,
+				15C9AC7918A69E12006E6F27 /* RichTextEditorFontPicker.h */,
 				153F957F179F9953005B2487 /* RichTextEditorFontPickerViewController.h */,
 				153F9580179F9953005B2487 /* RichTextEditorFontPickerViewController.m */,
+				15C9AC7A18A69E6E006E6F27 /* RichTextEditorFontSizePicker.h */,
 				153F9581179F9953005B2487 /* RichTextEditorFontSizePickerViewController.h */,
 				153F9582179F9953005B2487 /* RichTextEditorFontSizePickerViewController.m */,
 				153F9583179F9953005B2487 /* RichTextEditorPopover.h */,
@@ -391,7 +394,7 @@
 			isa = PBXGroup;
 			children = (
 				1583890E1735A5D7006DE713 /* RichTextEditor.app */,
-				158389381735A5D7006DE713 /* RichTextEditorTests.octest */,
+				158389381735A5D7006DE713 /* RichTextEditorTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -403,7 +406,6 @@
 				158389121735A5D7006DE713 /* UIKit.framework */,
 				158389141735A5D7006DE713 /* Foundation.framework */,
 				158389161735A5D7006DE713 /* CoreGraphics.framework */,
-				158389391735A5D7006DE713 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -509,8 +511,8 @@
 			);
 			name = RichTextEditorTests;
 			productName = RichTextEditorTests;
-			productReference = 158389381735A5D7006DE713 /* RichTextEditorTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = 158389381735A5D7006DE713 /* RichTextEditorTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -518,7 +520,8 @@
 		158389051735A5D7006DE713 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastTestingUpgradeCheck = 0510;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Aryan Ghassemi";
 			};
 			buildConfigurationList = 158389081735A5D7006DE713 /* Build configuration list for PBXProject "RichTextEditor" */;
@@ -743,6 +746,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -800,13 +804,13 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RichTextEditor/RichTextEditor-Prefix.pch";
 				INFOPLIST_FILE = "RichTextEditorTests/RichTextEditorTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -817,13 +821,13 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RichTextEditor/RichTextEditor-Prefix.pch";
 				INFOPLIST_FILE = "RichTextEditorTests/RichTextEditorTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};

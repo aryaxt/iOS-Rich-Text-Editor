@@ -39,7 +39,7 @@
 #define ITEM_TOP_AND_BOTTOM_BORDER 5
 #define ITEM_WITH 40
 
-@interface RichTextEditorToolbar() <RichTextEditorFontSizePickerViewControllerDelegate, RichTextEditorFontSizePickerViewControllerDataSource, RichTextEditorFontPickerViewControllerDelegate, RichTextEditorFontPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDelegate>
+@interface RichTextEditorToolbar() <RichTextEditorFontSizePickerViewControllerDelegate, RichTextEditorFontSizePickerViewControllerDataSource, RichTextEditorFontPickerViewControllerDelegate, RichTextEditorFontPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDataSource, RichTextEditorColorPickerViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) id <RichTextEditorPopover> popover;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnBold;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnItalic;
@@ -56,7 +56,8 @@
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphIndent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphOutdent;
 @property (nonatomic, strong) RichTextEditorToggleButton *btnParagraphFirstLineHeadIndent;
-@property (nonatomic, strong) RichTextEditorToggleButton *btnBulletPoint;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnBulletList;
+@property (nonatomic, strong) RichTextEditorToggleButton *btnTextAttachment;
 @end
 
 @implementation RichTextEditorToolbar
@@ -132,6 +133,8 @@
 	
 	NSNumber *existingStrikeThrough = [attributes objectForKey:NSStrikethroughStyleAttributeName];
 	self.btnStrikeThrough.on = (!existingStrikeThrough || existingStrikeThrough.intValue == NSUnderlineStyleNone) ? NO :YES;
+	
+	[self populateToolbar];
 }
 
 #pragma mark - IBActions -
@@ -156,9 +159,9 @@
 	[self.delegate richTextEditorToolbarDidSelectStrikeThrough];
 }
 
-- (void)bulletPointSelected:(UIButton *)sender
+- (void)bulletListSelected:(UIButton *)sender
 {
-	[self.delegate richTextEditorToolbarDidSelectBulletPoint];
+	[self.delegate richTextEditorToolbarDidSelectBulletList];
 }
 
 - (void)paragraphIndentSelected:(UIButton *)sender
@@ -178,7 +181,11 @@
 
 - (void)fontSizeSelected:(UIButton *)sender
 {
-	RichTextEditorFontSizePickerViewController *fontSizePicker = [[RichTextEditorFontSizePickerViewController alloc] init];
+	UIViewController <RichTextEditorFontSizePicker> *fontSizePicker = [self.dataSource fontSizePickerForRichTextEditorToolbar];
+	
+	if (!fontSizePicker)
+		fontSizePicker = [[RichTextEditorFontSizePickerViewController alloc] init];
+	
 	fontSizePicker.delegate = self;
 	fontSizePicker.dataSource = self;
 	[self presentViewController:fontSizePicker fromView:sender];
@@ -186,8 +193,11 @@
 
 - (void)fontSelected:(UIButton *)sender
 {
-	RichTextEditorFontPickerViewController *fontPicker= [[RichTextEditorFontPickerViewController alloc] init];
-	fontPicker.fontNames = [self.dataSource fontFamilySelectionForRichTextEditorToolbar];
+	UIViewController <RichTextEditorFontPicker> *fontPicker = [self.dataSource fontPickerForRichTextEditorToolbar];
+	
+	if (!fontPicker)
+		fontPicker= [[RichTextEditorFontPickerViewController alloc] init];
+	
 	fontPicker.delegate = self;
 	fontPicker.dataSource = self;
 	[self presentViewController:fontPicker fromView:sender];
@@ -195,7 +205,11 @@
 
 - (void)textBackgroundColorSelected:(UIButton *)sender
 {
-	RichTextEditorColorPickerViewController *colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
+	UIViewController <RichTextEditorColorPicker> *colorPicker = [self.dataSource colorPickerForRichTextEditorToolbarWithAction:RichTextEditorColorPickerActionTextBackgroundColor];
+	
+	if (!colorPicker)
+		colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
+	
 	colorPicker.action = RichTextEditorColorPickerActionTextBackgroundColor;
 	colorPicker.delegate = self;
 	colorPicker.dataSource = self;
@@ -204,7 +218,11 @@
 
 - (void)textForegroundColorSelected:(UIButton *)sender
 {
-	RichTextEditorColorPickerViewController *colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
+	UIViewController <RichTextEditorColorPicker> *colorPicker = [self.dataSource colorPickerForRichTextEditorToolbarWithAction:RichTextEditorColorPickerActionTextForegroudColor];
+	
+	if (!colorPicker)
+		colorPicker = [[RichTextEditorColorPickerViewController alloc] init];
+	
 	colorPicker.action = RichTextEditorColorPickerActionTextForegroudColor;
 	colorPicker.delegate = self;
 	colorPicker.dataSource = self;
@@ -221,16 +239,27 @@
 		textAlignment = NSTextAlignmentCenter;
 	else if (sender == self.btnTextAlignmentRight)
 		textAlignment = NSTextAlignmentRight;
-	else if (sender == self.btnTextAlignmentJustified)
+	else
 		textAlignment = NSTextAlignmentJustified;
 	
 	[self.delegate richTextEditorToolbarDidSelectTextAlignment:textAlignment];
+}
+
+- (void)textAttachmentSelected:(UIButton *)sender
+{
+	UIImagePickerController *vc = [[UIImagePickerController alloc] init];
+	vc.delegate = self;
+	[self presentViewController:vc fromView:self.btnTextAttachment];
 }
 
 #pragma mark - Private Methods -
 
 - (void)populateToolbar
 {
+	CGRect visibleRect;
+	visibleRect.origin = self.contentOffset;
+	visibleRect.size = self.bounds.size;
+	
     // Remove any existing subviews.
     for (UIView *subView in self.subviews)
 	{
@@ -250,6 +279,11 @@
 	if (features & RichTextEditorFeatureFont || features & RichTextEditorFeatureAll)
 	{
 		UIView *separatorView = [self separatorView];
+		CGSize size = [self.btnFont sizeThatFits:CGSizeZero];
+		CGRect rect = self.btnFont.frame;
+		rect.size.width = MAX(size.width + 25, 120);
+		self.btnFont.frame = rect;
+		
 		[self addView:self.btnFont afterView:lastAddedView withSpacing:YES];
 		[self addView:separatorView afterView:self.btnFont withSpacing:YES];
 		lastAddedView = separatorView;
@@ -380,6 +414,29 @@
 		[self addView:separatorView afterView:lastAddedView withSpacing:YES];
 		lastAddedView = separatorView;
 	}
+	
+	// Bullet List
+	if (features & RichTextEditorFeatureBulletList || features & RichTextEditorFeatureAll)
+	{
+		[self addView:self.btnBulletList afterView:lastAddedView withSpacing:YES];
+		lastAddedView = self.btnBulletList;
+	}
+	
+	// Separator view after color section
+	if (features & RichTextEditorFeatureBulletList || features & RichTextEditorFeatureAll)
+	{
+		UIView *separatorView = [self separatorView];
+		[self addView:separatorView afterView:lastAddedView withSpacing:YES];
+		lastAddedView = separatorView;
+	}
+	
+	if ((features & RichTextEditorFeatureBulletList || features & RichTextEditorFeatureAll) && SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0"))
+	{
+		[self addView:self.btnTextAttachment afterView:lastAddedView withSpacing:YES];
+		lastAddedView = self.btnBulletList;
+	}
+	
+	[self scrollRectToVisible:visibleRect animated:NO];
 }
 
 - (void)initializeButtons
@@ -432,8 +489,8 @@
 	self.btnBackgroundColor = [self buttonWithImageNamed:@"backcolor.png"
 											 andSelector:@selector(textBackgroundColorSelected:)];
 	
-	self.btnBulletPoint = [self buttonWithImageNamed:@"bullist.png"
-										 andSelector:@selector(bulletPointSelected:)];
+	self.btnBulletList = [self buttonWithImageNamed:@"bullist.png"
+										 andSelector:@selector(bulletListSelected:)];
 	
 	self.btnParagraphIndent = [self buttonWithImageNamed:@"indent.png"
 											 andSelector:@selector(paragraphIndentSelected:)];
@@ -443,6 +500,9 @@
 	
 	self.btnParagraphFirstLineHeadIndent = [self buttonWithImageNamed:@"firstLineIndent.png"
 														  andSelector:@selector(paragraphHeadIndentOutdentSelected:)];
+	
+	self.btnTextAttachment = [self buttonWithImageNamed:@"image.png"
+														  andSelector:@selector(textAttachmentSelected:)];
 }
 
 - (RichTextEditorToggleButton *)buttonWithImageNamed:(NSString *)image width:(NSInteger)width andSelector:(SEL)selector
@@ -550,6 +610,8 @@
 	{
 		[self.popover dismissPopoverAnimated:YES];
 	}
+	
+	[self.delegate richTextEditorToolbarDidDismissViewController];
 }
 
 #pragma mark - RichTextEditorColorPickerViewControllerDelegate & RichTextEditorColorPickerViewControllerDataSource Methods -
@@ -622,6 +684,20 @@
 - (BOOL)richTextEditorFontPickerViewControllerShouldDisplayToolbar
 {
 	return ([self.dataSource presentationStyleForRichTextEditorToolbar] == RichTextEditorToolbarPresentationStyleModal) ? YES: NO;
+}
+
+#pragma mark - UIImagePickerViewControllerDelegate -
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+	UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+	[self.delegate richTextEditorToolbarDidSelectTextAttachment:image];
+	[self dismissViewController];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+	[self dismissViewController];
 }
 
 @end

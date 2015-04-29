@@ -37,19 +37,19 @@
 	
 	self.view.backgroundColor = [UIColor whiteColor];
 	
-	UIButton *btnClose = [[UIButton alloc] initWithFrame:CGRectMake(5, 5, 60, 30)];
-	[btnClose addTarget:self action:@selector(closeSelected:) forControlEvents:UIControlEventTouchUpInside];
-	[btnClose.titleLabel setFont:[UIFont boldSystemFontOfSize:12]];
-	[btnClose setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-	[btnClose setTitle:@"Close" forState:UIControlStateNormal];
-	[self.view addSubview:btnClose];
-	
-	UIButton *btnDone = [[UIButton alloc] initWithFrame:CGRectMake(65, 5, 60, 30)];
+	UIButton *btnDone = [[UIButton alloc] initWithFrame:CGRectMake(5, 5, 60, 30)];
 	[btnDone addTarget:self action:@selector(doneSelected:) forControlEvents:UIControlEventTouchUpInside];
 	[btnDone.titleLabel setFont:[UIFont boldSystemFontOfSize:12]];
 	[btnDone setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-	[btnDone setTitle:@"Done" forState:UIControlStateNormal];
+	[btnDone setTitle:@"Select" forState:UIControlStateNormal];
 	[self.view addSubview:btnDone];
+
+	UIButton *btnClear = [[UIButton alloc] initWithFrame:CGRectMake(65, 5, 60, 30)];
+	[btnClear addTarget:self action:@selector(clearSelected:) forControlEvents:UIControlEventTouchUpInside];
+	[btnClear.titleLabel setFont:[UIFont boldSystemFontOfSize:12]];
+	[btnClear setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+	[btnClear setTitle:@"Clear" forState:UIControlStateNormal];
+	[self.view addSubview:btnClear];
 	
 	self.selectedColorView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 35 - 5, 5, 35, 30)];
 	self.selectedColorView.backgroundColor = [UIColor blackColor];
@@ -62,7 +62,7 @@
 	self.colorsImageView.frame = CGRectMake(2, 40, self.view.frame.size.width-4, self.view.frame.size.height - 40 - 2);
 	self.colorsImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	self.colorsImageView.layer.borderColor = [UIColor lightGrayColor].CGColor;
-	self.colorsImageView.layer.borderWidth = 1;
+	self.colorsImageView.layer.borderWidth = 0;
 	[self.view addSubview:self.colorsImageView];
 	
 	if ([self.dataSource richTextEditorColorPickerViewControllerShouldDisplayToolbar])
@@ -92,9 +92,14 @@
                                                                                    target:self
                                                                                    action:@selector(closeSelected:)];
 		
+		UIBarButtonItem *clearItem = [[UIBarButtonItem alloc] initWithTitle:@"Clear"
+																	  style:UIBarButtonItemStyleDone
+																	 target:self
+																	 action:@selector(clearSelected:)];
+		
 		UIBarButtonItem *selectedColorItem = [[UIBarButtonItem alloc] initWithCustomView:self.selectedColorView];
 		
-		[toolbar setItems:@[closeItem, flexibleSpaceItem, selectedColorItem, doneItem]];
+		[toolbar setItems:@[doneItem, clearItem, flexibleSpaceItem ,selectedColorItem, flexibleSpaceItem , closeItem]];
 		[self.view addSubview:toolbar];
 		
 		self.colorsImageView.frame = CGRectMake(2, toolbarHeight+2, self.view.frame.size.width-4, self.view.frame.size.height - (toolbarHeight+4));
@@ -114,7 +119,10 @@
 
 - (void)populateColorsForPoint:(CGPoint)point
 {
-	self.selectedColorView.backgroundColor = [self.colorsImageView colorOfPoint:point];
+	CGPoint pointInView = [self.colorsImageView convertPoint:point toView:self.colorsImageView];
+	
+	if (CGRectContainsPoint(self.colorsImageView.bounds, pointInView))
+		self.selectedColorView.backgroundColor = [self.colorsImageView colorOfPoint:pointInView];
 }
 
 #pragma mark - IBActions -
@@ -127,6 +135,11 @@
 - (IBAction)closeSelected:(id)sender
 {
 	[self.delegate richTextEditorColorPickerViewControllerDidSelectClose];
+}
+
+- (IBAction)clearSelected:(id)sender
+{
+	[self.delegate richTextEditorColorPickerViewControllerDidSelectColor:nil withAction:self.action];
 }
 
 #pragma mark - Touch Detection -

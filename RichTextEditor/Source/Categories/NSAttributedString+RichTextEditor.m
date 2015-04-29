@@ -33,6 +33,9 @@
 
 - (NSRange)firstParagraphRangeFromTextRange:(NSRange)range
 {
+	if (self.string.length == 0)
+		return NSMakeRange(0, 0);
+	
 	NSInteger start = -1;
 	NSInteger end = -1;
 	NSInteger length = 0;
@@ -41,7 +44,7 @@
 		range.location-1 :
 		range.location;
 	
-	for (int i=startingRange ; i>=0 ; i--)
+	for (NSInteger i=startingRange ; i>=0 ; i--)
 	{
 		char c = [self.string characterAtIndex:i];
 		if (c == '\n')
@@ -55,7 +58,7 @@
 	
 	NSInteger moveForwardIndex = (range.location > start) ? range.location : start;
 	
-	for (int i=moveForwardIndex; i<= self.string.length-1 ; i++)
+	for (NSInteger i=moveForwardIndex; i<= self.string.length-1 ; i++)
 	{
 		char c = [self.string characterAtIndex:i];
 		if (c == '\n')
