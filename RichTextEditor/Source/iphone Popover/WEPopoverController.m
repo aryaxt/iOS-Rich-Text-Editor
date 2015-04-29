@@ -46,6 +46,7 @@
 - (id)initWithContentViewController:(UIViewController *)viewController {
 	if ((self = [self init])) {
 		self.contentViewController = viewController;
+        self.popoverContentSize = viewController.view.frame.size;
 	}
 	return self;
 }
@@ -138,7 +139,7 @@
 	[contentViewController view];
 	
 	if (CGSizeEqualToSize(popoverContentSize, CGSizeZero)) {
-		popoverContentSize = contentViewController.contentSizeForViewInPopover;
+		popoverContentSize = contentViewController.preferredContentSize;
 	}
 	
 	CGRect displayArea = [self displayAreaForView:theView];
@@ -223,7 +224,7 @@
     }
     
     if (CGSizeEqualToSize(popoverContentSize, CGSizeZero)) {
-		popoverContentSize = contentViewController.contentSizeForViewInPopover;
+		popoverContentSize = contentViewController.preferredContentSize;
 	}
 	
 	CGRect displayArea = [self displayAreaForView:theView];

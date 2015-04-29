@@ -27,18 +27,18 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum{
-	RichTextEditorToolbarPresentationStyleModal,
-	RichTextEditorToolbarPresentationStylePopover
-}RichTextEditorToolbarPresentationStyle;
+typedef NS_ENUM(NSUInteger, RichTextEditorToolbarPresentationStyle) {
+    RichTextEditorToolbarPresentationStyleModal,
+    RichTextEditorToolbarPresentationStylePopover
+};
 
-typedef enum{
-	ParagraphIndentationIncrease,
-	ParagraphIndentationDecrease
-}ParagraphIndentation;
+typedef NS_ENUM(NSUInteger, ParagraphIndentation) {
+    ParagraphIndentationIncrease,
+    ParagraphIndentationDecrease
+};
 
-typedef enum{
-	RichTextEditorFeatureNone							= 0,
+typedef NS_ENUM(NSUInteger, RichTextEditorFeature) {
+    RichTextEditorFeatureNone							= 0,
 	RichTextEditorFeatureFont							= 1 << 0,
 	RichTextEditorFeatureFontSize						= 1 << 1,
 	RichTextEditorFeatureBold							= 1 << 2,
@@ -53,8 +53,9 @@ typedef enum{
 	RichTextEditorFeatureTextForegroundColor			= 1 << 11,
 	RichTextEditorFeatureParagraphIndentation			= 1 << 12,
 	RichTextEditorFeatureParagraphFirstLineIndentation	= 1 << 13,
-	RichTextEditorFeatureAll							= 1 << 14
-}RichTextEditorFeature;
+	RichTextEditorFeatureAll							= 1 << 14,
+    RichTextEditorFeatureLink                           = 1 << 15
+};
 
 @protocol RichTextEditorToolbarDelegate <UIScrollViewDelegate>
 - (void)richTextEditorToolbarDidSelectBold;
@@ -69,6 +70,7 @@ typedef enum{
 - (void)richTextEditorToolbarDidSelectTextBackgroundColor:(UIColor *)color;
 - (void)richTextEditorToolbarDidSelectTextForegroundColor:(UIColor *)color;
 - (void)richTextEditorToolbarDidSelectTextAlignment:(NSTextAlignment)textAlignment;
+- (void)richTextEditorToolbarDidInsertLink:(NSURL*) link displayText:(NSString*)displayText;
 @end
 
 @protocol RichTextEditorToolbarDataSource <NSObject>

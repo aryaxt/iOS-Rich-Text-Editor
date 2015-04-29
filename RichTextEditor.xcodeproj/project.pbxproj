@@ -101,6 +101,7 @@
 		1AFAED8617C804AB00E450B0 /* numlist@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AFAED8417C804AB00E450B0 /* numlist@2x.png */; };
 		1AFAED8717C804AB00E450B0 /* bullist@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AFAED8517C804AB00E450B0 /* bullist@2x.png */; };
 		1AFAED8917C80FC600E450B0 /* dropDownTriangle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AFAED8817C80FC600E450B0 /* dropDownTriangle@2x.png */; };
+		E1A1B1E1196ABAE900513A15 /* RichTextEditorInsertLinkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E1A1B1E0196ABAE900513A15 /* RichTextEditorInsertLinkViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -229,6 +230,8 @@
 		1AFAED8417C804AB00E450B0 /* numlist@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "numlist@2x.png"; sourceTree = "<group>"; };
 		1AFAED8517C804AB00E450B0 /* bullist@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bullist@2x.png"; sourceTree = "<group>"; };
 		1AFAED8817C80FC600E450B0 /* dropDownTriangle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dropDownTriangle@2x.png"; sourceTree = "<group>"; };
+		E1A1B1DF196ABAE800513A15 /* RichTextEditorInsertLinkViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichTextEditorInsertLinkViewController.h; sourceTree = "<group>"; };
+		E1A1B1E0196ABAE900513A15 /* RichTextEditorInsertLinkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RichTextEditorInsertLinkViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,6 +278,8 @@
 				153F9581179F9953005B2487 /* RichTextEditorFontSizePickerViewController.h */,
 				153F9582179F9953005B2487 /* RichTextEditorFontSizePickerViewController.m */,
 				153F9583179F9953005B2487 /* RichTextEditorPopover.h */,
+				E1A1B1DF196ABAE800513A15 /* RichTextEditorInsertLinkViewController.h */,
+				E1A1B1E0196ABAE900513A15 /* RichTextEditorInsertLinkViewController.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -658,6 +663,7 @@
 				153F95A0179F9953005B2487 /* RichTextEditor.m in Sources */,
 				153F958C179F9953005B2487 /* UIView+RichTextEditor.m in Sources */,
 				153F959F179F9953005B2487 /* WETouchableView.m in Sources */,
+				E1A1B1E1196ABAE900513A15 /* RichTextEditorInsertLinkViewController.m in Sources */,
 				158389231735A5D7006DE713 /* AppDelegate.m in Sources */,
 				158389321735A5D7006DE713 /* ViewController.m in Sources */,
 				153F95A1179F9953005B2487 /* RichTextEditorColorPickerViewController.m in Sources */,

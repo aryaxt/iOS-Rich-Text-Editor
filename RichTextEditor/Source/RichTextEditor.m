@@ -94,6 +94,11 @@
         [self updateToolbarState];
 }
 
+-(void)setDataSource:(id<RichTextEditorDataSource>)dataSource{
+    _dataSource = dataSource;
+    [self setupMenuItems];
+}
+
 #pragma mark - Override Methods -
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
@@ -157,8 +162,36 @@
 	UIMenuItem *italicItem = [[UIMenuItem alloc] initWithTitle:@"Italic" action:@selector(richTextEditorToolbarDidSelectItalic)];
 	UIMenuItem *underlineItem = [[UIMenuItem alloc] initWithTitle:@"Underline" action:@selector(richTextEditorToolbarDidSelectUnderline)];
 	UIMenuItem *strikeThroughItem = [[UIMenuItem alloc] initWithTitle:@"Strike" action:@selector(richTextEditorToolbarDidSelectStrikeThrough)];
-	
-	[[UIMenuController sharedMenuController] setMenuItems:@[selectParagraph, boldItem, italicItem, underlineItem, strikeThroughItem]];
+
+    RichTextEditorFeature features = [self featuresEnabledForRichTextEditorToolbar];
+    if(features == RichTextEditorFeatureAll){
+        [[UIMenuController sharedMenuController] setMenuItems:@[selectParagraph, boldItem, italicItem, underlineItem, strikeThroughItem]];
+    }else{
+        NSMutableArray *array = [NSMutableArray array];
+
+        if(features & RichTextEditorFeatureParagraphIndentation){
+            [array addObject:selectParagraph];
+        }
+
+        if(features & RichTextEditorFeatureBold){
+            [array addObject:boldItem];
+        }
+
+        if(features & RichTextEditorFeatureItalic){
+            [array addObject:italicItem];
+        }
+
+        if(features & RichTextEditorFeatureUnderline){
+            [array addObject:underlineItem];
+        }
+
+        if(features & RichTextEditorFeatureStrikeThrough){
+            [array addObject:strikeThroughItem];
+        }
+
+        [[UIMenuController sharedMenuController] setMenuItems:array];
+    }
+    
 }
 
 - (void)selectParagraph:(id)sender
@@ -322,6 +355,38 @@
     // TODO: implement this
 }
 
+- (void)richTextEditorToolbarDidInsertLink:(NSURL*) link displayText:(NSString*)displayText{
+
+    NSMutableAttributedString *attributedString = [self.attributedText mutableCopy];
+
+    NSMutableDictionary *attributes = [[self dictionaryAtIndex:self.selectedRange.location] mutableCopy];
+    UIFont *font = [attributes objectForKey:NSFontAttributeName];
+    font = [UIFont fontWithName:[font familyName] size:[font pointSize] boldTrait:NO italicTrait:NO];
+    [attributes setObject:font forKey:NSFontAttributeName];
+
+    NSMutableDictionary *cop = [attributes mutableCopy];
+    [cop setObject:link forKey:NSLinkAttributeName];
+    NSAttributedString *string = [[NSAttributedString alloc] initWithString:displayText attributes:cop];
+
+    NSRange oldRange = self.selectedRange;
+    oldRange.length = 0;
+    oldRange.location += displayText.length;
+
+    [attributedString insertAttributedString:string atIndex:self.selectedRange.location];
+
+    NSAttributedString *space = [[NSAttributedString alloc] initWithString:@" " attributes:attributes];
+    [attributedString insertAttributedString:space atIndex:oldRange.location];
+    oldRange.location += 1;
+
+    [self setAttributedText:attributedString];
+
+    [self updateToolbarState];
+    [self resignFirstResponder];
+    [self scrollRangeToVisible:oldRange];
+    [self becomeFirstResponder];
+    [self setSelectedRange:oldRange];
+}
+
 #pragma mark - Private Methods -
 
 - (CGRect)frameOfTextAtRange:(NSRange)range
@@ -358,6 +423,11 @@
 	[self setSelectedRange:fullRange];
 }
 
+-(void)setAttributedText:(NSAttributedString *)attributedText{
+    [super setAttributedText:attributedText];
+    [self updateToolbarState];
+}
+
 - (void)updateToolbarState
 {
 	// If no text exists or typing attributes is in progress update toolbar using typing attributes instead of selected text
@@ -367,10 +437,16 @@
 	}
 	else
 	{
-		int location = [self offsetFromPosition:self.beginningOfDocument toPosition:self.selectedTextRange.start];
-		
-		if (location == self.text.length)
-			location --;
+		NSInteger location = [self offsetFromPosition:self.beginningOfDocument toPosition:self.selectedTextRange.start];
+        if(self.selectedRange.length > 0){
+            if (location == self.text.length)
+                location --;
+        }else{
+            if (location != 0)
+                location --;
+        }
+
+
 		
 		[self.toolBar updateStateWithAttributes:[self.attributedText attributesAtIndex:location effectiveRange:nil]];
 	}
@@ -389,9 +465,13 @@
 - (UIFont *)fontAtIndex:(NSInteger)index
 {
 	// If index at end of string, get attributes starting from previous character
-	if (index == self.attributedText.string.length && [self hasText])
-		--index;
-    
+    if(self.selectedRange.length > 0){
+        if (index == self.attributedText.string.length && [self hasText])
+            index --;
+    }else{
+        if (index != 0)
+            index --;
+    }
 	// If no text exists get font from typing attributes
     NSDictionary *dictionary = ([self hasText])
 		? [self.attributedText attributesAtIndex:index effectiveRange:nil]
@@ -403,8 +483,13 @@
 - (NSDictionary *)dictionaryAtIndex:(NSInteger)index
 {
 	// If index at end of string, get attributes starting from previous character
-	if (index == self.attributedText.string.length && [self hasText])
-        --index;
+    if(self.selectedRange.length > 0){
+        if (index == self.attributedText.string.length && [self hasText])
+            index --;
+    }else{
+        if (index != 0)
+            index --;
+    }
 	
     // If no text exists get font from typing attributes
     return  ([self hasText])

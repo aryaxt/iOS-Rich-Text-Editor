@@ -47,9 +47,13 @@
 	return UIModalTransitionStyleFlipHorizontal;
 }*/
 
+-(RichTextEditorToolbarPresentationStyle)presentationStyleForRichTextEditor:(RichTextEditor *)richTextEditor{
+    return RichTextEditorToolbarPresentationStylePopover;
+}
+
 - (RichTextEditorFeature)featuresEnabledForRichTextEditor:(RichTextEditor *)richTextEditor
 {
-	return RichTextEditorFeatureFontSize | RichTextEditorFeatureFont | RichTextEditorFeatureAll;
+	return RichTextEditorFeatureLink | RichTextEditorFeatureItalic | RichTextEditorFeatureBold;
 }
 
 @end
