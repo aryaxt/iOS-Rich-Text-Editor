@@ -91,6 +91,7 @@
 }
 
 - (NSString *)htmlString
+{
 	if(!self.string || self.string.length == 0) 
 	{
         	return nil;
