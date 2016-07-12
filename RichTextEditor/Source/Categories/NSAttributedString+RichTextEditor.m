@@ -91,7 +91,11 @@
 }
 
 - (NSString *)htmlString
-{
+	if(!self.string || self.string.length == 0) 
+	{
+        	return nil;
+        }
+
 	NSMutableString *htmlString = [NSMutableString string];
 	NSArray *paragraphRanges = [self rangeOfParagraphsFromTextRange:NSMakeRange(0, self.string.length-1)];
 	
